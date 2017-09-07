@@ -1,9 +1,21 @@
-/*
- * Assignment1.cpp
+/*****************************************************************************
+ *	Name:   Darius W Lambiri (dwlambiri)
+ *	File:   Assignment1.cpp
+ *	Course: ICS4U
+ *	Date:   Sep 6, 2017
  *
- *  Created on: Sep 6, 2017
- *      Author: dwlambiri
- */
+ *	Purpose:
+ *		Assignment 1, encoding messages
+ *
+ *	Usage:
+ *		For a usage message see usage function below
+ *
+ *	Revision History:
+ *
+ *	Known Issues:
+ *		None
+ *****************************************************************************/
+
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
