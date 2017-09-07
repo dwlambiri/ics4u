@@ -32,10 +32,10 @@ Usage(void) {
 static char* configFileName;
 static const int keySize_c = 200;
 static const int messageSize_c = 1000;
-static char key[keySize_c] = "";
-static char message[messageSize_c] = "";
-static char eMessage[messageSize_c] = "";
-static char dMessage[messageSize_c] = "";
+static char keyBuffer[keySize_c] = "";
+static char messageBuffer[messageSize_c] = "";
+static char eMessageBuffer[messageSize_c] = "";
+static char dMessageBuffer[messageSize_c] = "";
 
 static bool readFile(char* configFileName, char key[], char message[]){
 	FILE* fptr = NULL;
@@ -155,26 +155,26 @@ main(int argc, char **argv) {
 		return 1;
 	} //end-of-if(configFileName == NULL)
 
-	if (readFile(configFileName, key, message) == false) {
+	if (readFile(configFileName, keyBuffer, messageBuffer) == false) {
 		return 2;
 	} //end-of-if(readFile(configFileName) == false)
 
 
-	std::cout << key << std::endl;
-	std::cout << message << std::endl;
+	std::cout << keyBuffer << std::endl;
+	std::cout << messageBuffer << std::endl;
 
-	if (encrypt(key, message, eMessage) == false) {
+	if (encrypt(keyBuffer, messageBuffer, eMessageBuffer) == false) {
 		return 3;
 	} //end-of-if(encrypt() == false)
 
-	std::cout << eMessage << std::endl;
+	std::cout << eMessageBuffer << std::endl;
 
-	if (dencrypt(key, eMessage, dMessage) == false) {
+	if (dencrypt(keyBuffer, eMessageBuffer, dMessageBuffer) == false) {
 		return 3;
 	} //end-of-if(encrypt() == false)
 
-	std::cout << dMessage << std::endl;
-	if (strcmp(message, dMessage) == 0) {
+	std::cout << dMessageBuffer << std::endl;
+	if (strcmp(messageBuffer, dMessageBuffer) == 0) {
 		std::cout << "Message is the same" << std::endl;
 	} //end-of-if(strcmp(message, dMessage) == 0)
 	return 0;
