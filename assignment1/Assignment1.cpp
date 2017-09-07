@@ -37,7 +37,7 @@ static char message[messageSize_c] = "";
 static char eMessage[messageSize_c] = "";
 static char dMessage[messageSize_c] = "";
 
-static bool readFile(char* configFileName){
+static bool readFile(char* configFileName, char key[], char message[]){
 	FILE* fptr = NULL;
 	if (configFileName == NULL) {
 		return false;
@@ -79,7 +79,7 @@ static bool readFile(char* configFileName){
 	return true;
 }
 
-static bool encrypt(){
+static bool encrypt(char key[], char message[], char eMessage[]){
 	int keySize = strlen(key);
 	int messageSize = strlen(message);
 
@@ -102,9 +102,9 @@ static bool encrypt(){
 	return true;
 }
 
-static bool dencrypt(){
+static bool dencrypt(char key[], char eMessage[], char dMessage[]){
 	int keySize = strlen(key);
-	int messageSize = strlen(message);
+	int messageSize = strlen(eMessage);
 
 	int numLoops = messageSize / keySize;
 	int remainder = messageSize % keySize;
@@ -116,7 +116,7 @@ static bool dencrypt(){
 		for (int j = 0; j < keySize; j++ ) {
 			//key[j];
 			//message[i*keySize + j];
-			if (message[i*keySize + j] == 0) {
+			if (eMessage[i*keySize + j] == 0) {
 				return true;
 			} //end-of-if(message[i*keySize + j] == 0;)
 			dMessage[i*keySize + j] = eMessage[i*keySize + j] - (key[j] - 'A');
@@ -155,7 +155,7 @@ main(int argc, char **argv) {
 		return 1;
 	} //end-of-if(configFileName == NULL)
 
-	if (readFile(configFileName) == false) {
+	if (readFile(configFileName, key, message) == false) {
 		return 2;
 	} //end-of-if(readFile(configFileName) == false)
 
@@ -163,13 +163,13 @@ main(int argc, char **argv) {
 	std::cout << key << std::endl;
 	std::cout << message << std::endl;
 
-	if (encrypt() == false) {
+	if (encrypt(key, message, eMessage) == false) {
 		return 3;
 	} //end-of-if(encrypt() == false)
 
 	std::cout << eMessage << std::endl;
 
-	if (dencrypt() == false) {
+	if (dencrypt(key, eMessage, dMessage) == false) {
 		return 3;
 	} //end-of-if(encrypt() == false)
 
