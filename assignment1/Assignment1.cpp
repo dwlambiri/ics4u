@@ -33,9 +33,36 @@ static char* configFileName;
 static const int keySize_c = 200;
 static const int messageSize_c = 1000;
 static char keyBuffer[keySize_c] = "";
+static char readBuffer[messageSize_c] = "";
 static char messageBuffer[messageSize_c] = "";
 static char eMessageBuffer[messageSize_c] = "";
 static char dMessageBuffer[messageSize_c] = "";
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Sep 11, 2017
+   @mname   textOnly
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+static bool
+textOnly(char message[], char messageText[]) {
+	int i = 0;
+	int j = 0;
+	while(message[i]) {
+		if ((message[i] >= 'A') && (message[i] <= 'Z')) {
+			messageText[j] = message[i];
+			j++;
+		} //end-of-if(message[i] >= 'A' && message[i] <= 'Z')
+		i++;
+	} //end-of-while(message[i])
+	messageText[j] = 0;
+	return true;
+} // end-of-method textOnly
+
+
 
 static bool readFile(char* configFileName, char key[], char message[]){
 	FILE* fptr = NULL;
@@ -97,6 +124,9 @@ static bool encrypt(char key[], char message[], char eMessage[]){
 				return true;
 			} //end-of-if(message[i*keySize + j] == 0;)
 			eMessage[i*keySize + j] = message[i*keySize + j] + (key[j] - 'A');
+			if(eMessage[i*keySize + j] > 'Z' ) {
+				eMessage[i*keySize + j] -= 'Z' + 1 - 'A';
+			}
 		} //end-of-for
 	} //end-of-for
 	return true;
@@ -120,6 +150,9 @@ static bool dencrypt(char key[], char eMessage[], char dMessage[]){
 				return true;
 			} //end-of-if(message[i*keySize + j] == 0;)
 			dMessage[i*keySize + j] = eMessage[i*keySize + j] - (key[j] - 'A');
+			if (dMessage[i*keySize + j] < 'A') {
+				dMessage[i*keySize + j] += 'Z' + 1 - 'A';
+			} //end-of-if(dMessage[i*keySize + j] < 'A')
 		} //end-of-for
 	} //end-of-for
 	return true;
@@ -155,12 +188,18 @@ main(int argc, char **argv) {
 		return 1;
 	} //end-of-if(configFileName == NULL)
 
-	if (readFile(configFileName, keyBuffer, messageBuffer) == false) {
+	if (readFile(configFileName, keyBuffer, readBuffer) == false) {
 		return 2;
 	} //end-of-if(readFile(configFileName) == false)
 
 
 	std::cout << keyBuffer << std::endl;
+	std::cout << readBuffer << std::endl;
+
+	if (textOnly(readBuffer, messageBuffer) == false) {
+		return 4;
+	} //end-of-if(textOnly(readBuffer, messageBuffer) == false)
+
 	std::cout << messageBuffer << std::endl;
 
 	if (encrypt(keyBuffer, messageBuffer, eMessageBuffer) == false) {
