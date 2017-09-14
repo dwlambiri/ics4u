@@ -25,7 +25,7 @@ int input_remaining(int arraysize, int counter, int list[], int outlist[], int o
 using namespace std;
 
 //opens file and reads in its content into an array
-int openFile(char filename[], int numberList[]){
+int openFile(const char* filename, int numberList[], int size){
 	ifstream file;
 	 file.open(filename);
 	 // todo: check if file opens successfully
@@ -34,11 +34,14 @@ int openFile(char filename[], int numberList[]){
 
 	 while (!file.eof()) {
 		 file >> numberList[counter++];
+		 if(counter >= size) {
+			 break;
+		 }
 	 }
-	 for (int i = 0; i < counter; i++){
-			cout << numberList[i] <<endl;
-	 }
-	 cout << '\n';
+//	 for (int i = 0; i < counter; i++){
+//			cout << numberList[i] <<endl;
+//	 }
+//	 cout << '\n';
 	 file.close();
 	 return counter;
 }
@@ -46,7 +49,7 @@ int openFile(char filename[], int numberList[]){
 
 
 
-int merger(int listA[], int listB[], int outlist[], int sizeArray1, int sizeArray2){
+int mergeArrays(int listA[], int listB[], int outlist[], int sizeArray1, int sizeArray2){
 	int counter1 = 0;
 	int counter2 = 0;
 	int output_counter = 0;
@@ -87,7 +90,7 @@ bool print_list(int list[],int listSize){
 	return true;
 }
 
-bool writeToTextFile(int outputArray[], int arraySize, char filename[]){
+bool writeToTextFile(int outputArray[], int arraySize, const char* filename){
 	ofstream fout(filename);
 	/*
 	if ( ! filename.is_open()) {
@@ -104,16 +107,17 @@ bool writeToTextFile(int outputArray[], int arraySize, char filename[]){
 
 //main function
 int main() {
-	char filename1[100] = "data1.dat";
-	char filename2[100] = "data2.dat";
-	char output_file[100] = "merged_data.txt";
-	int list1[200] = {0};
-	int list2[200] = {0};
-	int outputList[400] = {0};
-	int arraySize1 = openFile(filename1, list1);
-	int arraySize2 = openFile(filename2, list2);
+	const char* filename1 = "data1.dat";
+	const char* filename2 = "data2.dat";
+	const char* output_file = "merged_data.txt";
+	const int listSize_c = 200;
+	int list1[listSize_c];
+	int list2[listSize_c];
+	int outputList[2*listSize_c];
+	int arraySize1 = openFile(filename1, list1, listSize_c);
+	int arraySize2 = openFile(filename2, list2, listSize_c);
 
-	int outputSize = merger(list1, list2, outputList, arraySize1, arraySize2);
+	int outputSize = mergeArrays(list1, list2, outputList, arraySize1, arraySize2);
 
 	print_list(outputList,outputSize);
 	writeToTextFile(outputList, outputSize, output_file);
