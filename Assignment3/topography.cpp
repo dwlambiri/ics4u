@@ -73,7 +73,9 @@ void drawMap(apmatrix<int> &map){
 }
 
 //MAIN FUNCTION
-int main() {
+int main(int argc, char **argv) {
+	//we need full main declaration in osx
+
     apmatrix<int> mountainMat(matrixCols_c, matrixRows_c, 0);
 
     MapDataDrawer(mountainMat);
