@@ -1,8 +1,8 @@
 //includes
 #include <iostream>
 #include <fstream>
-#include <apmatrix.h>
 #include <allegro5/allegro.h>
+#include "apclasses/apmatrix.h"
 
 using namespace std;
 //Constant vaiables

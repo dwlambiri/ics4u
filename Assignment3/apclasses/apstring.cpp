@@ -15,11 +15,12 @@
 //  as defined in the draft ANSI standard
 // *******************************************************************
 
+#include "apstring.h"
+
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "apstring.h"
 
 const int npos = -1;
 
