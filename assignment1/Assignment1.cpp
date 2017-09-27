@@ -55,9 +55,9 @@ textOnly(char message[], char messageText[]) {
 		if ((message[i] >= 'A') && (message[i] <= 'Z')) {
 			messageText[j] = message[i];
 			j++;
-		} //end-of-if(message[i] >= 'A' && message[i] <= 'Z')
+		} //end-of-if
 		i++;
-	} //end-of-while(message[i])
+	} //end-of-while
 	messageText[j] = 0;
 	return true;
 } // end-of-method textOnly
@@ -72,7 +72,7 @@ static bool readFile(char* configFileName, char key[], char message[]){
 		fptr = fopen(configFileName, "r");
 		if (fptr == NULL) {
 			return false;
-		} //end-of-if(fptr == NULL)
+		} //end-of-if
 	}
 	//read the file contents
 	if ( fgets (key , keySize_c , fptr) == NULL ){
@@ -85,7 +85,7 @@ static bool readFile(char* configFileName, char key[], char message[]){
 		if (key[i] == '\n') {
 			key[i] = 0;
 			break;
-		} //end-of-if(key[i] == '\n')
+		} //end-of-if
 	} //end-of-for
 
 	if ( fgets (message , messageSize_c , fptr) == NULL ){
@@ -148,7 +148,7 @@ static bool dencrypt(char key[], char eMessage[], char dMessage[]){
 			//message[i*keySize + j];
 			if (eMessage[i*keySize + j] == 0) {
 				return true;
-			} //end-of-if(message[i*keySize + j] == 0;)
+			} //end-of-if
 			dMessage[i*keySize + j] = eMessage[i*keySize + j] - (key[j] - 'A');
 			if (dMessage[i*keySize + j] < 'A') {
 				dMessage[i*keySize + j] += 'Z' + 1 - 'A';
