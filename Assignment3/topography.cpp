@@ -7,9 +7,9 @@
 
 using namespace std;
 //Constant vaiables
-const int matrixCols_c = 480;
+const int matrixCols_c = 844;
 const int matrixRows_c = 480;
-const char fileName_c[] = "Colorado_480x480.dat";
+const char fileName_c[] = "Colorado_844x480.dat";
 ALLEGRO_DISPLAY *display = nullptr;
 const int maxcolour_c = 255;
 
@@ -73,7 +73,7 @@ int findMax(apmatrix<int> &map){
 //not using this yet
 int drawMap(apmatrix<int> &map, int small, int large){
 
-     float ratios = (large - small) / maxcolour_c;
+     float ratios = float(large - small) / maxcolour_c;
     //initialize display
     al_init();
 	display = al_create_display(matrixCols_c, matrixRows_c);
@@ -82,7 +82,7 @@ int drawMap(apmatrix<int> &map, int small, int large){
 	if (!display) {
     	al_show_native_message_box(display, "Error", "Error", "Failed to initialize display!",
                                  nullptr, ALLEGRO_MESSAGEBOX_ERROR);
-       	return -1;
+       	return 1;
 	}
 	al_set_window_title(display, "Allegro Example 1 - Create Display");
 
@@ -100,11 +100,12 @@ int drawMap(apmatrix<int> &map, int small, int large){
     return 0;
 }
 
+
 //MAIN FUNCTION
 int main(int argc, char **argv) {
 	//we need full main declaration in osx
 
-    apmatrix<int> mountainMat(matrixCols_c, matrixRows_c, 0);
+    apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
 
     MapDataDrawer(mountainMat);
 
