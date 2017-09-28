@@ -2,14 +2,16 @@
 #include <iostream>
 #include <fstream>
 #include <allegro5/allegro.h>
-#include "apclasses/apmatrix.h"
+#include <allegro5/allegro_native_dialog.h>
+#include <apmatrix.h>
 
 using namespace std;
 //Constant vaiables
 const int matrixCols_c = 480;
 const int matrixRows_c = 480;
 const char fileName_c[] = "Colorado_480x480.dat";
-
+ALLEGRO_DISPLAY *display = nullptr;
+const int maxcolour_c = 255;
 
 //function that reads in data from a file
 bool MapDataDrawer(apmatrix<int> &map){
@@ -68,8 +70,34 @@ int findMax(apmatrix<int> &map){
 }// END OF findMin
 
 
-void drawMap(apmatrix<int> &map){
+//not using this yet
+int drawMap(apmatrix<int> &map, int small, int large){
 
+     float ratios = (large - small) / maxcolour_c;
+    //initialize display
+    al_init();
+	display = al_create_display(matrixCols_c, matrixRows_c);
+
+	// Always check if your allegro routines worked successfully.
+	if (!display) {
+    	al_show_native_message_box(display, "Error", "Error", "Failed to initialize display!",
+                                 nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+       	return -1;
+	}
+	al_set_window_title(display, "Allegro Example 1 - Create Display");
+
+
+
+	for (int y = 0; y < matrixRows_c; y++){
+        for (int x = 0; x < matrixCols_c; x++){
+            int temp = (map[y][x] - small) / ratios;
+            al_draw_pixel(x , y , al_map_rgb(temp, temp, temp));
+        }
+    }
+    al_flip_display();
+    al_rest(10);
+    al_destroy_display(display);
+    return 0;
 }
 
 //MAIN FUNCTION
@@ -84,6 +112,7 @@ int main(int argc, char **argv) {
     int smallestSize = findMin(mountainMat);
 
     cout << "The largest size is: " << largestSize << endl << "And the smallest size is: " << smallestSize << endl;
+    drawMap(mountainMat, smallestSize, largestSize);
 
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
