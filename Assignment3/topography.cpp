@@ -113,7 +113,6 @@ int drawMap(apmatrix<int> &map, int small, int large){
             al_draw_pixel(x , y , al_map_rgb(temp, temp, temp));
         }
     }
-	al_flip_display();
 
     return 0;
 }
@@ -156,9 +155,9 @@ drawPixel(int x, int y, MapPixelColour c) {
 	  \n
   --------------------------------------------------------------------------
  */
-void
-findPath(apmatrix<int> map, int startRow, int maxvalue) {
-
+int
+findPath(apmatrix<int> map, int startRow, int maxvalue, MapPixelColour colour) {
+	int total = 0;
 	int row = startRow;
 	for (int j = 1; j < matrixCols_c; j++ ) {
 		int n1 = 10*maxvalue;
@@ -175,29 +174,35 @@ findPath(apmatrix<int> map, int startRow, int maxvalue) {
 		//checks value
 		if ((n1 < n2) && (n1 < n3)) {
 			row--;
+			total += n1;
 		}
 		if ((n2 < n1) && (n2 < n3)) {
-			//nothing
+			total += n2;
 		}
 		if ((n3 < n2) && (n3 < n1)) {
 			row++;
+			total += n3;
 		}
 		if ((n1 == n2) && (n1 < n3)) {
 			row -= rand()%2;
+			total += n1;
 		}
 		if ((n3 == n2) && (n3 < n1)) {
 			row += rand()%2;
+			total += n3;
 		}
 		if ((n1 == n3) && (n1 < n2)) {
 			row = row -1 + 2*rand()%2;
+			total += n1;
 		}
 		if ((n1 == n2) && (n1 == n3)) {
 			row += rand()%3 -1;
+			total += n1;
 		}
-		drawPixel(j, row, redPixel_c);
+		drawPixel(j, row, colour);
 
 	} //end-of-for
-
+	return total;
 } // end-of-function findpath
 
 
@@ -212,10 +217,18 @@ findPath(apmatrix<int> map, int startRow, int maxvalue) {
  */
 void
 markAllPaths(apmatrix<int> map, int maxValue) {
+	int total1 = -1;
+	int rowvalue = 0;
 	for (int i = 0; i < matrixRows_c; i++){
-		findPath(map, i, maxValue);
-		al_flip_display();
+		int temp = findPath(map, i, maxValue, redPixel_c);
+		//std::cout << temp << endl;
+		if (total1 < 0 || total1 > temp){
+			total1 = temp;
+			rowvalue = i;
+		}
 	}
+	findPath(map, rowvalue, maxValue, greeenPixel_c);
+	al_flip_display();
 } // end-of-function markAllPaths
 
 
@@ -239,3 +252,4 @@ int main(int argc, char **argv) {
     al_destroy_display(display);
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
+
