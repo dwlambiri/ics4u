@@ -1,6 +1,7 @@
 //includes
 #include <iostream>
 #include <fstream>
+#include <time.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
 #include "apclasses/apmatrix.h"
@@ -176,28 +177,36 @@ findPath(apmatrix<int> map, int startRow, int maxvalue, MapPixelColour colour) {
 			row--;
 			total += n1;
 		}
-		if ((n2 < n1) && (n2 < n3)) {
+		else if ((n2 < n1) && (n2 < n3)) {
 			total += n2;
 		}
-		if ((n3 < n2) && (n3 < n1)) {
+		else if ((n3 < n2) && (n3 < n1)) {
 			row++;
 			total += n3;
 		}
-		if ((n1 == n2) && (n1 < n3)) {
+		else if ((n1 == n2) && (n1 < n3)) {
 			row -= rand()%2;
 			total += n1;
+//			if(colour == greeenPixel_c)
+//				std::cout << row << std::endl;
 		}
-		if ((n3 == n2) && (n3 < n1)) {
+		else if ((n3 == n2) && (n3 < n1)) {
 			row += rand()%2;
 			total += n3;
+//			if(colour == greeenPixel_c)
+//				std::cout << row << std::endl;
 		}
-		if ((n1 == n3) && (n1 < n2)) {
-			row = row -1 + 2*rand()%2;
+		else if ((n1 == n3) && (n1 < n2)) {
+			row += 2*rand()%2 - 1;
 			total += n1;
+//			if(colour == greeenPixel_c)
+//				std::cout << row << std::endl;
 		}
-		if ((n1 == n2) && (n1 == n3)) {
+		else if ((n1 == n2) && (n1 == n3)) {
 			row += rand()%3 -1;
 			total += n1;
+//			if(colour == greeenPixel_c)
+//				std::cout << row << std::endl;
 		}
 		drawPixel(j, row, colour);
 
@@ -236,6 +245,8 @@ markAllPaths(apmatrix<int> map, int maxValue) {
 //MAIN FUNCTION
 int main(int argc, char **argv) {
 	//we need full main declaration in osx
+
+	srand (time(NULL));
 
     apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
 
