@@ -163,13 +163,25 @@ findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, 
 	int row = startRow;
 	path[0] = startRow;
 	for (int j = 1; j < map.numcols(); j++ ) {
+		/*
+		 * @author   dwlambiri
+		 * @date     Oct 1, 2017
+		 *  I initiallised the deltas with very large values.
+		 *  because I know the maximum delta a value of one hundred delta will never be selected
+		 *  I used this for the matrix boundaries
+		 */
+
 		int n1 = 100*maxvalue;
 		int n3 = 100*maxvalue;
+
+
 		if ((row - 1) > 0) {
 			n1 = abs(map[row-1][j] - map[row][j-1]);
 
 		} //end-of-if
+
 		int n2 = abs(map[row][j] - map[row][j-1]);
+
 		if ((row + 1) < matrixRows_c) {
 			n3 = abs(map[row+1][j] - map[row][j - 1]);
 		} //end-of-if
@@ -231,14 +243,44 @@ void
 markAllPaths(apmatrix<int> map, int maxValue) {
 	int total1 = -1;
 	int rowvalue = 0;
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 1, 2017
+	 *  I store the row numbers for the best path of the run.
+	 *
+	 *  This is to ensure that the green path that is displayed
+	 *  is the path with the smallest delta sum.
+	 *
+	 *  Because of the use of random number generation
+	 *  there are many possible paths from a starting point.
+	 *
+	 *  Therefore even if a given starting point has the smallest path
+	 *  of the run when we run the function again the new path might not
+	 *  be the smallest
+	 */
+
 	apvector<int> bestRun(map.numcols());
 	for (int i = 0; i < map.numrows(); i++){
+		/*
+		 * @author   dwlambiri
+		 * @date     Oct 1, 2017
+		 *  For each starting point (row) we return the actual path
+		 *  as row positions in a vector who's indeces represent the columns.
+		 */
+
 		apvector<int> tempRun(map.numcols());
 		int temp = findPath(map, i, maxValue, redPixel_c, tempRun);
 		if(i == 11) {
 			std::cout << "Min Path Index = " << i << " Value = " << temp << std::endl;
 		}
-		//std::cout << temp << endl;
+
+		/*
+		 * @author   dwlambiri
+		 * @date     Oct 1, 2017
+		 *  If the current path has a smaller sum than the current best
+		 *  I store the starting row value and the path vector.
+		 */
+
 		if (total1 < 0 || total1 > temp){
 			total1 = temp;
 			rowvalue = i;
@@ -247,6 +289,12 @@ markAllPaths(apmatrix<int> map, int maxValue) {
 	}
 
 	std::cout << "Min Path Index = " << rowvalue << " Value = " << total1 << std::endl;
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 1, 2017
+	 *  I am drawing the best path of the run in green.
+	 */
+
 	for (int i = 0; i < map.numcols(); i++ ) {
 		drawPixel(i, bestRun[i], greeenPixel_c);
 	} //end-of-for
