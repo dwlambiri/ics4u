@@ -3,9 +3,28 @@
 #include <fstream>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
-#include <apmatrix.h>
+#include "apclasses/apmatrix.h"
 
 using namespace std;
+
+
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author     dwlambiri
+   @date       Sep 30, 2017
+   @name       MapPixelColour
+   @brief
+
+  ---------------------------------------------------------------------------
+ */
+enum MapPixelColour {
+	redPixel_c,
+	greeenPixel_c,
+	bluePixel_c
+}; //end-of-enum MapPixelColour
+
 //Constant vaiables
 const int matrixCols_c = 844;
 const int matrixRows_c = 480;
@@ -94,11 +113,111 @@ int drawMap(apmatrix<int> &map, int small, int large){
             al_draw_pixel(x , y , al_map_rgb(temp, temp, temp));
         }
     }
-    al_flip_display();
-    al_rest(10);
-    al_destroy_display(display);
+	al_flip_display();
+
     return 0;
 }
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Sep 30, 2017
+   @mname   DrawPixel
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+drawPixel(int x, int y, MapPixelColour c) {
+	 switch (c) {
+		case redPixel_c:
+			al_draw_pixel(x , y , al_map_rgb(255, 0, 0));
+			break;
+		case greeenPixel_c:
+			al_draw_pixel(x , y , al_map_rgb(0, 255, 0));
+			break;
+		case bluePixel_c:
+			al_draw_pixel(x , y , al_map_rgb(0, 0, 255));
+			break;
+		default:
+			return false;
+	 } //end-of-switch
+	 return true;
+
+} // end-of-function DrawPixel
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Sep 30, 2017
+   @mname   findPath
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+findPath(apmatrix<int> map, int startRow, int maxvalue) {
+
+	int row = startRow;
+	for (int j = 1; j < matrixCols_c; j++ ) {
+		int n1 = 10*maxvalue;
+		int n3 = 10*maxvalue;
+		if ((row - 1) >= 0) {
+			n1 = abs(map[row-1][j] - map[row][j-1]);
+
+		} //end-of-if
+		int n2 = abs(map[row][j] - map[row][j-1]);
+		if ((row + 1) < matrixRows_c) {
+			n3 = abs(map[row+1][j] - map[row][j - 1]);
+		} //end-of-if
+
+		//checks value
+		if ((n1 < n2) && (n1 < n3)) {
+			row--;
+		}
+		if ((n2 < n1) && (n2 < n3)) {
+			//nothing
+		}
+		if ((n3 < n2) && (n3 < n1)) {
+			row++;
+		}
+		if ((n1 == n2) && (n1 < n3)) {
+			row -= rand()%2;
+		}
+		if ((n3 == n2) && (n3 < n1)) {
+			row += rand()%2;
+		}
+		if ((n1 == n3) && (n1 < n2)) {
+			row = row -1 + 2*rand()%2;
+		}
+		if ((n1 == n2) && (n1 == n3)) {
+			row += rand()%3 -1;
+		}
+		drawPixel(j, row, redPixel_c);
+
+	} //end-of-for
+
+} // end-of-function findpath
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Sep 30, 2017
+   @mname   markAllPaths
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+markAllPaths(apmatrix<int> map, int maxValue) {
+	for (int i = 0; i < matrixRows_c; i++){
+		findPath(map, i, maxValue);
+		al_flip_display();
+	}
+} // end-of-function markAllPaths
+
 
 
 //MAIN FUNCTION
@@ -112,8 +231,11 @@ int main(int argc, char **argv) {
     int largestSize = findMax(mountainMat);
     int smallestSize = findMin(mountainMat);
 
-    cout << "The largest size is: " << largestSize << endl << "And the smallest size is: " << smallestSize << endl;
+    std::cout << "The largest size is: " << largestSize << endl << "And the smallest size is: " << smallestSize << std::endl;
     drawMap(mountainMat, smallestSize, largestSize);
 
+    markAllPaths(mountainMat, largestSize);
+    al_rest(10);
+    al_destroy_display(display);
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
