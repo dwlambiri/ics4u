@@ -5,6 +5,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
 #include "apclasses/apmatrix.h"
+#include "apclasses/apvector.h"
 
 using namespace std;
 
@@ -157,13 +158,14 @@ drawPixel(int x, int y, MapPixelColour c) {
   --------------------------------------------------------------------------
  */
 int
-findPath(apmatrix<int> map, int startRow, int maxvalue, MapPixelColour colour) {
+findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, apvector<int> &path) {
 	int total = 0;
 	int row = startRow;
-	for (int j = 1; j < matrixCols_c; j++ ) {
-		int n1 = 10*maxvalue;
-		int n3 = 10*maxvalue;
-		if ((row - 1) >= 0) {
+	path[0] = startRow;
+	for (int j = 1; j < map.numcols(); j++ ) {
+		int n1 = 100*maxvalue;
+		int n3 = 100*maxvalue;
+		if ((row - 1) > 0) {
 			n1 = abs(map[row-1][j] - map[row][j-1]);
 
 		} //end-of-if
@@ -208,6 +210,7 @@ findPath(apmatrix<int> map, int startRow, int maxvalue, MapPixelColour colour) {
 //			if(colour == greeenPixel_c)
 //				std::cout << row << std::endl;
 		}
+		path[j] = row;
 		drawPixel(j, row, colour);
 
 	} //end-of-for
@@ -228,15 +231,25 @@ void
 markAllPaths(apmatrix<int> map, int maxValue) {
 	int total1 = -1;
 	int rowvalue = 0;
-	for (int i = 0; i < matrixRows_c; i++){
-		int temp = findPath(map, i, maxValue, redPixel_c);
+	apvector<int> bestRun(map.numcols());
+	for (int i = 0; i < map.numrows(); i++){
+		apvector<int> tempRun(map.numcols());
+		int temp = findPath(map, i, maxValue, redPixel_c, tempRun);
+		if(i == 11) {
+			std::cout << "Min Path Index = " << i << " Value = " << temp << std::endl;
+		}
 		//std::cout << temp << endl;
 		if (total1 < 0 || total1 > temp){
 			total1 = temp;
 			rowvalue = i;
+			bestRun = tempRun;
 		}
 	}
-	findPath(map, rowvalue, maxValue, greeenPixel_c);
+
+	std::cout << "Min Path Index = " << rowvalue << " Value = " << total1 << std::endl;
+	for (int i = 0; i < map.numcols(); i++ ) {
+		drawPixel(i, bestRun[i], greeenPixel_c);
+	} //end-of-for
 	al_flip_display();
 } // end-of-function markAllPaths
 
