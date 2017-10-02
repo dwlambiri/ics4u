@@ -1,11 +1,33 @@
+/*****************************************************************************
+ *	Name:   Darius W Lambiri (dwlambiri)
+ *	File:   topography.cpp
+ *	Course: ICS4U
+ *	Date:   Oct 2, 2017
+ *
+ *	Purpose: This program reads in data relating to a topographical map into a
+ *			 matrix. It then draws the map and calculates routes to traverse the map
+ *			 from east to west in order to travel a path with the least change in
+ *			 elevation.
+ *
+ *	Usage:   Just run the program. The green line represents the optimal path
+ *			 with the least change. Each red path represents every possible
+ *			 east west path involving a minimal amount of height change.
+ *
+ *	Revision History:
+ *
+ *	Known Issues:
+ *
+ *****************************************************************************/
+
+
 //includes
 #include <iostream>
 #include <fstream>
 #include <time.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
-#include <apmatrix.h>
-#include <apvector.h>
+#include "apclasses/apmatrix.h"
+#include "apclasses/apmatrix.h"
 
 using namespace std;
 
