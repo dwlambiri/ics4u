@@ -4,13 +4,10 @@
 #include <time.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
-#include "apclasses/apmatrix.h"
-#include "apclasses/apvector.h"
+#include <apmatrix.h>
+#include <apvector.h>
 
 using namespace std;
-
-
-
 
 /**
   ---------------------------------------------------------------------------
@@ -21,12 +18,15 @@ using namespace std;
 
   ---------------------------------------------------------------------------
  */
+/*
+the enum is used to select a colour of the line drawn in the findpath function*/
 enum MapPixelColour {
 	redPixel_c,
 	greeenPixel_c,
 	bluePixel_c
 }; //end-of-enum MapPixelColour
-
+//constants that determine the initial values of the variables
+// initialize the allegro display
 //Constant vaiables
 const int matrixCols_c = 844;
 const int matrixRows_c = 480;
@@ -35,18 +35,17 @@ ALLEGRO_DISPLAY *display = nullptr;
 const int maxcolour_c = 255;
 
 //function that reads in data from a file
+// the function draws the map depending on the elevation of each variable
 bool MapDataDrawer(apmatrix<int> &map){
     ifstream file;
-
+    //opens file
 	file.open(fileName_c);
-
+    //checks if the file is open
 	if ( ! file.is_open()) {
         cerr << "ERROR FILE NOT OPEN" << endl;
         return false;
     }
-	// todo: check if file opens successfully
-
-
+	// draws every every pixel using its relative position in the matrix to the display
 	for (int y = 0; y < matrixRows_c; y++){
         for (int x = 0; x < matrixCols_c; x++){
             file >>  map[y][x];
@@ -54,8 +53,9 @@ bool MapDataDrawer(apmatrix<int> &map){
         }
         //cout << endl;
     }
-
+    //closes file
 	file.close();
+	//returns to prove the function works
 	return true;
 }//END OF MapDataDrawer
 
@@ -63,7 +63,7 @@ bool MapDataDrawer(apmatrix<int> &map){
 //finds the smallest peak of the set of heights
 int findMin(apmatrix<int> &map){
     int lowest = map[0][0];
-
+    //
     for (int y = 0; y < matrixRows_c; y++){
         for (int x = 0; x < matrixCols_c; x++){
             if (lowest > map[y][x]){
@@ -166,7 +166,7 @@ findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, 
 		/*
 		 * @author   dwlambiri
 		 * @date     Oct 1, 2017
-		 *  I initiallised the deltas with very large values.
+		 *  I initialized the deltas with very large values.
 		 *  because I know the maximum delta a value of one hundred delta will never be selected
 		 *  I used this for the matrix boundaries
 		 */
@@ -175,7 +175,7 @@ findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, 
 		int n3 = 100*maxvalue;
 
 
-		if ((row - 1) > 0) {
+		if ((row - 1) >= 0) {
 			n1 = abs(map[row-1][j] - map[row][j-1]);
 
 		} //end-of-if
@@ -324,4 +324,3 @@ int main(int argc, char **argv) {
     al_destroy_display(display);
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
-
