@@ -26,8 +26,8 @@
 #include <time.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
-#include "apclasses/apmatrix.h"
-#include "apclasses/apmatrix.h"
+#include <apmatrix.h>
+#include <apvector.h>
 
 using namespace std;
 
@@ -116,7 +116,8 @@ int findMax(apmatrix<int> &map){
 //not using this yet
 int drawMap(apmatrix<int> &map, int small, int large){
 
-     float ratios = float(large - small) / maxcolour_c;
+     float range  = large - small;
+     float ratios = range / maxcolour_c;
     //initialize display
     al_init();
 	display = al_create_display(matrixCols_c, matrixRows_c);
@@ -127,14 +128,18 @@ int drawMap(apmatrix<int> &map, int small, int large){
                                  nullptr, ALLEGRO_MESSAGEBOX_ERROR);
        	return 1;
 	}
-	al_set_window_title(display, "Allegro Example 1 - Create Display");
+	al_set_window_title(display, "Mountain region map");
 
 
 
 	for (int y = 0; y < matrixRows_c; y++){
         for (int x = 0; x < matrixCols_c; x++){
-            int temp = (map[y][x] - small) / ratios;
-            al_draw_pixel(x , y , al_map_rgb(temp, temp, temp));
+            int shiftValue = map[y][x] - small;
+            int temp = shiftValue / ratios;
+            if (shiftValue <= (range / 2))
+                al_draw_pixel(x , y , al_map_rgb(0, temp, 0));
+            else if (shiftValue > (range / 2))
+                al_draw_pixel(x , y , al_map_rgb(temp, temp, temp));
         }
     }
 
@@ -151,8 +156,7 @@ int drawMap(apmatrix<int> &map, int small, int large){
 	  \n
   --------------------------------------------------------------------------
  */
-bool
-drawPixel(int x, int y, MapPixelColour c) {
+bool drawPixel(int x, int y, MapPixelColour c) {
 	 switch (c) {
 		case redPixel_c:
 			al_draw_pixel(x , y , al_map_rgb(255, 0, 0));
@@ -183,6 +187,7 @@ int
 findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, apvector<int> &path) {
 	int total = 0;
 	int row = startRow;
+	//The vector path is a vector that stores the row values of each column in a route
 	path[0] = startRow;
 	for (int j = 1; j < map.numcols(); j++ ) {
 		/*
@@ -191,23 +196,25 @@ findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, 
 		 *  I initialized the deltas with very large values.
 		 *  because I know the maximum delta a value of one hundred delta will never be selected
 		 *  I used this for the matrix boundaries
+		 *
 		 */
 
+        //The n variables contain the elevation difference values of each possible edge
 		int n1 = 100*maxvalue;
 		int n3 = 100*maxvalue;
 
-
+        //If the row that I am currently in is greater than row zero
 		if ((row - 1) >= 0) {
 			n1 = abs(map[row-1][j] - map[row][j-1]);
-
 		} //end-of-if
-
+        //Initiallized the second 'edge'
 		int n2 = abs(map[row][j] - map[row][j-1]);
-
+        // if the third row is equal to the total value of the row then do not assign it a proper value
 		if ((row + 1) < matrixRows_c) {
 			n3 = abs(map[row+1][j] - map[row][j - 1]);
 		} //end-of-if
 
+        //The following if statements compare the differences in elevation and return the lowest one
 		//checks value
 		if ((n1 < n2) && (n1 < n3)) {
 			row--;
@@ -318,7 +325,7 @@ markAllPaths(apmatrix<int> map, int maxValue) {
 	 */
 
 	for (int i = 0; i < map.numcols(); i++ ) {
-		drawPixel(i, bestRun[i], greeenPixel_c);
+		drawPixel(i, bestRun[i], bluePixel_c);
 	} //end-of-for
 	al_flip_display();
 } // end-of-function markAllPaths
@@ -328,21 +335,21 @@ markAllPaths(apmatrix<int> map, int maxValue) {
 //MAIN FUNCTION
 int main(int argc, char **argv) {
 	//we need full main declaration in osx
-
+    //Initializes pseudo randomization
 	srand (time(NULL));
-
+    //Initializes an apmatrix to store all the map's data
     apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
 
     MapDataDrawer(mountainMat);
-
+    //saves the smallest and largest peaks on the mountains into two variables
     int largestSize = findMax(mountainMat);
     int smallestSize = findMin(mountainMat);
-
+    //Prints the value of the largest and smallest peaks on the mountain
     std::cout << "The largest size is: " << largestSize << endl << "And the smallest size is: " << smallestSize << std::endl;
     drawMap(mountainMat, smallestSize, largestSize);
-
+     //Draws the initial map using a grey scale into an allegro buffer
     markAllPaths(mountainMat, largestSize);
-    al_rest(10);
+    al_rest(20);
     al_destroy_display(display);
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
