@@ -2,7 +2,7 @@
  *	Name:   Darius W Lambiri (dwlambiri)
  *	File:   topography.cpp
  *	Course: ICS4U
- *	Date:   Oct 2, 2017
+ *	Date:   Oct 6, 2017
  *
  *	Purpose: This program reads in data relating to a topographical map into a
  *			 matrix. It then draws the map and calculates routes to traverse the map
