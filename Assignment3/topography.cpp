@@ -349,7 +349,7 @@ int main(int argc, char **argv) {
     drawMap(mountainMat, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
     markAllPaths(mountainMat, largestSize);
-    al_rest(20);
+    al_rest(10);
     al_destroy_display(display);
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
