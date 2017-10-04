@@ -130,16 +130,24 @@ int drawMap(apmatrix<int> &map, int small, int large){
 	}
 	al_set_window_title(display, "Mountain region map");
 
-
+	int heights[] = { 1800, 2700};
 
 	for (int y = 0; y < matrixRows_c; y++){
         for (int x = 0; x < matrixCols_c; x++){
-            int shiftValue = map[y][x] - small;
-            int temp = shiftValue / ratios;
-            if (shiftValue <= (range / 2))
-                al_draw_pixel(x , y , al_map_rgb(0, temp, 0));
-            else if (shiftValue > (range / 2))
-                al_draw_pixel(x , y , al_map_rgb(temp, temp, temp));
+            if (map[y][x] <= heights[0] ){
+            	int shade = (map[y][x] - small) *255 / (heights[0]-small);
+            	al_draw_pixel(x , y , al_map_rgb(0, shade, 0));
+            }
+            else if ((map[y][x] > heights[0]) && (map[y][x] <= heights[1]) ){
+            	int shade1 = -(map[y][x] - heights[0]) * (0xf0 -0xd0)/ (heights[1] - heights[0]) + 0xd0;
+               	int shade2 = -(map[y][x] - heights[0]) * (0x66 -0x22)/ (heights[1] - heights[0]) + 0x66;
+               	int shade3 = -(map[y][x] - heights[0]) * (0xf0 -0xa0)/ (heights[1] - heights[0]) + 0xf0;
+
+                al_draw_pixel(x , y , al_map_rgb(shade3, shade1, shade2));
+            } else {
+            	int shade = (map[y][x] - heights[1]) * (0xff -0xa0) / (large - heights[1]) + 0xa0;
+                al_draw_pixel(x , y , al_map_rgb(shade, shade, shade));
+            }
         }
     }
 
