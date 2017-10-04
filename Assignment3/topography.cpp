@@ -26,6 +26,8 @@
 #include <time.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
 #include <apmatrix.h>
 #include <apvector.h>
 
@@ -181,7 +183,19 @@ bool drawPixel(int x, int y, MapPixelColour c) {
 	 return true;
 
 } // end-of-function DrawPixel
+void printFont(int lowestElev){
+    al_init_font_addon(); // initialize the font addon
+    al_init_ttf_addon();// initialize the ttf (True Type Font) addon
 
+    ALLEGRO_FONT *font = al_load_ttf_font("font.ttf",30,0 );
+
+    if (!font){
+        cout << "Could not load 'font.ttf'";
+    }
+
+    al_draw_textf(font, al_map_rgb(255,255,255), 200, 50,ALLEGRO_ALIGN_CENTRE, "Lowest Elevation: %d", lowestElev);
+
+}
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
@@ -276,7 +290,7 @@ findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, 
 	  \n
   --------------------------------------------------------------------------
  */
-void
+int
 markAllPaths(apmatrix<int> map, int maxValue) {
 	int total1 = -1;
 	int rowvalue = 0;
@@ -335,7 +349,8 @@ markAllPaths(apmatrix<int> map, int maxValue) {
 	for (int i = 0; i < map.numcols(); i++ ) {
 		drawPixel(i, bestRun[i], bluePixel_c);
 	} //end-of-for
-	al_flip_display();
+
+	return total1;
 } // end-of-function markAllPaths
 
 
@@ -356,8 +371,10 @@ int main(int argc, char **argv) {
     std::cout << "The largest size is: " << largestSize << endl << "And the smallest size is: " << smallestSize << std::endl;
     drawMap(mountainMat, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
-    markAllPaths(mountainMat, largestSize);
-    al_rest(10);
+    int pathLength = markAllPaths(mountainMat, largestSize);
+    printFont(pathLength);
+    al_flip_display();
+    al_rest(5);
     al_destroy_display(display);
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
