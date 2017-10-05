@@ -355,21 +355,117 @@ markAllPaths(apmatrix<int> map, int maxValue) {
 
 
 
+/*
+ * @author   dwlambiri
+ * @date     Oct 4, 2017
+ *  THIS MARKS THE BEGINING OF THE ALGORITHM TWO FUNCTIONS
+ *  THE FOLLOWING ARE FOR ALGORITHM 2
+ */
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 4, 2017
+   @mname   InitMatrices
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+InitMatrices(apmatrix<int> map) {
+
+	for (int  i = 0; i < matrixRows_c; i++ ) {
+		for (int j = 0; j < matrixCols_c; j++ ) {
+			map[i][j] = -1;
+		} //end-of-for
+	} //end-of-for
+} // end-of-function InitMatrices
+
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 4, 2017
+   @mname   relax
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+int
+relax(int newX, int y, int oldX, int wheight, apmatrix<int> d, apmatrix<int> pi) {
+
+	if (oldX < 0 || newX < 0)
+		return 1;
+	if (y > matrixCols_c)
+		return 2;
+	if (d[newX][y+1] == -1 || d[newX][y+1] > d[oldX][y]+ wheight ){
+		d[newX][y+1] = d[oldX][y] + wheight;
+		pi[newX][y+1] = oldX;
+	}
+	return 0;
+} // end-of-function relax
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 4, 2017
+   @mname   superSort
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+int
+superSort(apmatrix<int> d, apmatrix<int> pi, apmatrix<int> map) {
+
+	for (int y = 0; y < matrixCols_c; y++ ) {
+		for (int x = 0; x < matrixRows_c; x++ ) {
+			int temp1 = abs(map[x][y] - map[x][y+1]);
+			int temp2 = abs(map[x][y] - map[x+1][y+1]);
+			int temp3 = abs(map[x][y] - map[x-1][y+1]);
+			if (x == 0){
+				relax(x, y, x, temp1, d, pi);
+				relax(x, y, (x+1), temp2, d, pi);
+			}
+			else if(x == matrixRows_c){
+				relax(x, y, x, temp1, d, pi);
+				relax(x, y, (x-1), temp3, d, pi);
+			}
+			else{
+				relax(x, y, x, temp1, d, pi);
+				relax(x, y, (x+1), temp2, d, pi);
+				relax(x, y, (x-1), temp3, d, pi);
+			}
+		} //end-of-for
+	} //end-of-for
+	return 0;
+} // end-of-function superSort
+
+
+
+
+
+
 //MAIN FUNCTION
 int main(int argc, char **argv) {
+
 	//we need full main declaration in osx
     //Initializes pseudo randomization
 	srand (time(NULL));
+
     //Initializes an apmatrix to store all the map's data
     apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
-
     MapDataDrawer(mountainMat);
+
     //saves the smallest and largest peaks on the mountains into two variables
     int largestSize = findMax(mountainMat);
     int smallestSize = findMin(mountainMat);
+
     //Prints the value of the largest and smallest peaks on the mountain
     std::cout << "The largest size is: " << largestSize << endl << "And the smallest size is: " << smallestSize << std::endl;
     drawMap(mountainMat, smallestSize, largestSize);
+
      //Draws the initial map using a grey scale into an allegro buffer
     int pathLength = markAllPaths(mountainMat, largestSize);
     printFont(pathLength);
