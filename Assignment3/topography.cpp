@@ -51,12 +51,13 @@ enum MapPixelColour {
 }; //end-of-enum MapPixelColour
 //constants that determine the initial values of the variables
 // initialize the allegro display
-//Constant vaiables
+//Constant variables
 const int matrixCols_c = 844;
 const int matrixRows_c = 480;
 const char fileName_c[] = "Colorado_844x480.dat";
 ALLEGRO_DISPLAY *display = nullptr;
-const int maxcolour_c = 255;
+//const int maxIntensity_c = 0xff;
+const int invalidValue_c = -1;
 
 //function that reads in data from a file
 // the function draws the map depending on the elevation of each variable
@@ -115,11 +116,11 @@ int findMax(apmatrix<int> &map){
 }// END OF findMin
 
 
-//not using this yet
+
 int drawMap(apmatrix<int> &map, int small, int large){
 
-     float range  = large - small;
-     float ratios = range / maxcolour_c;
+//     float range  = large - small;
+
     //initialize display
     al_init();
 	display = al_create_display(matrixCols_c, matrixRows_c);
@@ -131,6 +132,19 @@ int drawMap(apmatrix<int> &map, int small, int large){
        	return 1;
 	}
 	al_set_window_title(display, "Mountain region map");
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 5, 2017
+	 *  I picked two altitudes at which I change colours.
+	 *   Below heights[0] there is green vegetation.
+	 *   The lower the altitude the more vegetation and therefore I use a darker colour.
+	 *   Between height[0] and height[1] we use a different colour range and use darker colours
+	 *   	to denote altitudes closer to height[1]
+	 *   Above height[1] is the permanent snow area and I am using a monochromatic scheme with
+	 *   	grayer shades at lower altitudes where there is lower snow.
+	 *   I an doing linear interpolation obtain the colour shade for a given height
+	 */
 
 	int heights[] = { 1800, 2700};
 
@@ -169,13 +183,13 @@ int drawMap(apmatrix<int> &map, int small, int large){
 bool drawPixel(int x, int y, MapPixelColour c) {
 	 switch (c) {
 		case redPixel_c:
-			al_draw_pixel(x , y , al_map_rgb(255, 0, 0));
+			al_draw_pixel(x , y , al_map_rgb(0xff, 0, 0));
 			break;
 		case greeenPixel_c:
-			al_draw_pixel(x , y , al_map_rgb(0, 255, 0));
+			al_draw_pixel(x , y , al_map_rgb(0, 0xff, 0));
 			break;
 		case bluePixel_c:
-			al_draw_pixel(x , y , al_map_rgb(0, 0, 255));
+			al_draw_pixel(x , y , al_map_rgb(0, 0, 0xff));
 			break;
 		default:
 			return false;
@@ -207,11 +221,11 @@ void printFont(int lowestElev){
  */
 int
 findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, apvector<int> &path) {
-	int total = 0;
-	int row = startRow;
+	int totalPathLength = 0;
+	int currentRow = startRow;
 	//The vector path is a vector that stores the row values of each column in a route
 	path[0] = startRow;
-	for (int j = 1; j < map.numcols(); j++ ) {
+	for (int columnIndex = 1; columnIndex < map.numcols(); columnIndex++ ) {
 		/*
 		 * @author   dwlambiri
 		 * @date     Oct 1, 2017
@@ -222,62 +236,62 @@ findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, 
 		 */
 
         //The n variables contain the elevation difference values of each possible edge
-		int n1 = 100*maxvalue;
-		int n3 = 100*maxvalue;
+		int edge1weight = 1001*maxvalue;
+		int edge3weight = 1001*maxvalue;
 
         //If the row that I am currently in is greater than row zero
-		if ((row - 1) >= 0) {
-			n1 = abs(map[row-1][j] - map[row][j-1]);
+		if ((currentRow - 1) >= 0) {
+			edge1weight = abs(map[currentRow-1][columnIndex] - map[currentRow][columnIndex-1]);
 		} //end-of-if
         //Initiallized the second 'edge'
-		int n2 = abs(map[row][j] - map[row][j-1]);
+		int edge2weight = abs(map[currentRow][columnIndex] - map[currentRow][columnIndex-1]);
         // if the third row is equal to the total value of the row then do not assign it a proper value
-		if ((row + 1) < matrixRows_c) {
-			n3 = abs(map[row+1][j] - map[row][j - 1]);
+		if ((currentRow + 1) < matrixRows_c) {
+			edge3weight = abs(map[currentRow+1][columnIndex] - map[currentRow][columnIndex - 1]);
 		} //end-of-if
 
         //The following if statements compare the differences in elevation and return the lowest one
 		//checks value
-		if ((n1 < n2) && (n1 < n3)) {
-			row--;
-			total += n1;
+		if ((edge1weight < edge2weight) && (edge1weight < edge3weight)) {
+			currentRow--;
+			totalPathLength += edge1weight;
 		}
-		else if ((n2 < n1) && (n2 < n3)) {
-			total += n2;
+		else if ((edge2weight < edge1weight) && (edge2weight < edge3weight)) {
+			totalPathLength += edge2weight;
 		}
-		else if ((n3 < n2) && (n3 < n1)) {
-			row++;
-			total += n3;
+		else if ((edge3weight < edge2weight) && (edge3weight < edge1weight)) {
+			currentRow++;
+			totalPathLength += edge3weight;
 		}
-		else if ((n1 == n2) && (n1 < n3)) {
-			row -= rand()%2;
-			total += n1;
+		else if ((edge1weight == edge2weight) && (edge1weight < edge3weight)) {
+			currentRow -= rand()%2;
+			totalPathLength += edge1weight;
 //			if(colour == greeenPixel_c)
 //				std::cout << row << std::endl;
 		}
-		else if ((n3 == n2) && (n3 < n1)) {
-			row += rand()%2;
-			total += n3;
+		else if ((edge3weight == edge2weight) && (edge3weight < edge1weight)) {
+			currentRow += rand()%2;
+			totalPathLength += edge3weight;
 //			if(colour == greeenPixel_c)
 //				std::cout << row << std::endl;
 		}
-		else if ((n1 == n3) && (n1 < n2)) {
-			row += 2*rand()%2 - 1;
-			total += n1;
+		else if ((edge1weight == edge3weight) && (edge1weight < edge2weight)) {
+			currentRow += 2*rand()%2 - 1;
+			totalPathLength += edge1weight;
 //			if(colour == greeenPixel_c)
 //				std::cout << row << std::endl;
 		}
-		else if ((n1 == n2) && (n1 == n3)) {
-			row += rand()%3 -1;
-			total += n1;
+		else if ((edge1weight == edge2weight) && (edge1weight == edge3weight)) {
+			currentRow += rand()%3 -1;
+			totalPathLength += edge1weight;
 //			if(colour == greeenPixel_c)
 //				std::cout << row << std::endl;
 		}
-		path[j] = row;
-		drawPixel(j, row, colour);
+		path[columnIndex] = currentRow;
+		drawPixel(columnIndex, currentRow, colour);
 
 	} //end-of-for
-	return total;
+	return totalPathLength;
 } // end-of-function findpath
 
 
@@ -291,7 +305,7 @@ findPath(apmatrix<int>& map, int startRow, int maxvalue, MapPixelColour colour, 
   --------------------------------------------------------------------------
  */
 int
-markAllPaths(apmatrix<int> map, int maxValue) {
+markAllPaths(apmatrix<int>& map, int maxValue) {
 	int total1 = -1;
 	int rowvalue = 0;
 	/*
@@ -373,11 +387,11 @@ markAllPaths(apmatrix<int> map, int maxValue) {
   --------------------------------------------------------------------------
  */
 void
-InitMatrices(apmatrix<int> map) {
+initMatrices(apmatrix<int>& map) {
 
 	for (int  i = 0; i < matrixRows_c; i++ ) {
 		for (int j = 0; j < matrixCols_c; j++ ) {
-			map[i][j] = -1;
+			map[i][j] = invalidValue_c;
 		} //end-of-for
 	} //end-of-for
 } // end-of-function InitMatrices
@@ -393,58 +407,162 @@ InitMatrices(apmatrix<int> map) {
 	  \n
   --------------------------------------------------------------------------
  */
-int
-relax(int newX, int y, int oldX, int wheight, apmatrix<int> d, apmatrix<int> pi) {
+bool
+relaxVertex(int currentX, int y, int nextX, int wheight, apmatrix<int>& d, apmatrix<int>& pi) {
 
-	if (oldX < 0 || newX < 0)
-		return 1;
-	if (y > matrixCols_c)
-		return 2;
-	if (d[newX][y+1] == -1 || d[newX][y+1] > d[oldX][y]+ wheight ){
-		d[newX][y+1] = d[oldX][y] + wheight;
-		pi[newX][y+1] = oldX;
+	if (currentX < 0 || (nextX >= matrixRows_c))
+		return false;
+	if (y >= matrixCols_c-1)
+		return false;
+	if ((d[nextX][y+1] == invalidValue_c) || (d[nextX][y+1] > d[currentX][y]+ wheight )){
+		d[nextX][y+1] = d[currentX][y] + wheight;
+		pi[nextX][y+1] = currentX;
 	}
-	return 0;
+	return true;
 } // end-of-function relax
 
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 4, 2017
-   @mname   superSort
+   @mname   shortestPathsFromSingleStart
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 int
-superSort(apmatrix<int> d, apmatrix<int> pi, apmatrix<int> map) {
+shortestPathsFromSingleStart(int start, apmatrix<int>& map, apvector<int>& bestPath) {
 
-	for (int y = 0; y < matrixCols_c; y++ ) {
+	static apmatrix<int> d(map.numrows(), map.numcols());
+	static apmatrix<int> pi(map.numrows(), map.numcols());
+
+	int row = 0;
+
+	initMatrices(d);
+	initMatrices(pi);
+
+	d[start][0] = 0;
+
+	for (int y = 0; y < matrixCols_c-1; y++ ) {
 		for (int x = 0; x < matrixRows_c; x++ ) {
-			int temp1 = abs(map[x][y] - map[x][y+1]);
-			int temp2 = abs(map[x][y] - map[x+1][y+1]);
-			int temp3 = abs(map[x][y] - map[x-1][y+1]);
+			//cout << " x = " << x << "  y = " << y << endl;
+
+			if(d[x][y] == invalidValue_c) continue;
+
 			if (x == 0){
-				relax(x, y, x, temp1, d, pi);
-				relax(x, y, (x+1), temp2, d, pi);
+				//top row
+				int edge1weight = abs(map[x][y] - map[x][y+1]);
+				int edge2weight = abs(map[x][y] - map[x+1][y+1]);
+				relaxVertex(x, y, x, edge1weight, d, pi);
+				relaxVertex(x, y, (x+1), edge2weight, d, pi);
 			}
-			else if(x == matrixRows_c){
-				relax(x, y, x, temp1, d, pi);
-				relax(x, y, (x-1), temp3, d, pi);
+			else if(x == matrixRows_c-1){
+				int edge1weight = abs(map[x][y] - map[x][y+1]);
+				int edge3weight = abs(map[x][y] - map[x-1][y+1]);
+				relaxVertex(x, y, x, edge1weight, d, pi);
+				relaxVertex(x, y, (x-1), edge3weight, d, pi);
 			}
 			else{
-				relax(x, y, x, temp1, d, pi);
-				relax(x, y, (x+1), temp2, d, pi);
-				relax(x, y, (x-1), temp3, d, pi);
+				int edge1weight = abs(map[x][y] - map[x][y+1]);
+				int edge2weight = abs(map[x][y] - map[x+1][y+1]);
+				int edge3weight = abs(map[x][y] - map[x-1][y+1]);
+				relaxVertex(x, y, x, edge1weight, d, pi);
+				relaxVertex(x, y, (x+1), edge2weight, d, pi);
+				relaxVertex(x, y, (x-1), edge3weight, d, pi);
 			}
 		} //end-of-for
 	} //end-of-for
-	return 0;
-} // end-of-function superSort
+
+	for (int i = 0; i < matrixRows_c; i++ ) {
+		if (d[i][matrixCols_c-1] == invalidValue_c) continue;
+		if ((d[row][matrixCols_c-1] == invalidValue_c) || (d[row][matrixCols_c-1] > d[i][matrixCols_c-1])) {
+			row = i;
+		} //end-of-if
+	} //end-of-for
+
+	int temp2 = pi[row][matrixCols_c-1];
+	bestPath[matrixCols_c-1] = row;
+
+	for (int i = matrixCols_c - 1; i >=1 ; i-- ) {
+		bestPath[i-1] = pi[temp2][i];
+		temp2 = pi[temp2][i];
+	} //end-of-for
+
+	cout << " SHORT SHORT " << d[row][matrixCols_c-1] << endl;
 
 
+	return d[row][matrixCols_c-1];
+} // end-of-function shortestPathsFromSingleStart
 
 
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Sep 30, 2017
+   @mname   markAllPaths
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+int
+markAllPaths2(apmatrix<int>& map, int maxValue) {
+	int runsize = -1;
+	int rowvalue = 0;
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 1, 2017
+	 *  I store the row numbers for the best path of the run.
+	 *
+	 *  This is to ensure that the green path that is displayed
+	 *  is the path with the smallest delta sum.
+	 *
+	 *  Because of the use of random number generation
+	 *  there are many possible paths from a starting point.
+	 *
+	 *  Therefore even if a given starting point has the smallest path
+	 *  of the run when we run the function again the new path might not
+	 *  be the smallest
+	 */
+
+	apvector<int> bestRun(map.numcols());
+	for (int i = 0; i < map.numrows(); i++){
+		/*
+		 * @author   dwlambiri
+		 * @date     Oct 1, 2017
+		 *  For each starting point (row) we return the actual path
+		 *  as row positions in a vector who's indeces represent the columns.
+		 */
+
+		apvector<int> tempRun(map.numcols());
+		int temp = shortestPathsFromSingleStart(i, map, tempRun);
+
+		/*
+		 * @author   dwlambiri
+		 * @date     Oct 1, 2017
+		 *  If the current path has a smaller sum than the current best
+		 *  I store the starting row value and the path vector.
+		 */
+
+		if (runsize < 0 || runsize > temp){
+			runsize = temp;
+			rowvalue = i;
+			bestRun = tempRun;
+		}
+	}
+
+	std::cout << "Min Path Index = " << rowvalue << " Value = " << runsize << std::endl;
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 1, 2017
+	 *  I am drawing the best path of the run in green.
+	 */
+
+	for (int i = 0; i < map.numcols(); i++ ) {
+		drawPixel(i, bestRun[i], bluePixel_c);
+	} //end-of-for
+
+	return runsize;
+} // end-of-function markAllPaths
 
 
 //MAIN FUNCTION
@@ -467,10 +585,13 @@ int main(int argc, char **argv) {
     drawMap(mountainMat, smallestSize, largestSize);
 
      //Draws the initial map using a grey scale into an allegro buffer
-    int pathLength = markAllPaths(mountainMat, largestSize);
+    markAllPaths(mountainMat, largestSize);
+
+    int pathLength = markAllPaths2(mountainMat, matrixRows_c);
     printFont(pathLength);
+
     al_flip_display();
-    al_rest(5);
+    al_rest(15);
     al_destroy_display(display);
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
