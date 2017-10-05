@@ -54,7 +54,7 @@ enum MapPixelColour {
 //Constant variables
 const int matrixCols_c = 844;
 const int matrixRows_c = 480;
-const char fileName_c[] = "Colorado_844x480.dat";
+const char* fileName_c  = "Colorado_844x480.dat";
 ALLEGRO_DISPLAY *display = nullptr;
 //const int maxIntensity_c = 0xff;
 const int invalidValue_c = -1;
