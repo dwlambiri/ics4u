@@ -61,12 +61,23 @@ ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
 ALLEGRO_TIMER *timer = nullptr;
 ALLEGRO_BITMAP *screenBitmap = nullptr;
 
-//const int maxIntensity_c = 0xff;
+
 const int invalidValue_c = -1;
 
-//function that reads in data from a file
-// the function draws the map depending on the elevation of each variable
-bool MapDataDrawer(apmatrix<int> &map) {
+/**
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @name    mapDataReader
+   @param   enclosing_method_arguments
+   @return  return_type
+   @details
+     function that reads in data from a file
+     the function draws the map depending on the elevation of each variable
+	\n
+  -------------------------------------------------------------------------
+ */
+bool mapDataReader(apmatrix<int> &map) {
 	ifstream file;
 	//opens file
 	file.open(fileName_c);
@@ -79,17 +90,25 @@ bool MapDataDrawer(apmatrix<int> &map) {
 	for (int y = 0; y < matrixRows_c; y++) {
 		for (int x = 0; x < matrixCols_c; x++) {
 			file >> map[y][x];
-			//cout << map[y][x] << " ";
 		}
-		//cout << endl;
 	}
 	//closes file
 	file.close();
 	//returns to prove the function works
 	return true;
-} //END OF MapDataDrawer
+} //END OF mapDataReader
 
-//finds the smallest peak of the set of heights
+/**
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @name    findMin
+   @param   enclosing_method_arguments
+   @return  return_type
+   @details
+	finds the smallest peak of the set of heights\n
+  -------------------------------------------------------------------------
+ */
 int findMin(apmatrix<int> &map) {
 	int lowest = map[0][0];
 	//
@@ -103,7 +122,17 @@ int findMin(apmatrix<int> &map) {
 	return lowest;
 } // END OF findMin
 
-//finds the largest peak of the set of heights
+/**
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @name    findMax
+   @param   enclosing_method_arguments
+   @return  return_type
+   @details
+	 finds the largest peak of the set of heights\n
+  -------------------------------------------------------------------------
+ */
 int findMax(apmatrix<int> &map) {
 	int largest = map[0][0];
 
@@ -123,7 +152,9 @@ int findMax(apmatrix<int> &map) {
  @date    Oct 6, 2017
  @mname   initAllegro
  @details
- \n
+    I placed all allegro  initializations in this function
+    The function returns true if all initializations are 'ok' and returns
+    	false if any initialization fails
  --------------------------------------------------------------------------
  */
 bool initAllegro() {
@@ -133,6 +164,12 @@ bool initAllegro() {
 	display = al_create_display(matrixCols_c, matrixRows_c);
 
 	timer = al_create_timer(1.0 / fps_c);
+
+	if(!al_install_keyboard()) {
+		cerr << "failed to initialize the keyboard!" << endl;
+	    return false;
+	 }
+
 	if (!timer) {
 		cerr << "failed to create timer!" << endl;
 		return false;
@@ -146,7 +183,9 @@ bool initAllegro() {
 		al_destroy_timer(timer);
 		return false;
 	}
+
 	screenBitmap = al_create_bitmap(matrixCols_c, matrixRows_c);
+
 	if (!screenBitmap) {
 		cerr << "failed to create bouncer bitmap!" << endl;
 		al_destroy_display(display);
@@ -163,12 +202,105 @@ bool initAllegro() {
 	}
 
 	al_register_event_source(event_queue, al_get_display_event_source(display));
-
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
+	al_register_event_source(event_queue, al_get_keyboard_event_source());
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 6, 2017
+	 *  The next function call will set the bitmap as the target
+	 *  	for all the allegro writes
+	 */
+
+	al_set_target_bitmap(screenBitmap);
 	al_set_window_title(display, "Mountain region map");
 	return true;
 } // end-of-function initAllegro
 
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @mname   moveBitmapToDisplay
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+moveBitmapToDisplay() {
+
+    al_set_target_bitmap(al_get_backbuffer(display));
+    al_draw_bitmap(screenBitmap, 0, 0, 0);
+    al_flip_display();
+	al_set_target_bitmap(screenBitmap);
+
+} // end-of-function moveBitmapToDisplay
+
+
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @mname   cleanUp
+ @details
+    I am collecting all allegro cleanups in this function.
+    This function is called before main exits to properly clean up the allegro library
+ --------------------------------------------------------------------------
+ */
+void cleanUpAllegro() {
+	al_destroy_bitmap(screenBitmap);
+	al_destroy_display(display);
+	al_destroy_timer(timer);
+	al_destroy_event_queue(event_queue);
+
+} // end-of-function cleanUp
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @mname   allegroEventLoop
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+allegroEventLoop() {
+
+	 while(true)
+	   {
+	      ALLEGRO_EVENT ev;
+	      al_wait_for_event(event_queue, &ev);
+
+	      if(ev.type == ALLEGRO_EVENT_TIMER) {
+	    	  continue;
+	      }
+	      else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+	    	 cleanUpAllegro();
+	         return false;
+	      }
+	      else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+	    	  return true;
+	      }
+
+	   }
+	 return true;
+} // end-of-function allegroEventLoop
+
+
+/**
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @name    drawMap
+   @param   enclosing_method_arguments
+   @return  return_type
+   @details
+	\n
+  -------------------------------------------------------------------------
+ */
 int drawMap(apmatrix<int>& map, int small, int large) {
 
 	/*
@@ -207,7 +339,7 @@ int drawMap(apmatrix<int>& map, int small, int large) {
 			}
 		}
 	}
-
+	moveBitmapToDisplay();
 	return 0;
 }
 
@@ -237,6 +369,18 @@ bool drawPixel(int x, int y, MapPixelColour c) {
 	return true;
 
 } // end-of-function DrawPixel
+
+/**
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @name    printFont
+   @param   enclosing_method_arguments
+   @return  return_type
+   @details
+	\n
+  -------------------------------------------------------------------------
+ */
 void printFont(int lowestElev) {
 	al_init_font_addon(); // initialize the font addon
 	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
@@ -251,6 +395,8 @@ void printFont(int lowestElev) {
 			ALLEGRO_ALIGN_CENTRE, "Lowest Elevation: %d", lowestElev);
 
 }
+
+
 /**
  ---------------------------------------------------------------------------
  @author  dwlambiri
@@ -311,33 +457,27 @@ int findPath(apmatrix<int>& map, int startRow, int maxvalue,
 				&& (edge1weight < edge3weight)) {
 			currentRow -= rand() % 2;
 			totalPathLength += edge1weight;
-//			if(colour == greeenPixel_c)
-//				std::cout << row << std::endl;
 		} else if ((edge3weight == edge2weight)
 				&& (edge3weight < edge1weight)) {
 			currentRow += rand() % 2;
 			totalPathLength += edge3weight;
-//			if(colour == greeenPixel_c)
-//				std::cout << row << std::endl;
 		} else if ((edge1weight == edge3weight)
 				&& (edge1weight < edge2weight)) {
 			currentRow += 2 * rand() % 2 - 1;
 			totalPathLength += edge1weight;
-//			if(colour == greeenPixel_c)
-//				std::cout << row << std::endl;
 		} else if ((edge1weight == edge2weight)
 				&& (edge1weight == edge3weight)) {
 			currentRow += rand() % 3 - 1;
 			totalPathLength += edge1weight;
-//			if(colour == greeenPixel_c)
-//				std::cout << row << std::endl;
 		}
 		path[columnIndex] = currentRow;
 		drawPixel(columnIndex, currentRow, colour);
 
 	} //end-of-for
+	moveBitmapToDisplay();
 	return totalPathLength;
 } // end-of-function findpath
+
 
 /**
  ---------------------------------------------------------------------------
@@ -409,6 +549,8 @@ int markAllPaths(apmatrix<int>& map, int maxValue) {
 		drawPixel(i, bestRun[i], bluePixel_c);
 	} //end-of-for
 
+	moveBitmapToDisplay();
+
 	return total1;
 } // end-of-function markAllPaths
 
@@ -470,7 +612,7 @@ bool relaxVertex(int currentX, int y, int nextX, int wheight,
  \n
  --------------------------------------------------------------------------
  */
-int shortestPathsFromSingleStart(int start, apmatrix<int>& map,
+int shortestPathsFromVertex(int start, apmatrix<int>& map,
 		apvector<int>& bestPath) {
 
 	static apmatrix<int> distanceToStartVertex(map.numrows(), map.numcols());
@@ -487,7 +629,6 @@ int shortestPathsFromSingleStart(int start, apmatrix<int>& map,
 		bool done = false;
 		for (int x = ((start - y) >= 0) ? (start - y) : 0; x < matrixRows_c;
 				x++) {
-			//cout << " x = " << x << "  y = " << y << endl;
 
 			if ((done == false)
 					&& (distanceToStartVertex[x][y] == invalidValue_c))
@@ -546,11 +687,13 @@ int shortestPathsFromSingleStart(int start, apmatrix<int>& map,
 		temp2 = predecesorVertex[temp2][i];
 	} //end-of-for
 
-	cout << " SHORT SHORT " << distanceToStartVertex[row][matrixCols_c - 1]
-			<< endl;
+	for (int i = 0; i < map.numcols(); i++) {
+		drawPixel(i, bestPath[i], redPixel_c);
+	} //end-of-for
 
+	moveBitmapToDisplay();
 	return distanceToStartVertex[row][matrixCols_c - 1];
-} // end-of-function shortestPathsFromSingleStart
+} // end-of-function shortestPathsFromVertex
 
 /**
  ---------------------------------------------------------------------------
@@ -561,7 +704,7 @@ int shortestPathsFromSingleStart(int start, apmatrix<int>& map,
  \n
  --------------------------------------------------------------------------
  */
-int markAllPaths2(apmatrix<int>& map, int maxValue) {
+int markAllPaths2(apmatrix<int>& map) {
 	int runsize = -1;
 	int rowvalue = 0;
 	/*
@@ -590,7 +733,7 @@ int markAllPaths2(apmatrix<int>& map, int maxValue) {
 		 */
 
 		apvector<int> tempRun(map.numcols());
-		int temp = shortestPathsFromSingleStart(i, map, tempRun);
+		int temp = shortestPathsFromVertex(i, map, tempRun);
 
 		/*
 		 * @author   dwlambiri
@@ -621,22 +764,6 @@ int markAllPaths2(apmatrix<int>& map, int maxValue) {
 	return runsize;
 } // end-of-function markAllPaths
 
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @mname   cleanUp
- @details
- \n
- --------------------------------------------------------------------------
- */
-void cleanUpAllegro() {
-	al_destroy_bitmap(screenBitmap);
-	al_destroy_display(display);
-	al_destroy_timer(timer);
-	al_destroy_event_queue(event_queue);
-
-} // end-of-function cleanUp
 
 //MAIN FUNCTION
 int main(int argc, char **argv) {
@@ -650,26 +777,36 @@ int main(int argc, char **argv) {
 	}
 
 	//Initializes an apmatrix to store all the map's data
-			apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
-			MapDataDrawer(mountainMat);
+	apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
+	mapDataReader(mountainMat);
 
 	//saves the smallest and largest peaks on the mountains into two variables
-			int largestSize = findMax(mountainMat);
-			int smallestSize = findMin(mountainMat);
+	int largestSize = findMax(mountainMat);
+	int smallestSize = findMin(mountainMat);
 
 	//Prints the value of the largest and smallest peaks on the mountain
-			std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
+    std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
+
+    //Run 1 for Algo 1
     drawMap(mountainMat, smallestSize, largestSize);
-
      //Draws the initial map using a grey scale into an allegro buffer
-    markAllPaths(mountainMat, largestSize);
-
-    int pathLength = markAllPaths2(mountainMat, matrixRows_c);
+    int pathLength = markAllPaths(mountainMat, largestSize);
     printFont(pathLength);
+    moveBitmapToDisplay();
 
-    al_flip_display();
-    al_rest(15);
+    // Wait for key press
+    if(allegroEventLoop() == false) return 0;
 
-    cleanUpAllegro();
+    //this should clear the bitmap
+    al_clear_to_color(al_map_rgb(0,0,0));
+
+    //Run 2 for Algo 2
+    drawMap(mountainMat, smallestSize, largestSize);
+    pathLength = markAllPaths2(mountainMat);
+    printFont(pathLength);
+    moveBitmapToDisplay();
+
+    if(allegroEventLoop() == false) return 0;
+    else cleanUpAllegro();
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
