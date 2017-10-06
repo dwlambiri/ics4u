@@ -408,15 +408,15 @@ initMatrices(apmatrix<int>& map) {
   --------------------------------------------------------------------------
  */
 bool
-relaxVertex(int currentX, int y, int nextX, int wheight, apmatrix<int>& d, apmatrix<int>& pi) {
+relaxVertex(int currentX, int y, int nextX, int wheight, apmatrix<int>& distance, apmatrix<int>& predecesor) {
 
 	if (currentX < 0 || (nextX >= matrixRows_c))
 		return false;
 	if (y >= matrixCols_c-1)
 		return false;
-	if ((d[nextX][y+1] == invalidValue_c) || (d[nextX][y+1] > d[currentX][y]+ wheight )){
-		d[nextX][y+1] = d[currentX][y] + wheight;
-		pi[nextX][y+1] = currentX;
+	if ((distance[nextX][y+1] == invalidValue_c) || (distance[nextX][y+1] > distance[currentX][y]+ wheight )){
+		distance[nextX][y+1] = distance[currentX][y] + wheight;
+		predecesor[nextX][y+1] = currentX;
 	}
 	return true;
 } // end-of-function relax
@@ -433,65 +433,70 @@ relaxVertex(int currentX, int y, int nextX, int wheight, apmatrix<int>& d, apmat
 int
 shortestPathsFromSingleStart(int start, apmatrix<int>& map, apvector<int>& bestPath) {
 
-	static apmatrix<int> d(map.numrows(), map.numcols());
-	static apmatrix<int> pi(map.numrows(), map.numcols());
+	static apmatrix<int> distanceToStartVertex(map.numrows(), map.numcols());
+	static apmatrix<int> predecesorVertex(map.numrows(), map.numcols());
 
 	int row = 0;
 
-	initMatrices(d);
-	initMatrices(pi);
+	initMatrices(distanceToStartVertex);
+	initMatrices(predecesorVertex);
 
-	d[start][0] = 0;
+	distanceToStartVertex[start][0] = 0;
 
 	for (int y = 0; y < matrixCols_c-1; y++ ) {
-		for (int x = 0; x < matrixRows_c; x++ ) {
+		bool done = false;
+		for (int x = ((start-y)>=0)?(start-y):0; x < matrixRows_c; x++ ) {
 			//cout << " x = " << x << "  y = " << y << endl;
 
-			if(d[x][y] == invalidValue_c) continue;
+			if((done == false) && (distanceToStartVertex[x][y] == invalidValue_c)) continue;
+			if((done == true) && (distanceToStartVertex[x][y] == invalidValue_c)) break;
 
 			if (x == 0){
 				//top row
 				int edge1weight = abs(map[x][y] - map[x][y+1]);
 				int edge2weight = abs(map[x][y] - map[x+1][y+1]);
-				relaxVertex(x, y, x, edge1weight, d, pi);
-				relaxVertex(x, y, (x+1), edge2weight, d, pi);
+				relaxVertex(x, y, x, edge1weight, distanceToStartVertex, predecesorVertex);
+				relaxVertex(x, y, (x+1), edge2weight, distanceToStartVertex, predecesorVertex);
+				done = true;
 			}
 			else if(x == matrixRows_c-1){
 				int edge1weight = abs(map[x][y] - map[x][y+1]);
 				int edge3weight = abs(map[x][y] - map[x-1][y+1]);
-				relaxVertex(x, y, x, edge1weight, d, pi);
-				relaxVertex(x, y, (x-1), edge3weight, d, pi);
+				relaxVertex(x, y, x, edge1weight, distanceToStartVertex, predecesorVertex);
+				relaxVertex(x, y, (x-1), edge3weight, distanceToStartVertex, predecesorVertex);
+				done = true;
 			}
 			else{
 				int edge1weight = abs(map[x][y] - map[x][y+1]);
 				int edge2weight = abs(map[x][y] - map[x+1][y+1]);
 				int edge3weight = abs(map[x][y] - map[x-1][y+1]);
-				relaxVertex(x, y, x, edge1weight, d, pi);
-				relaxVertex(x, y, (x+1), edge2weight, d, pi);
-				relaxVertex(x, y, (x-1), edge3weight, d, pi);
+				relaxVertex(x, y, x, edge1weight, distanceToStartVertex, predecesorVertex);
+				relaxVertex(x, y, (x+1), edge2weight, distanceToStartVertex, predecesorVertex);
+				relaxVertex(x, y, (x-1), edge3weight, distanceToStartVertex, predecesorVertex);
+				done = true;
 			}
 		} //end-of-for
 	} //end-of-for
 
 	for (int i = 0; i < matrixRows_c; i++ ) {
-		if (d[i][matrixCols_c-1] == invalidValue_c) continue;
-		if ((d[row][matrixCols_c-1] == invalidValue_c) || (d[row][matrixCols_c-1] > d[i][matrixCols_c-1])) {
+		if (distanceToStartVertex[i][matrixCols_c-1] == invalidValue_c) continue;
+		if ((distanceToStartVertex[row][matrixCols_c-1] == invalidValue_c) || (distanceToStartVertex[row][matrixCols_c-1] > distanceToStartVertex[i][matrixCols_c-1])) {
 			row = i;
 		} //end-of-if
 	} //end-of-for
 
-	int temp2 = pi[row][matrixCols_c-1];
+	int temp2 = predecesorVertex[row][matrixCols_c-1];
 	bestPath[matrixCols_c-1] = row;
 
 	for (int i = matrixCols_c - 1; i >=1 ; i-- ) {
-		bestPath[i-1] = pi[temp2][i];
-		temp2 = pi[temp2][i];
+		bestPath[i-1] = predecesorVertex[temp2][i];
+		temp2 = predecesorVertex[temp2][i];
 	} //end-of-for
 
-	cout << " SHORT SHORT " << d[row][matrixCols_c-1] << endl;
+	cout << " SHORT SHORT " << distanceToStartVertex[row][matrixCols_c-1] << endl;
 
 
-	return d[row][matrixCols_c-1];
+	return distanceToStartVertex[row][matrixCols_c-1];
 } // end-of-function shortestPathsFromSingleStart
 
 
