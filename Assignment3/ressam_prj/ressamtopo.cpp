@@ -90,7 +90,7 @@ int menuScreen() {
 		cerr << "failed to initialize the mouse!" << endl;
 	}
 
-	trebuchet = al_load_font("font.ttf", 60, 0);
+	trebuchet = al_load_font("font.ttf", 30, 0);
 	if (!trebuchet) {
 		fprintf(stderr, "failed to create font!\n");
 	}
@@ -538,6 +538,10 @@ int main(int argc, char **argv) {
 		drawLowPath(mountainMat, indexOfLowElevChangePath, orange);
 //
 		printFont(lowestElevChange[indexOfLowElevChangePath]);
+	}
+
+	if(userInput == 3) {
+		return 0;
 	}
 
 	//prints to the screen
