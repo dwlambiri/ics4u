@@ -90,15 +90,15 @@ int menuScreen() {
 		cerr << "failed to initialize the mouse!" << endl;
 	}
 
-//	trebuchet = al_load_font("font.ttf", 60, 0);
-//	if (!trebuchet) {
-//		fprintf(stderr, "failed to create font!\n");
-//	}
-//
-//	trebuchetSmall = al_load_font("font.ttf", 20, 0);
-//	if (!trebuchet) {
-//		fprintf(stderr, "failed to create font!\n");
-//	}
+	trebuchet = al_load_font("font.ttf", 60, 0);
+	if (!trebuchet) {
+		fprintf(stderr, "failed to create font!\n");
+	}
+
+	trebuchetSmall = al_load_font("font.ttf", 20, 0);
+	if (!trebuchet) {
+		fprintf(stderr, "failed to create font!\n");
+	}
 
 	exitButton_bitmap = al_create_bitmap(exitButton.size * 3, exitButton.size);
 	if (!exitButton_bitmap) {
@@ -146,82 +146,82 @@ int menuScreen() {
 	//timer starts
 	al_start_timer(timer);
 
-//	//the loop that contains the code for any events and their subsequent results
-//	while (1) {
-//		al_init_timeout(&timeout, 0.06);
-//
-//		bool get_event = al_wait_for_event_until(event_queue, &ev, &timeout); // tells computer to look for event
-//
-//		//exits program if display is closed
-//		if (get_event && ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-//			break;
-//		}
-//
-//		//exits program if exit button is pressed
-//		else if (ev.mouse.y > exitButton.position.y
-//				&& ev.mouse.y < exitButton.position.y + exitButton.size
-//				&& ev.mouse.x > exitButton.position.x
-//				&& ev.mouse.x < exitButton.position.x + exitButton.size * 3) {
-//			if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-//				return 0;
-//				break;
-//			}
-//		}
-//
-//		//does the second algorithm
-//		else if (ev.mouse.y > algorithmTwoButton.position.y
-//				&& ev.mouse.y
-//						< algorithmTwoButton.position.y
-//								+ algorithmTwoButton.size
-//				&& ev.mouse.x > algorithmTwoButton.position.x
-//				&& ev.mouse.x
-//						< algorithmTwoButton.position.x
-//								+ algorithmTwoButton.size * 3) {
-//			if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-//				//algorithmTwoScreen();
-//				return 2;
-//				break;
-//			}
-//		}
-//
-//		//does the first algorithm
-//		else if (ev.mouse.y > algorithmOneButton.position.y
-//				&& ev.mouse.y
-//						< algorithmOneButton.position.y
-//								+ algorithmOneButton.size
-//				&& ev.mouse.x > algorithmOneButton.position.x
-//				&& ev.mouse.x
-//						< algorithmOneButton.position.x
-//								+ algorithmOneButton.size * 3) {
-//			if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-//				return 1;
-//				break;
-//			}
-//		}
-//
+	//the loop that contains the code for any events and their subsequent results
+	while (1) {
+		al_init_timeout(&timeout, 0.06);
+
+		bool get_event = al_wait_for_event_until(event_queue, &ev, &timeout); // tells computer to look for event
+
+		//exits program if display is closed
+		if (get_event && ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+			break;
+		}
+
+		//exits program if exit button is pressed
+		else if (ev.mouse.y > exitButton.position.y
+				&& ev.mouse.y < exitButton.position.y + exitButton.size
+				&& ev.mouse.x > exitButton.position.x
+				&& ev.mouse.x < exitButton.position.x + exitButton.size * 3) {
+			if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+				return 0;
+				break;
+			}
+		}
+
+		//does the second algorithm
+		else if (ev.mouse.y > algorithmTwoButton.position.y
+				&& ev.mouse.y
+						< algorithmTwoButton.position.y
+								+ algorithmTwoButton.size
+				&& ev.mouse.x > algorithmTwoButton.position.x
+				&& ev.mouse.x
+						< algorithmTwoButton.position.x
+								+ algorithmTwoButton.size * 3) {
+			if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+				//algorithmTwoScreen();
+				return 2;
+				break;
+			}
+		}
+
+		//does the first algorithm
+		else if (ev.mouse.y > algorithmOneButton.position.y
+				&& ev.mouse.y
+						< algorithmOneButton.position.y
+								+ algorithmOneButton.size
+				&& ev.mouse.x > algorithmOneButton.position.x
+				&& ev.mouse.x
+						< algorithmOneButton.position.x
+								+ algorithmOneButton.size * 3) {
+			if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+				return 1;
+				break;
+			}
+		}
+
 //		//sets the background colour
-//		al_clear_to_color(al_map_rgb(100, 10, 10));
-//		al_draw_text(trebuchet, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, 50,
-//				ALLEGRO_ALIGN_CENTRE, "Greedy Walking Mountains!");
-//
-//		//forms the buttons on the screen
-//		al_draw_bitmap(algorithmTwoButton_bitmap, algorithmTwoButton.position.x,
-//				algorithmTwoButton.position.y, 100);
-//		al_draw_bitmap(exitButton_bitmap, exitButton.position.x,
-//				exitButton.position.y, 100);
-//		al_draw_bitmap(algorithmOneButton_bitmap, algorithmOneButton.position.x,
-//				algorithmOneButton.position.y, 100);
-//
-//		//puts the labels on the buttons so the user clearly know which one to select
-//		al_draw_text(trebuchetSmall, al_map_rgb(100, 10, 10), SCREEN_WIDTH / 2,
-//				235, ALLEGRO_ALIGN_CENTRE, "Lowest Elevation Change");
-//		al_draw_text(trebuchetSmall, al_map_rgb(100, 10, 10), SCREEN_WIDTH / 2,
-//				305, ALLEGRO_ALIGN_CENTRE, "Low as Possible");
-//		al_draw_text(trebuchetSmall, al_map_rgb(100, 10, 10), SCREEN_WIDTH / 2,
-//				375, ALLEGRO_ALIGN_CENTRE, "Exit");
-//
-//		al_flip_display();
-//	}
+		al_clear_to_color(al_map_rgb(100, 10, 10));
+		al_draw_text(trebuchet, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, 50,
+				ALLEGRO_ALIGN_CENTRE, "Greedy Walking Mountains!");
+
+		//forms the buttons on the screen
+		al_draw_bitmap(algorithmTwoButton_bitmap, algorithmTwoButton.position.x,
+				algorithmTwoButton.position.y, 100);
+		al_draw_bitmap(exitButton_bitmap, exitButton.position.x,
+				exitButton.position.y, 100);
+		al_draw_bitmap(algorithmOneButton_bitmap, algorithmOneButton.position.x,
+				algorithmOneButton.position.y, 100);
+
+		//puts the labels on the buttons so the user clearly know which one to select
+		al_draw_text(trebuchetSmall, al_map_rgb(100, 10, 10), SCREEN_WIDTH / 2,
+				235, ALLEGRO_ALIGN_CENTRE, "Lowest Elevation Change");
+		al_draw_text(trebuchetSmall, al_map_rgb(100, 10, 10), SCREEN_WIDTH / 2,
+				305, ALLEGRO_ALIGN_CENTRE, "Low as Possible");
+		al_draw_text(trebuchetSmall, al_map_rgb(100, 10, 10), SCREEN_WIDTH / 2,
+				375, ALLEGRO_ALIGN_CENTRE, "Exit");
+
+		al_flip_display();
+	}
 
 	al_destroy_display(display);
 	al_destroy_event_queue(event_queue);
@@ -507,7 +507,7 @@ int main(int argc, char **argv) {
 
 	drawMap(mountainMat, highestElevation, lowestElevation);
 
-////	if (userInput == 1) {
+	if (userInput == 1) {
 		//printing the lines on the map and returning their elevation changes, least elevation change algorithm
 		for (int i = 0; i < mountainMat.numrows(); i++) {
 			totalElevChange[i] = drawPath(mountainMat, i, red);
@@ -520,11 +520,11 @@ int main(int argc, char **argv) {
 		//drawing the path with least elevation change
 		drawPath(mountainMat, indexOfLowElevPath, green);
 
-//		printFont(totalElevChange[indexOfLowElevPath]);
-////	}
+		printFont(totalElevChange[indexOfLowElevPath]);
+	}
 //
-////	if (userInput == 2) {
-//		//printing the lines on the map and returning their average elevation, lowest average elevation algorithm
+	if (userInput == 2) {
+		//printing the lines on the map and returning their average elevation, lowest average elevation algorithm
 		for (int i = 0; i < mountainMat.numrows(); i++) {
 			lowestElevChange[i] = drawLowPath(mountainMat, i, red);
 		}
@@ -538,7 +538,7 @@ int main(int argc, char **argv) {
 		drawLowPath(mountainMat, indexOfLowElevChangePath, orange);
 //
 		printFont(lowestElevChange[indexOfLowElevChangePath]);
-////	}
+	}
 
 	//prints to the screen
 	al_flip_display();
