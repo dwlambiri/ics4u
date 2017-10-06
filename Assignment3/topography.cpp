@@ -51,18 +51,18 @@ enum MapPixelColour {
 //constants that determine the initial values of the variables
 // initialize the allegro display
 //Constant variables
-const int matrixCols_c = 844;
-const int matrixRows_c = 480;
-const char* fileName_c = "Colorado_844x480.dat";
-const int fps_c = 60;
+static const int matrixCols_c = 844;
+static const int matrixRows_c = 480;
+static const char* fileName_c = "Colorado_844x480.dat";
+static const int fps_c = 60;
 
-ALLEGRO_DISPLAY *display = nullptr;
-ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
-ALLEGRO_TIMER *timer = nullptr;
-ALLEGRO_BITMAP *screenBitmap = nullptr;
-ALLEGRO_FONT *font = nullptr;
+static ALLEGRO_DISPLAY *display = nullptr;
+static ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
+static ALLEGRO_TIMER *timer = nullptr;
+static ALLEGRO_BITMAP *screenBitmap = nullptr;
+static ALLEGRO_FONT *font = nullptr;
 
-const int invalidValue_c = -1;
+static const int invalidValue_c = -1;
 
 bool mapDataReader(apmatrix<int> &map);
 int findMin(apmatrix<int> &map);
