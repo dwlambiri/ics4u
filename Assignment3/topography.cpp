@@ -62,21 +62,42 @@ ALLEGRO_TIMER *timer = nullptr;
 ALLEGRO_BITMAP *screenBitmap = nullptr;
 ALLEGRO_FONT *font = nullptr;
 
-
 const int invalidValue_c = -1;
 
+bool mapDataReader(apmatrix<int> &map);
+int findMin(apmatrix<int> &map);
+int findMax(apmatrix<int> &map);
+bool initAllegro();
+void moveBitmapToDisplay();
+void cleanUpAllegro();
+bool allegroEventLoop();
+void allegroExitLoop();
+int drawMap(apmatrix<int>& map, int small, int large);
+bool drawPixel(int x, int y, MapPixelColour c);
+void printLowestPathInfo(int lowestElev);
+void displayMessage(const char* msg);
+int findPath(apmatrix<int>& map, int startRow, int maxvalue,
+		MapPixelColour colour, apvector<int> &path);
+int markAllPaths(apmatrix<int>& map, int maxValue);
+void initMatrices(apmatrix<int>& map);
+bool relaxVertex(int currentX, int y, int nextX, int wheight,
+		apmatrix<int>& distance, apmatrix<int>& predecesor);
+int shortestPathsFromVertex(int start, apmatrix<int>& map,
+		apvector<int>& bestPath);
+int markAllPaths2(apmatrix<int>& map);
+
 /**
-  --------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @name    mapDataReader
-   @param   enclosing_method_arguments
-   @return  return_type
-   @details
-     function that reads in data from a file
-     the function draws the map depending on the elevation of each variable
-	\n
-  -------------------------------------------------------------------------
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    mapDataReader
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ function that reads in data from a file
+ the function draws the map depending on the elevation of each variable
+ \n
+ -------------------------------------------------------------------------
  */
 bool mapDataReader(apmatrix<int> &map) {
 	ifstream file;
@@ -100,15 +121,15 @@ bool mapDataReader(apmatrix<int> &map) {
 } //END OF mapDataReader
 
 /**
-  --------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @name    findMin
-   @param   enclosing_method_arguments
-   @return  return_type
-   @details
-	finds the smallest peak of the set of heights\n
-  -------------------------------------------------------------------------
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    findMin
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ finds the smallest peak of the set of heights\n
+ -------------------------------------------------------------------------
  */
 int findMin(apmatrix<int> &map) {
 	int lowest = map[0][0];
@@ -124,15 +145,15 @@ int findMin(apmatrix<int> &map) {
 } // END OF findMin
 
 /**
-  --------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @name    findMax
-   @param   enclosing_method_arguments
-   @return  return_type
-   @details
-	 finds the largest peak of the set of heights\n
-  -------------------------------------------------------------------------
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    findMax
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ finds the largest peak of the set of heights\n
+ -------------------------------------------------------------------------
  */
 int findMax(apmatrix<int> &map) {
 	int largest = map[0][0];
@@ -153,9 +174,9 @@ int findMax(apmatrix<int> &map) {
  @date    Oct 6, 2017
  @mname   initAllegro
  @details
-    I placed all allegro  initializations in this function
-    The function returns true if all initializations are 'ok' and returns
-    	false if any initialization fails
+ I placed all allegro  initializations in this function
+ The function returns true if all initializations are 'ok' and returns
+ false if any initialization fails
  --------------------------------------------------------------------------
  */
 bool initAllegro() {
@@ -166,10 +187,10 @@ bool initAllegro() {
 
 	timer = al_create_timer(1.0 / fps_c);
 
-	if(!al_install_keyboard()) {
+	if (!al_install_keyboard()) {
 		cerr << "failed to initialize the keyboard!" << endl;
-	    return false;
-	 }
+		return false;
+	}
 
 	if (!timer) {
 		cerr << "failed to create timer!" << endl;
@@ -216,7 +237,6 @@ bool initAllegro() {
 		return false;
 	}
 
-
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -234,25 +254,22 @@ bool initAllegro() {
 } // end-of-function initAllegro
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @mname   moveBitmapToDisplay
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @mname   moveBitmapToDisplay
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
-void
-moveBitmapToDisplay() {
+void moveBitmapToDisplay() {
 
-    al_set_target_bitmap(al_get_backbuffer(display));
-    al_draw_bitmap(screenBitmap, 0, 0, 0);
-    al_flip_display();
+	al_set_target_bitmap(al_get_backbuffer(display));
+	al_draw_bitmap(screenBitmap, 0, 0, 0);
+	al_flip_display();
 	al_set_target_bitmap(screenBitmap);
 
 } // end-of-function moveBitmapToDisplay
-
-
 
 /**
  ---------------------------------------------------------------------------
@@ -260,8 +277,8 @@ moveBitmapToDisplay() {
  @date    Oct 6, 2017
  @mname   cleanUp
  @details
-    I am collecting all allegro cleanups in this function.
-    This function is called before main exits to properly clean up the allegro library
+ I am collecting all allegro cleanups in this function.
+ This function is called before main exits to properly clean up the allegro library
  --------------------------------------------------------------------------
  */
 void cleanUpAllegro() {
@@ -272,76 +289,66 @@ void cleanUpAllegro() {
 	al_destroy_font(font);
 } // end-of-function cleanUp
 
-
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @mname   allegroEventLoop
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @mname   allegroEventLoop
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
-bool
-allegroEventLoop() {
+bool allegroEventLoop() {
 
-	 while(true)
-	   {
-	      ALLEGRO_EVENT ev;
-	      al_wait_for_event(event_queue, &ev);
+	while (true) {
+		ALLEGRO_EVENT ev;
+		al_wait_for_event(event_queue, &ev);
 
-	      if(ev.type == ALLEGRO_EVENT_TIMER) {
-	    	  continue;
-	      }
-	      else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-	    	 cleanUpAllegro();
-	         return false;
-	      }
-	      else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-	    	  return true;
-	      }
+		if (ev.type == ALLEGRO_EVENT_TIMER) {
+			continue;
+		} else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+			cleanUpAllegro();
+			return false;
+		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+			return true;
+		}
 
-	   }
-	 return true;
+	}
+	return true;
 } // end-of-function allegroEventLoop
 
-
-
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @mname   allegroExitLoop
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @mname   allegroExitLoop
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
-void
-allegroExitLoop() {
+void allegroExitLoop() {
 
-	 while(true)
-	   {
-	      ALLEGRO_EVENT ev;
-	      al_wait_for_event(event_queue, &ev);
+	while (true) {
+		ALLEGRO_EVENT ev;
+		al_wait_for_event(event_queue, &ev);
 
-	      if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-	    	 cleanUpAllegro();
-	    	 return;
-	      }
-	   }
+		if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+			cleanUpAllegro();
+			return;
+		}
+	}
 } // end-of-function allegroExitLoop
 
-
 /**
-  --------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @name    drawMap
-   @param   enclosing_method_arguments
-   @return  return_type
-   @details
-	\n
-  -------------------------------------------------------------------------
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    drawMap
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ \n
+ -------------------------------------------------------------------------
  */
 int drawMap(apmatrix<int>& map, int small, int large) {
 
@@ -413,15 +420,15 @@ bool drawPixel(int x, int y, MapPixelColour c) {
 } // end-of-function DrawPixel
 
 /**
-  --------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @name    printLowestPathInfo
-   @param   enclosing_method_arguments
-   @return  return_type
-   @details
-	\n
-  -------------------------------------------------------------------------
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    printLowestPathInfo
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ \n
+ -------------------------------------------------------------------------
  */
 void printLowestPathInfo(int lowestElev) {
 
@@ -431,22 +438,21 @@ void printLowestPathInfo(int lowestElev) {
 }
 
 /**
-  --------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 6, 2017
-   @name    displayMessage
-   @param   enclosing_method_arguments
-   @return  return_type
-   @details
-	\n
-  -------------------------------------------------------------------------
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    displayMessage
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ \n
+ -------------------------------------------------------------------------
  */
-void displayMessage(const char* msg){
+void displayMessage(const char* msg) {
 
 	al_draw_textf(font, al_map_rgb(255, 255, 255), 275, 100,
-				ALLEGRO_ALIGN_CENTRE, "%s", msg);
+			ALLEGRO_ALIGN_CENTRE, "%s", msg);
 }
-
 
 /**
  ---------------------------------------------------------------------------
@@ -528,7 +534,6 @@ int findPath(apmatrix<int>& map, int startRow, int maxvalue,
 	moveBitmapToDisplay();
 	return totalPathLength;
 } // end-of-function findpath
-
 
 /**
  ---------------------------------------------------------------------------
@@ -636,7 +641,8 @@ void initMatrices(apmatrix<int>& map) {
  @date    Oct 4, 2017
  @mname   relax
  @details
- \n
+  This function implements the algorithm found in section 24.1 (page 586)
+   of the second edition of the CLR algorithms book.
  --------------------------------------------------------------------------
  */
 bool relaxVertex(int currentX, int y, int nextX, int wheight,
@@ -660,11 +666,42 @@ bool relaxVertex(int currentX, int y, int nextX, int wheight,
  @date    Oct 4, 2017
  @mname   shortestPathsFromSingleStart
  @details
- \n
+   This function implements the algorithm found in section 24.2 (page 592)
+   	   of the second edition of the CLR algorithms book.
+   The algorithm finds shortest paths from a given source to all nodes on
+   	   the last column if a path exists.
+   Please note there are node pairs that do not have connecting paths using
+   	   the three edge connectivity property of this problem.
+   After finding all the pats the algorithm will iterate through all the found
+   	   paths to find the best possible path among this set.
+   This path is then displayed to the screen as a red line.
+
+   I picked this algorithm because the map with the three edges can be modeled
+   	   as an acyclical, directed graph with no negative edge values.
+   The CLR book states that the performance of Floyd-Warshall is proportional
+   	   with n^3 where n is the number of vertices.
+   In our problem n = maxCols_c * maxRows_c
+   The algorithm I chose has a performance of n + e where e is the number of edges.
+   This algorithm is called in markAllPaths2 maxRows_c times.
+   The number of edges is at most 3*n for our problem.
+   Therefore the running time of finding the shortest path with this method is
+   	   (n + 3n) * maxRows_c
+   This is better than the FW algorithm by a large factor.
+   Considering how long this algorithm takes to finish, FW would have taken
+   	   a looooooooooooooooong time to complete.
  --------------------------------------------------------------------------
  */
 int shortestPathsFromVertex(int start, apmatrix<int>& map,
 		apvector<int>& bestPath) {
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 6, 2017
+	 *  I declared these two variables static to avoid being created every
+	 *  	time the function is called.
+	 *  This way the variables are created only the first time the function
+	 *  	is called.
+	 */
 
 	static apmatrix<int> distanceToStartVertex(map.numrows(), map.numcols());
 	static apmatrix<int> predecesorVertex(map.numrows(), map.numcols());
@@ -750,9 +787,13 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Sep 30, 2017
- @mname   markAllPaths
+ @mname   markAllPaths2
  @details
- \n
+  This function calls shortestPathsFromVertex() for each node in the first
+  	  column of the matrix.
+  Similar to markAllPaths() it then remembers the best possible path up to that point
+      in the run.
+
  --------------------------------------------------------------------------
  */
 int markAllPaths2(apmatrix<int>& map) {
@@ -815,7 +856,6 @@ int markAllPaths2(apmatrix<int>& map) {
 	return runsize;
 } // end-of-function markAllPaths
 
-
 //MAIN FUNCTION
 int main(int argc, char **argv) {
 
@@ -828,15 +868,15 @@ int main(int argc, char **argv) {
 	}
 
 	//Initializes an apmatrix to store all the map's data
-	apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
-	mapDataReader(mountainMat);
+			apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
+			mapDataReader(mountainMat);
 
 	//saves the smallest and largest peaks on the mountains into two variables
-	int largestSize = findMax(mountainMat);
-	int smallestSize = findMin(mountainMat);
+			int largestSize = findMax(mountainMat);
+			int smallestSize = findMin(mountainMat);
 
 	//Prints the value of the largest and smallest peaks on the mountain
-    std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
+			std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
 
     //Run 1 for Algo 1
     drawMap(mountainMat, smallestSize, largestSize);
