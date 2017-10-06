@@ -259,7 +259,12 @@ bool initAllegro() {
  @date    Oct 6, 2017
  @mname   moveBitmapToDisplay
  @details
- \n
+   Allegro has a feature that allows all commands to be directed to a bitmap
+   I utilized this property by creating a bitmap the same size as the screen
+   	   and filling this bitmap.
+   Every time I want to move the contents of the bitmap to the display I change
+   	   the target of the write to the display itself, copy the bitmap to the display
+   	   buffer, flip the display and then set the write target back to the bitmap.
  --------------------------------------------------------------------------
  */
 void moveBitmapToDisplay() {
@@ -701,6 +706,8 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 	 *  	time the function is called.
 	 *  This way the variables are created only the first time the function
 	 *  	is called.
+	 *  In CLR distanceToStartVertex is denoted by d and
+	 *  	predecesorVertex is denoted by pi.
 	 */
 
 	static apmatrix<int> distanceToStartVertex(map.numrows(), map.numcols());
@@ -715,12 +722,28 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 
 	for (int y = 0; y < matrixCols_c - 1; y++) {
 		bool done = false;
+		/*
+		 * @author   dwlambiri
+		 * @date     Oct 6, 2017
+		 *  Each column we start using this expression.
+		 *  	int x = ((start - y) >= 0) ? (start - y) : 0
+		 */
+
 		for (int x = ((start - y) >= 0) ? (start - y) : 0; x < matrixRows_c;
 				x++) {
 
 			if ((done == false)
 					&& (distanceToStartVertex[x][y] == invalidValue_c))
 				continue;
+
+			/*
+			 * @author   dwlambiri
+			 * @date     Oct 6, 2017
+			 *  The variable done is used to reduce the number of iterations.
+			 *  We need to stop processing nodes in a column when we encounter
+			 *  	an invalidValue_c after we have seen nodes with positive path lengths.
+			 */
+
 			if ((done == true)
 					&& (distanceToStartVertex[x][y] == invalidValue_c))
 				break;
@@ -868,17 +891,30 @@ int main(int argc, char **argv) {
 	}
 
 	//Initializes an apmatrix to store all the map's data
-			apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
-			mapDataReader(mountainMat);
+	apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
+	mapDataReader(mountainMat);
 
 	//saves the smallest and largest peaks on the mountains into two variables
-			int largestSize = findMax(mountainMat);
-			int smallestSize = findMin(mountainMat);
+	int largestSize = findMax(mountainMat);
+	int smallestSize = findMin(mountainMat);
 
 	//Prints the value of the largest and smallest peaks on the mountain
-			std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
+	std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
 
-    //Run 1 for Algo 1
+    /*
+	 * @author   dwlambiri
+	 * @date     Oct 6, 2017
+	 *  The method runs in three steps.
+	 *  1. It draws the map
+	 *  2. It calculates and draws paths
+	 *  3. It highlights the optimal path
+	 *  4. It waits for user input to either continue with the next method or exit.
+	 *
+	 *   The method is animated and the paths are drawn as they are calculated.
+	 *   Because the computational complexity of the markAllPaths is low,
+	 *   	(3 * matrixCols_c * matrixRows_c) the animation is very fast.
+	 */
+
     drawMap(mountainMat, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
     int pathLength = markAllPaths(mountainMat, largestSize);
@@ -892,7 +928,20 @@ int main(int argc, char **argv) {
     //this should clear the bitmap
     al_clear_to_color(al_map_rgb(0,0,0));
 
-    //Run 2 for Algo 2
+    /*
+    	 * @author   dwlambiri
+    	 * @date     Oct 6, 2017
+    	 *  The method runs in three steps.
+    	 *  1. It draws the map
+    	 *  2. It calculates and draws paths
+    	 *  3. It highlights the optimal path
+    	 *  4. It waits for user input to either continue with the next method or exit.
+    	 *
+    	 *   The method is animated and the paths are drawn as they are calculated.
+    	 *   The computational complexity is much greater than for the previous algorithm,
+    	 *   	((n + 3n) * maxRows_c) this runs maxRows_c slower.
+    	 */
+
     drawMap(mountainMat, smallestSize, largestSize);
     pathLength = markAllPaths2(mountainMat);
     printLowestPathInfo(pathLength);
