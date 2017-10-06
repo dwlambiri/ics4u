@@ -143,9 +143,9 @@ int menuScreen() {
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_mouse_event_source());
 
-//	//timer starts
-//	al_start_timer(timer);
-//
+	//timer starts
+	al_start_timer(timer);
+
 //	//the loop that contains the code for any events and their subsequent results
 //	while (1) {
 //		al_init_timeout(&timeout, 0.06);
