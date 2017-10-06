@@ -60,6 +60,7 @@ ALLEGRO_DISPLAY *display = nullptr;
 ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
 ALLEGRO_TIMER *timer = nullptr;
 ALLEGRO_BITMAP *screenBitmap = nullptr;
+ALLEGRO_FONT *font = nullptr;
 
 
 const int invalidValue_c = -1;
@@ -201,6 +202,21 @@ bool initAllegro() {
 		return false;
 	}
 
+	al_init_font_addon(); // initialize the font addon
+	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
+
+	font = al_load_ttf_font("font.ttf", 30, 0);
+
+	if (!font) {
+		cerr << "Could not load 'font.ttf'" << endl;
+		al_destroy_event_queue(event_queue);
+		al_destroy_bitmap(screenBitmap);
+		al_destroy_display(display);
+		al_destroy_timer(timer);
+		return false;
+	}
+
+
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -253,7 +269,7 @@ void cleanUpAllegro() {
 	al_destroy_display(display);
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
-
+	al_destroy_font(font);
 } // end-of-function cleanUp
 
 
@@ -288,6 +304,32 @@ allegroEventLoop() {
 	   }
 	 return true;
 } // end-of-function allegroEventLoop
+
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @mname   allegroExitLoop
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+allegroExitLoop() {
+
+	 while(true)
+	   {
+	      ALLEGRO_EVENT ev;
+	      al_wait_for_event(event_queue, &ev);
+
+	      if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+	    	 cleanUpAllegro();
+	    	 return;
+	      }
+	   }
+} // end-of-function allegroExitLoop
 
 
 /**
@@ -374,26 +416,35 @@ bool drawPixel(int x, int y, MapPixelColour c) {
   --------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 6, 2017
-   @name    printFont
+   @name    printLowestPathInfo
    @param   enclosing_method_arguments
    @return  return_type
    @details
 	\n
   -------------------------------------------------------------------------
  */
-void printFont(int lowestElev) {
-	al_init_font_addon(); // initialize the font addon
-	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
-
-	ALLEGRO_FONT *font = al_load_ttf_font("font.ttf", 30, 0);
-
-	if (!font) {
-		cout << "Could not load 'font.ttf'";
-	}
+void printLowestPathInfo(int lowestElev) {
 
 	al_draw_textf(font, al_map_rgb(255, 255, 255), 200, 50,
 			ALLEGRO_ALIGN_CENTRE, "Lowest Elevation: %d", lowestElev);
 
+}
+
+/**
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 6, 2017
+   @name    displayMessage
+   @param   enclosing_method_arguments
+   @return  return_type
+   @details
+	\n
+  -------------------------------------------------------------------------
+ */
+void displayMessage(const char* msg){
+
+	al_draw_textf(font, al_map_rgb(255, 255, 255), 275, 100,
+				ALLEGRO_ALIGN_CENTRE, "%s", msg);
 }
 
 
@@ -791,7 +842,8 @@ int main(int argc, char **argv) {
     drawMap(mountainMat, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
     int pathLength = markAllPaths(mountainMat, largestSize);
-    printFont(pathLength);
+    printLowestPathInfo(pathLength);
+    displayMessage("Press any key to see next algorithm");
     moveBitmapToDisplay();
 
     // Wait for key press
@@ -803,10 +855,10 @@ int main(int argc, char **argv) {
     //Run 2 for Algo 2
     drawMap(mountainMat, smallestSize, largestSize);
     pathLength = markAllPaths2(mountainMat);
-    printFont(pathLength);
+    printLowestPathInfo(pathLength);
+    displayMessage("Close window to exit program");
     moveBitmapToDisplay();
 
-    if(allegroEventLoop() == false) return 0;
-    else cleanUpAllegro();
+    allegroExitLoop();
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
