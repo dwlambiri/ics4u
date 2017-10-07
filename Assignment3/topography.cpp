@@ -181,31 +181,35 @@ int findMax(apmatrix<int> &map) {
  */
 bool initAllegro() {
 
-	//initialize display
-	al_init();
+	//initialize allegro
+	if(al_init() == false) {
+		cerr << "cannot init allegro" << endl;
+	}
+
+	//create display
 	display = al_create_display(matrixCols_c, matrixRows_c);
 
-	timer = al_create_timer(1.0 / fps_c);
+	// Always check if your allegro routines worked successfully.
+	if (!display) {
+		cerr << "failed to intialize display!" << endl;
+		return false;
+	}
 
+	//install keyboard
 	if (!al_install_keyboard()) {
 		cerr << "failed to initialize the keyboard!" << endl;
 		return false;
 	}
+
+	//create a timer
+	timer = al_create_timer(1.0 / fps_c);
 
 	if (!timer) {
 		cerr << "failed to create timer!" << endl;
 		return false;
 	}
 
-	// Always check if your allegro routines worked successfully.
-	if (!display) {
-		al_show_native_message_box(display, "Error", "Error",
-				"Failed to initialize display!",
-				nullptr, ALLEGRO_MESSAGEBOX_ERROR);
-		al_destroy_timer(timer);
-		return false;
-	}
-
+	//create a bitmap
 	screenBitmap = al_create_bitmap(matrixCols_c, matrixRows_c);
 
 	if (!screenBitmap) {
