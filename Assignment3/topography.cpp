@@ -105,7 +105,7 @@ public:
 	bool allegroEventLoop();
 	void allegroExitLoop();
 
-	int drawMap(apmatrix<int>& map, int small, int large);
+	int drawMap(const apmatrix<int>& map, int small, int large);
 	bool drawPixel(int x, int y, MapPixelColour c);
 	void printLowestPathInfo(int lowestElev);
 	void displayMessage(const char* msg);
@@ -321,7 +321,7 @@ void GraphicsEngine::allegroExitLoop() {
  \n
  -------------------------------------------------------------------------
  */
-int GraphicsEngine::drawMap(apmatrix<int>& map, int small, int large) {
+int GraphicsEngine::drawMap(const apmatrix<int>& map, int small, int large) {
 
 	/*
 	 * @author   dwlambiri
@@ -432,27 +432,89 @@ void GraphicsEngine::displayMessage(const char* msg) {
 static const int invalidValue_c = -1;
 GraphicsEngine ge;
 
-bool mapDataReader(apmatrix<int> &map);
-int findMin(apmatrix<int> &map);
-int findMax(apmatrix<int> &map);
+/**
+  ---------------------------------------------------------------------------
+   @author     dwlambiri
+   @date       Oct 7, 2017
+   @classname  MapEngine
+   @brief
+	 \n
+   @details
+	\n
+  ---------------------------------------------------------------------------
+ */
+class MapEngine {
+
+public:
+	//--------------------------------------------------
+	// Public Methods (External Type Interface)
+	//--------------------------------------------------
+	/**
+	  --------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 7, 2017
+	   @name    MapEngine::MapEngine
+	   @param   -
+	   @return  -
+	   @details
+		Default constructor of Class MapEngine \n
+	  --------------------------------------------------------------------------
+	 */
+	MapEngine() : map(matrixRows_c, matrixCols_c, 0) {}
+
+	/**
+	  --------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 7, 2017
+	   @name    MapEngine::~MapEngine
+	   @param   -
+	   @return  -
+	   @details
+		Default destructor of class MapEngine \n
+	  --------------------------------------------------------------------------
+	 */
+	~MapEngine() {}
 
 
-int findPath(apmatrix<int>& map, int startRow, int maxvalue,
-		MapPixelColour colour, apvector<int> &path);
-int markAllPaths(apmatrix<int>& map, int maxValue);
+	bool mapDataReader();
+	int findMin();
+	int findMax();
 
-void initMatrices(apmatrix<int>& map);
-bool relaxVertex(int currentX, int y, int nextX, int wheight,
-		apmatrix<int>& distance, apmatrix<int>& predecesor);
-int shortestPathsFromVertex(int start, apmatrix<int>& map,
-		apvector<int>& bestPath);
-int markAllPaths2(apmatrix<int>& map);
+	int markAllPaths( int maxValue);
+	int markAllPaths2();
+	const apmatrix<int>& getMap() { return map; }
+
+private:
+	//--------------------------------------------------
+	// Data Members
+	//--------------------------------------------------
+	//Initializes an apmatrix to store all the map's data
+	apmatrix<int> map;
+
+
+private:
+	//--------------------------------------------------
+	// Private Methods
+	//--------------------------------------------------
+	void initMatrices(apmatrix<int>&);
+	bool relaxVertex(int currentX, int y, int nextX, int wheight,
+			apmatrix<int>& distance, apmatrix<int>& predecesor);
+	int shortestPathsFromVertex(int start,
+			apvector<int>& bestPath);
+
+	int findPath(int startRow, int maxvalue,
+			MapPixelColour colour, apvector<int> &path);
+
+}; //end-of-class MapEngine
+
+
+
 
 /**
  --------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 6, 2017
- @name    mapDataReader
+ @name    MapEngine::mapDataReader
  @param   enclosing_method_arguments
  @return  return_type
  @details
@@ -461,7 +523,7 @@ int markAllPaths2(apmatrix<int>& map);
  \n
  -------------------------------------------------------------------------
  */
-bool mapDataReader(apmatrix<int> &map) {
+bool MapEngine::mapDataReader() {
 	ifstream file;
 	//opens file
 	file.open(fileName_c);
@@ -486,14 +548,14 @@ bool mapDataReader(apmatrix<int> &map) {
  --------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 6, 2017
- @name    findMin
+ @name    MapEngine::findMin
  @param   enclosing_method_arguments
  @return  return_type
  @details
  finds the smallest peak of the set of heights\n
  -------------------------------------------------------------------------
  */
-int findMin(apmatrix<int> &map) {
+int MapEngine::findMin() {
 	int lowest = map[0][0];
 	//
 	for (int y = 0; y < matrixRows_c; y++) {
@@ -510,14 +572,14 @@ int findMin(apmatrix<int> &map) {
  --------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 6, 2017
- @name    findMax
+ @name    MapEngine::findMax
  @param   enclosing_method_arguments
  @return  return_type
  @details
  finds the largest peak of the set of heights\n
  -------------------------------------------------------------------------
  */
-int findMax(apmatrix<int> &map) {
+int MapEngine::findMax() {
 	int largest = map[0][0];
 
 	for (int y = 0; y < matrixRows_c; y++) {
@@ -535,12 +597,12 @@ int findMax(apmatrix<int> &map) {
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Sep 30, 2017
- @mname   findPath
+ @mname   MapEngine::findPath
  @details
  \n
  --------------------------------------------------------------------------
  */
-int findPath(apmatrix<int>& map, int startRow, int maxvalue,
+int MapEngine::findPath(int startRow, int maxvalue,
 		MapPixelColour colour, apvector<int> &path) {
 	int totalPathLength = 0;
 	int currentRow = startRow;
@@ -616,12 +678,12 @@ int findPath(apmatrix<int>& map, int startRow, int maxvalue,
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Sep 30, 2017
- @mname   markAllPaths
+ @mname   MapEngine::markAllPaths
  @details
  \n
  --------------------------------------------------------------------------
  */
-int markAllPaths(apmatrix<int>& map, int maxValue) {
+int MapEngine::markAllPaths(int maxValue) {
 	int total1 = -1;
 	int rowvalue = 0;
 	/*
@@ -650,7 +712,7 @@ int markAllPaths(apmatrix<int>& map, int maxValue) {
 		 */
 
 		apvector<int> tempRun(map.numcols());
-		int temp = findPath(map, i, maxValue, redPixel_c, tempRun);
+		int temp = findPath( i, maxValue, redPixel_c, tempRun);
 		if (i == 11) {
 			std::cout << "Min Path Index = " << i << " Value = " << temp
 					<< std::endl;
@@ -698,16 +760,16 @@ int markAllPaths(apmatrix<int>& map, int maxValue) {
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 4, 2017
- @mname   InitMatrices
+ @mname   MapEngine::InitMatrices
  @details
  \n
  --------------------------------------------------------------------------
  */
-void initMatrices(apmatrix<int>& map) {
+void MapEngine::initMatrices(apmatrix<int>& matrix) {
 
 	for (int i = 0; i < matrixRows_c; i++) {
 		for (int j = 0; j < matrixCols_c; j++) {
-			map[i][j] = invalidValue_c;
+			matrix[i][j] = invalidValue_c;
 		} //end-of-for
 	} //end-of-for
 } // end-of-function InitMatrices
@@ -716,13 +778,13 @@ void initMatrices(apmatrix<int>& map) {
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 4, 2017
- @mname   relax
+ @mname   MapEngine::relaxVertex
  @details
   This function implements the algorithm found in section 24.1 (page 586)
    of the second edition of the CLR algorithms book.
  --------------------------------------------------------------------------
  */
-bool relaxVertex(int currentX, int y, int nextX, int wheight,
+bool MapEngine::relaxVertex(int currentX, int y, int nextX, int wheight,
 		apmatrix<int>& distance, apmatrix<int>& predecesor) {
 
 	if (currentX < 0 || (nextX >= matrixRows_c))
@@ -768,7 +830,7 @@ bool relaxVertex(int currentX, int y, int nextX, int wheight,
    	   a looooooooooooooooong time to complete.
  --------------------------------------------------------------------------
  */
-int shortestPathsFromVertex(int start, apmatrix<int>& map,
+int MapEngine::shortestPathsFromVertex(int start,
 		apvector<int>& bestPath) {
 
 	/*
@@ -882,7 +944,7 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Sep 30, 2017
- @mname   markAllPaths2
+ @mname   MapEngine::markAllPaths2
  @details
   This function calls shortestPathsFromVertex() for each node in the first
   	  column of the matrix.
@@ -891,7 +953,7 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 
  --------------------------------------------------------------------------
  */
-int markAllPaths2(apmatrix<int>& map) {
+int MapEngine::markAllPaths2() {
 	int runsize = -1;
 	int rowvalue = 0;
 	/*
@@ -920,7 +982,7 @@ int markAllPaths2(apmatrix<int>& map) {
 		 */
 
 		apvector<int> tempRun(map.numcols());
-		int temp = shortestPathsFromVertex(i, map, tempRun);
+		int temp = shortestPathsFromVertex(i,  tempRun);
 
 		/*
 		 * @author   dwlambiri
@@ -963,12 +1025,12 @@ int main(int argc, char **argv) {
 	}
 
 	//Initializes an apmatrix to store all the map's data
-	apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
-	mapDataReader(mountainMat);
+	MapEngine map;
+	map.mapDataReader();
 
 	//saves the smallest and largest peaks on the mountains into two variables
-	int largestSize = findMax(mountainMat);
-	int smallestSize = findMin(mountainMat);
+	int largestSize = map.findMax();
+	int smallestSize = map.findMin();
 
 	//Prints the value of the largest and smallest peaks on the mountain
 	std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
@@ -987,9 +1049,9 @@ int main(int argc, char **argv) {
 	 *   	(3 * matrixCols_c * matrixRows_c) the animation is very fast.
 	 */
 
-    ge.drawMap(mountainMat, smallestSize, largestSize);
+    ge.drawMap(map.getMap(), smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
-    int pathLength = markAllPaths(mountainMat, largestSize);
+    int pathLength = map.markAllPaths(largestSize);
     ge.printLowestPathInfo(pathLength);
     ge.displayMessage("Press any key to see next algorithm");
     ge.moveBitmapToDisplay();
@@ -1014,8 +1076,8 @@ int main(int argc, char **argv) {
     	 *   	((n + 3n) * maxRows_c) this runs maxRows_c slower.
     	 */
 
-    ge.drawMap(mountainMat, smallestSize, largestSize);
-    pathLength = markAllPaths2(mountainMat);
+    ge.drawMap(map.getMap(), smallestSize, largestSize);
+    pathLength = map.markAllPaths2();
     ge.printLowestPathInfo(pathLength);
     ge.displayMessage("Close window to exit program");
     ge.moveBitmapToDisplay();
