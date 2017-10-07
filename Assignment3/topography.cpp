@@ -105,7 +105,6 @@ public:
 	bool allegroEventLoop();
 	void allegroExitLoop();
 
-	int drawMap(const apmatrix<int>& map, int small, int large);
 	bool drawPixel(int x, int y, MapPixelColour c);
 	void printLowestPathInfo(int lowestElev);
 	void displayMessage(const char* msg);
@@ -310,59 +309,6 @@ void GraphicsEngine::allegroExitLoop() {
 } // end-of-function allegroExitLoop
 
 
-/**
- --------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @name    GraphicsEngine::drawMap
- @param   enclosing_method_arguments
- @return  return_type
- @details
- \n
- -------------------------------------------------------------------------
- */
-int GraphicsEngine::drawMap(const apmatrix<int>& map, int small, int large) {
-
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 5, 2017
-	 *  I picked two altitudes at which I change colours.
-	 *   Below heights[0] there is green vegetation.
-	 *   The lower the altitude the more vegetation and therefore I use a darker colour.
-	 *   Between height[0] and height[1] we use a different colour range and use darker colours
-	 *   	to denote altitudes closer to height[1]
-	 *   Above height[1] is the permanent snow area and I am using a monochromatic scheme with
-	 *   	grayer shades at lower altitudes where there is lower snow.
-	 *   I an doing linear interpolation obtain the colour shade for a given height
-	 */
-
-	int heights[] = { 1800, 2700 };
-
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
-			if (map[y][x] <= heights[0]) {
-				int shade = (map[y][x] - small) * 255 / (heights[0] - small);
-				al_draw_pixel(x, y, al_map_rgb(0, shade, 0));
-			} else if ((map[y][x] > heights[0]) && (map[y][x] <= heights[1])) {
-				int shade1 = -(map[y][x] - heights[0]) * (0xf0 - 0xd0)
-						/ (heights[1] - heights[0]) + 0xd0;
-				int shade2 = -(map[y][x] - heights[0]) * (0x66 - 0x22)
-						/ (heights[1] - heights[0]) + 0x66;
-				int shade3 = -(map[y][x] - heights[0]) * (0xf0 - 0xa0)
-						/ (heights[1] - heights[0]) + 0xf0;
-
-				al_draw_pixel(x, y, al_map_rgb(shade3, shade1, shade2));
-			} else {
-				int shade = (map[y][x] - heights[1]) * (0xff - 0xa0)
-						/ (large - heights[1]) + 0xa0;
-				al_draw_pixel(x, y, al_map_rgb(shade, shade, shade));
-			}
-		}
-	}
-	moveBitmapToDisplay();
-	return 0;
-}
-
 
 /**
  ---------------------------------------------------------------------------
@@ -427,11 +373,6 @@ void GraphicsEngine::displayMessage(const char* msg) {
 }
 
 
-
-
-static const int invalidValue_c = -1;
-GraphicsEngine ge;
-
 /**
   ---------------------------------------------------------------------------
    @author     dwlambiri
@@ -460,7 +401,7 @@ public:
 		Default constructor of Class MapEngine \n
 	  --------------------------------------------------------------------------
 	 */
-	MapEngine() : map(matrixRows_c, matrixCols_c, 0) {}
+	MapEngine() : map(matrixRows_c, matrixCols_c, 0), invalidValue_c(-1) {}
 
 	/**
 	  --------------------------------------------------------------------------
@@ -477,12 +418,12 @@ public:
 
 
 	bool mapDataReader();
+	int drawMap(GraphicsEngine& ge, int small, int large);
 	int findMin();
 	int findMax();
 
-	int markAllPaths( int maxValue);
-	int markAllPaths2();
-	const apmatrix<int>& getMap() { return map; }
+	int markAllPaths(GraphicsEngine& ge, int maxValue);
+	int markAllPaths2(GraphicsEngine& ge);
 
 private:
 	//--------------------------------------------------
@@ -490,6 +431,7 @@ private:
 	//--------------------------------------------------
 	//Initializes an apmatrix to store all the map's data
 	apmatrix<int> map;
+	const int invalidValue_c;
 
 
 private:
@@ -499,14 +441,67 @@ private:
 	void initMatrices(apmatrix<int>&);
 	bool relaxVertex(int currentX, int y, int nextX, int wheight,
 			apmatrix<int>& distance, apmatrix<int>& predecesor);
-	int shortestPathsFromVertex(int start,
+	int shortestPathsFromVertex(GraphicsEngine& ge, int start,
 			apvector<int>& bestPath);
 
-	int findPath(int startRow, int maxvalue,
+	int findPath(GraphicsEngine& ge, int startRow, int maxvalue,
 			MapPixelColour colour, apvector<int> &path);
 
 }; //end-of-class MapEngine
 
+
+/**
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    GraphicsEngine::drawMap
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
+int MapEngine::drawMap(GraphicsEngine& ge, int small, int large) {
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 5, 2017
+	 *  I picked two altitudes at which I change colours.
+	 *   Below heights[0] there is green vegetation.
+	 *   The lower the altitude the more vegetation and therefore I use a darker colour.
+	 *   Between height[0] and height[1] we use a different colour range and use darker colours
+	 *   	to denote altitudes closer to height[1]
+	 *   Above height[1] is the permanent snow area and I am using a monochromatic scheme with
+	 *   	grayer shades at lower altitudes where there is lower snow.
+	 *   I an doing linear interpolation obtain the colour shade for a given height
+	 */
+
+	int heights[] = { 1800, 2700 };
+
+	for (int y = 0; y < matrixRows_c; y++) {
+		for (int x = 0; x < matrixCols_c; x++) {
+			if (map[y][x] <= heights[0]) {
+				int shade = (map[y][x] - small) * 255 / (heights[0] - small);
+				al_draw_pixel(x, y, al_map_rgb(0, shade, 0));
+			} else if ((map[y][x] > heights[0]) && (map[y][x] <= heights[1])) {
+				int shade1 = -(map[y][x] - heights[0]) * (0xf0 - 0xd0)
+						/ (heights[1] - heights[0]) + 0xd0;
+				int shade2 = -(map[y][x] - heights[0]) * (0x66 - 0x22)
+						/ (heights[1] - heights[0]) + 0x66;
+				int shade3 = -(map[y][x] - heights[0]) * (0xf0 - 0xa0)
+						/ (heights[1] - heights[0]) + 0xf0;
+
+				al_draw_pixel(x, y, al_map_rgb(shade3, shade1, shade2));
+			} else {
+				int shade = (map[y][x] - heights[1]) * (0xff - 0xa0)
+						/ (large - heights[1]) + 0xa0;
+				al_draw_pixel(x, y, al_map_rgb(shade, shade, shade));
+			}
+		}
+	}
+	ge.moveBitmapToDisplay();
+	return 0;
+}
 
 
 
@@ -602,7 +597,7 @@ int MapEngine::findMax() {
  \n
  --------------------------------------------------------------------------
  */
-int MapEngine::findPath(int startRow, int maxvalue,
+int MapEngine::findPath(GraphicsEngine& ge,int startRow, int maxvalue,
 		MapPixelColour colour, apvector<int> &path) {
 	int totalPathLength = 0;
 	int currentRow = startRow;
@@ -683,7 +678,7 @@ int MapEngine::findPath(int startRow, int maxvalue,
  \n
  --------------------------------------------------------------------------
  */
-int MapEngine::markAllPaths(int maxValue) {
+int MapEngine::markAllPaths(GraphicsEngine& ge,int maxValue) {
 	int total1 = -1;
 	int rowvalue = 0;
 	/*
@@ -712,7 +707,7 @@ int MapEngine::markAllPaths(int maxValue) {
 		 */
 
 		apvector<int> tempRun(map.numcols());
-		int temp = findPath( i, maxValue, redPixel_c, tempRun);
+		int temp = findPath(ge, i, maxValue, redPixel_c, tempRun);
 		if (i == 11) {
 			std::cout << "Min Path Index = " << i << " Value = " << temp
 					<< std::endl;
@@ -830,7 +825,7 @@ bool MapEngine::relaxVertex(int currentX, int y, int nextX, int wheight,
    	   a looooooooooooooooong time to complete.
  --------------------------------------------------------------------------
  */
-int MapEngine::shortestPathsFromVertex(int start,
+int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 		apvector<int>& bestPath) {
 
 	/*
@@ -953,7 +948,7 @@ int MapEngine::shortestPathsFromVertex(int start,
 
  --------------------------------------------------------------------------
  */
-int MapEngine::markAllPaths2() {
+int MapEngine::markAllPaths2(GraphicsEngine& ge) {
 	int runsize = -1;
 	int rowvalue = 0;
 	/*
@@ -982,7 +977,7 @@ int MapEngine::markAllPaths2() {
 		 */
 
 		apvector<int> tempRun(map.numcols());
-		int temp = shortestPathsFromVertex(i,  tempRun);
+		int temp = shortestPathsFromVertex(ge, i,  tempRun);
 
 		/*
 		 * @author   dwlambiri
@@ -1019,7 +1014,9 @@ int main(int argc, char **argv) {
 	//we need full main declaration in osx
 	//Initializes pseudo randomization
 	srand(time(nullptr));
-	if (ge.initAllegro() == false) {
+
+	GraphicsEngine allegroEngine;
+	if (allegroEngine.initAllegro() == false) {
 		cerr << "program error: could not initialize allegro" << endl;
 		return 1;
 	}
@@ -1049,18 +1046,18 @@ int main(int argc, char **argv) {
 	 *   	(3 * matrixCols_c * matrixRows_c) the animation is very fast.
 	 */
 
-    ge.drawMap(map.getMap(), smallestSize, largestSize);
+    map.drawMap(allegroEngine, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
-    int pathLength = map.markAllPaths(largestSize);
-    ge.printLowestPathInfo(pathLength);
-    ge.displayMessage("Press any key to see next algorithm");
-    ge.moveBitmapToDisplay();
+    int pathLength = map.markAllPaths(allegroEngine, largestSize);
+    allegroEngine.printLowestPathInfo(pathLength);
+    allegroEngine.displayMessage("Press any key to see next algorithm");
+    allegroEngine.moveBitmapToDisplay();
 
     // Wait for key press
-    if(ge.allegroEventLoop() == false) return 0;
+    if(allegroEngine.allegroEventLoop() == false) return 0;
 
     //this should clear the bitmap
-    ge.clearBitmap();
+    allegroEngine.clearBitmap();
 
     /*
     	 * @author   dwlambiri
@@ -1076,12 +1073,12 @@ int main(int argc, char **argv) {
     	 *   	((n + 3n) * maxRows_c) this runs maxRows_c slower.
     	 */
 
-    ge.drawMap(map.getMap(), smallestSize, largestSize);
-    pathLength = map.markAllPaths2();
-    ge.printLowestPathInfo(pathLength);
-    ge.displayMessage("Close window to exit program");
-    ge.moveBitmapToDisplay();
+    map.drawMap( allegroEngine, smallestSize, largestSize);
+    pathLength = map.markAllPaths2(allegroEngine);
+    allegroEngine.printLowestPathInfo(pathLength);
+    allegroEngine.displayMessage("Close window to exit program");
+    allegroEngine.moveBitmapToDisplay();
 
-    ge.allegroExitLoop();
+    allegroEngine.allegroExitLoop();
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
