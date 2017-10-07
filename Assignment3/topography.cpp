@@ -480,8 +480,8 @@ int MapEngine::drawMap(GraphicsEngine& ge, int small, int large) {
 
 	int heights[] = { 1800, 2700 };
 
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
+	for (int y = 0; y < map.numrows(); y++) {
+		for (int x = 0; x < map.numcols(); x++) {
 			if (map[y][x] <= heights[0]) {
 				int shade = (map[y][x] - small) * 255 / (heights[0] - small);
 				al_draw_pixel(x, y, al_map_rgb(0, shade, 0));
@@ -526,12 +526,12 @@ bool MapEngine::mapDataReader() {
 	file.open(fileName_c);
 	//checks if the file is open
 	if (!file.is_open()) {
-		cerr << "ERROR FILE NOT OPEN" << endl;
+		cerr << "error: cannot open map file "<< fileName_c << endl;
 		return false;
 	}
 	// draws every every pixel using its relative position in the matrix to the display
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
+	for (int y = 0; y < map.numrows(); y++) {
+		for (int x = 0; x < map.numcols(); x++) {
 			file >> map[y][x];
 		}
 	}
@@ -555,8 +555,8 @@ bool MapEngine::mapDataReader() {
 int MapEngine::findMin() {
 	int lowest = map[0][0];
 	//
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
+	for (int y = 0; y < map.numrows(); y++) {
+		for (int x = 0; x < map.numcols(); x++) {
 			if (lowest > map[y][x]) {
 				lowest = map[y][x];
 			}
@@ -579,8 +579,8 @@ int MapEngine::findMin() {
 int MapEngine::findMax() {
 	int largest = map[0][0];
 
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
+	for (int y = 0; y < map.numrows(); y++) {
+		for (int x = 0; x < map.numcols(); x++) {
 			if (largest < map[y][x]) {
 				largest = map[y][x];
 			}
@@ -630,7 +630,7 @@ int MapEngine::findPath(GraphicsEngine& ge,int startRow, int maxvalue,
 				map[currentRow][columnIndex]
 						- map[currentRow][columnIndex - 1]);
 		// if the third row is equal to the total value of the row then do not assign it a proper value
-		if ((currentRow + 1) < matrixRows_c) {
+		if ((currentRow + 1) < map.numrows()) {
 			edge3weight = abs(
 					map[currentRow + 1][columnIndex]
 							- map[currentRow][columnIndex - 1]);
@@ -764,8 +764,8 @@ int MapEngine::markAllPaths(GraphicsEngine& ge,int maxValue) {
  */
 void MapEngine::initMatrices(apmatrix<int>& matrix) {
 
-	for (int i = 0; i < matrixRows_c; i++) {
-		for (int j = 0; j < matrixCols_c; j++) {
+	for (int i = 0; i < matrix.numrows(); i++) {
+		for (int j = 0; j < matrix.numcols(); j++) {
 			matrix[i][j] = invalidValue_c;
 		} //end-of-for
 	} //end-of-for
@@ -850,8 +850,10 @@ int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 	initMatrices(predecesorVertex);
 
 	distanceToStartVertex[start][0] = 0;
+	const int maprows_c = map.numrows();
+	const int mapcolumns_c = map.numcols();
 
-	for (int y = 0; y < matrixCols_c -1; y++) {
+	for (int y = 0; y < mapcolumns_c -1; y++) {
 		bool done = false;
 		/*
 		 * @author   dwlambiri
@@ -860,7 +862,7 @@ int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 		 *  	int x = ((start - y) >= 0) ? (start - y) : 0
 		 */
 
-		for (int x = ((start - y) >= 0) ? (start - y) : 0; x < matrixRows_c;
+		for (int x = ((start - y) >= 0) ? (start - y) : 0; x < maprows_c;
 				x++) {
 
 			if ((done == false)
@@ -888,7 +890,7 @@ int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 				relaxVertex(x, y, (x + 1), edge2weight, distanceToStartVertex,
 						predecesorVertex);
 				done = true;
-			} else if (x == matrixRows_c - 1) {
+			} else if (x == maprows_c - 1) {
 				int edge1weight = abs(map[x][y] - map[x][y + 1]);
 				int edge3weight = abs(map[x][y] - map[x - 1][y + 1]);
 				relaxVertex(x, y, x, edge1weight, distanceToStartVertex,
@@ -911,46 +913,46 @@ int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 		} //end-of-for
 	} //end-of-for
 
-	for (int i = 0; i < matrixRows_c; i++) {
-		if (distanceToStartVertex[i][matrixCols_c - 1] == invalidValue_c)
+	for (int i = 0; i < maprows_c; i++) {
+		if (distanceToStartVertex[i][mapcolumns_c - 1] == invalidValue_c)
 			continue;
-		if ((distanceToStartVertex[row][matrixCols_c - 1] == invalidValue_c)
-				|| (distanceToStartVertex[row][matrixCols_c - 1]
-						> distanceToStartVertex[i][matrixCols_c - 1])) {
+		if ((distanceToStartVertex[row][mapcolumns_c - 1] == invalidValue_c)
+				|| (distanceToStartVertex[row][mapcolumns_c - 1]
+						> distanceToStartVertex[i][mapcolumns_c - 1])) {
 			row = i;
 		} //end-of-if
 	} //end-of-for
 
-	int temp2 = predecesorVertex[row][matrixCols_c - 1];
-	bestPath[matrixCols_c - 1] = row;
+	int temp2 = predecesorVertex[row][mapcolumns_c - 1];
+	bestPath[mapcolumns_c - 1] = row;
 
-	for (int i = matrixCols_c - 1; i >= 1; i--) {
+	for (int i = mapcolumns_c - 1; i >= 1; i--) {
 		bestPath[i - 1] = predecesorVertex[temp2][i];
 		temp2 = predecesorVertex[temp2][i];
 	} //end-of-for
 
 	if(printAll == false) {
-		for (int i = 0; i < map.numcols(); i++) {
+		for (int i = 0; i < mapcolumns_c; i++) {
 			ge.drawPixel(i, bestPath[i], redPixel_c);
 		} //end-of-for
 	}
 	else {
 
-		for (int j = 0; j < matrixRows_c; ++j) {
-			int temp2 = predecesorVertex[j][matrixCols_c - 1];
-			ge.drawPixel(matrixCols_c-1, j, redPixel_c);
-			for (int i = matrixCols_c - 1; i >= 1; i--) {
+		for (int j = 0; j < maprows_c; ++j) {
+			int temp2 = predecesorVertex[j][mapcolumns_c - 1];
+			ge.drawPixel(mapcolumns_c-1, j, redPixel_c);
+			for (int i = mapcolumns_c - 1; i >= 1; i--) {
 				ge.drawPixel(i-1, predecesorVertex[temp2][i], redPixel_c);
 				temp2 = predecesorVertex[temp2][i];
 			} //end-of-for
 		}
 
-		for (int i = 0; i < map.numcols(); i++) {
+		for (int i = 0; i < mapcolumns_c; i++) {
 			ge.drawPixel(i, bestPath[i], bluePixel_c);
 		} //end-of-for
 	}
 	ge.moveBitmapToDisplay();
-	return distanceToStartVertex[row][matrixCols_c - 1];
+	return distanceToStartVertex[row][mapcolumns_c - 1];
 } // end-of-function shortestPathsFromVertex
 
 /**
