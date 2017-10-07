@@ -279,7 +279,8 @@ bool GraphicsEngine::allegroEventLoop() {
 			cleanUp();
 			return false;
 		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-			return true;
+			if(ev.keyboard.keycode == ALLEGRO_KEY_SPACE)
+							return true;
 		}
 
 	}
@@ -425,6 +426,9 @@ public:
 	int markAllPaths(GraphicsEngine& ge, int maxValue);
 	int markAllPaths2(GraphicsEngine& ge);
 
+	int shortestPathsFromVertex(GraphicsEngine& ge, int start,
+				apvector<int>& bestPath, bool printAll = false);
+
 private:
 	//--------------------------------------------------
 	// Data Members
@@ -441,8 +445,6 @@ private:
 	void initMatrices(apmatrix<int>&);
 	bool relaxVertex(int currentX, int y, int nextX, int wheight,
 			apmatrix<int>& distance, apmatrix<int>& predecesor);
-	int shortestPathsFromVertex(GraphicsEngine& ge, int start,
-			apvector<int>& bestPath);
 
 	int findPath(GraphicsEngine& ge, int startRow, int maxvalue,
 			MapPixelColour colour, apvector<int> &path);
@@ -826,7 +828,7 @@ bool MapEngine::relaxVertex(int currentX, int y, int nextX, int wheight,
  --------------------------------------------------------------------------
  */
 int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
-		apvector<int>& bestPath) {
+		apvector<int>& bestPath, bool printAll) {
 
 	/*
 	 * @author   dwlambiri
@@ -927,10 +929,23 @@ int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 		temp2 = predecesorVertex[temp2][i];
 	} //end-of-for
 
-	for (int i = 0; i < map.numcols(); i++) {
-		ge.drawPixel(i, bestPath[i], redPixel_c);
-	} //end-of-for
+	if(printAll == false) {
+		for (int i = 0; i < map.numcols(); i++) {
+			ge.drawPixel(i, bestPath[i], redPixel_c);
+		} //end-of-for
+	}
+	else {
+		for (int i = 1; i < matrixCols_c; i++ ) {
+			for (int j = 0; j < matrixRows_c; j++ ) {
+				if(predecesorVertex[j][i] != invalidValue_c)
+					ge.drawPixel(i-1, predecesorVertex[j][i], redPixel_c);
+			} //end-of-for
+		} //end-of-for
 
+		for (int i = 0; i < map.numcols(); i++) {
+			ge.drawPixel(i, bestPath[i], bluePixel_c);
+		} //end-of-for
+	}
 	ge.moveBitmapToDisplay();
 	return distanceToStartVertex[row][matrixCols_c - 1];
 } // end-of-function shortestPathsFromVertex
@@ -1058,6 +1073,21 @@ int main(int argc, char **argv) {
 
     //this should clear the bitmap
     allegroEngine.clearBitmap();
+
+    map.drawMap( allegroEngine, smallestSize, largestSize);
+    apvector<int> bp(matrixCols_c);
+    map.shortestPathsFromVertex(allegroEngine, 240, bp, true);
+    allegroEngine.displayMessage("Press any key to see next algorithm");
+    allegroEngine.moveBitmapToDisplay();
+
+    // Wait for key press
+     if(allegroEngine.allegroEventLoop() == false) return 0;
+
+
+     //this should clear the bitmap
+     allegroEngine.clearBitmap();
+
+
 
     /*
     	 * @author   dwlambiri
