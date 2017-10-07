@@ -935,12 +935,14 @@ int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 		} //end-of-for
 	}
 	else {
-		for (int i = 1; i < matrixCols_c; i++ ) {
-			for (int j = 0; j < matrixRows_c; j++ ) {
-				if(predecesorVertex[j][i] != invalidValue_c)
-					ge.drawPixel(i-1, predecesorVertex[j][i], redPixel_c);
+
+		for (int j = 0; j < matrixRows_c; ++j) {
+			int temp2 = predecesorVertex[j][matrixCols_c - 1];
+			for (int i = matrixCols_c - 1; i >= 1; i--) {
+				ge.drawPixel(i-1, predecesorVertex[temp2][i], redPixel_c);
+				temp2 = predecesorVertex[temp2][i];
 			} //end-of-for
-		} //end-of-for
+		}
 
 		for (int i = 0; i < map.numcols(); i++) {
 			ge.drawPixel(i, bestPath[i], bluePixel_c);
@@ -1076,7 +1078,7 @@ int main(int argc, char **argv) {
 
     map.drawMap( allegroEngine, smallestSize, largestSize);
     apvector<int> bp(matrixCols_c);
-    map.shortestPathsFromVertex(allegroEngine, 240, bp, true);
+    map.shortestPathsFromVertex(allegroEngine, 479, bp, true);
     allegroEngine.displayMessage("Press any key to see next algorithm");
     allegroEngine.moveBitmapToDisplay();
 
