@@ -268,7 +268,7 @@ int drawMap(apmatrix<int> &map, int large, int small) {
 }
 
 //function that reads in data from a file
-bool MapDataDrawer(apmatrix<int> &map) {
+bool mapDataReader(apmatrix<int> &map) {
 	ifstream file;
 
 	file.open(FILENAME);
@@ -468,7 +468,7 @@ int indexOfLowest(apvector<int> &data) {
 	return indexOfLow;
 }
 
-void printFont(int lowestElev) {
+void printLowestPathInfo(int lowestElev) {
 
 	ALLEGRO_FONT *font = al_load_ttf_font("font.ttf", 30, 0);
 
@@ -499,7 +499,7 @@ int main(int argc, char **argv) {
 	userInput = menuScreen();
 
 	//takes data from text file
-	MapDataDrawer(mountainMat);
+	mapDataReader(mountainMat);
 
 	//finds the lowest and highest points of elevation on the map
 	highestElevation = findMax(mountainMat);
@@ -520,7 +520,7 @@ int main(int argc, char **argv) {
 		//drawing the path with least elevation change
 		drawPath(mountainMat, indexOfLowElevPath, green);
 
-		printFont(totalElevChange[indexOfLowElevPath]);
+		printLowestPathInfo(totalElevChange[indexOfLowElevPath]);
 	}
 //
 	if (userInput == 2) {
@@ -537,7 +537,7 @@ int main(int argc, char **argv) {
 		//drawing the path with lowest average elevation
 		drawLowPath(mountainMat, indexOfLowElevChangePath, orange);
 //
-		printFont(lowestElevChange[indexOfLowElevChangePath]);
+		printLowestPathInfo(lowestElevChange[indexOfLowElevChangePath]);
 	}
 
 	if(userInput == 3) {

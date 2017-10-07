@@ -378,6 +378,13 @@ int drawMap(apmatrix<int>& map, int small, int large) {
 				int shade = (map[y][x] - small) * 255 / (heights[0] - small);
 				al_draw_pixel(x, y, al_map_rgb(0, shade, 0));
 			} else if ((map[y][x] > heights[0]) && (map[y][x] <= heights[1])) {
+				/*
+				 * @author   dwlambiri
+				 * @date     Oct 7, 2017
+				 *  I needed to interpolate through R, G, B to get a reasonable shading
+				 *  	of the alpine region.
+				 */
+
 				int shade1 = -(map[y][x] - heights[0]) * (0xf0 - 0xd0)
 						/ (heights[1] - heights[0]) + 0xd0;
 				int shade2 = -(map[y][x] - heights[0]) * (0x66 - 0x22)
