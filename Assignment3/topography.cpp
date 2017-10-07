@@ -56,29 +56,391 @@ static const int matrixRows_c = 480;
 static const char* fileName_c = "Colorado_844x480.dat";
 static const int fps_c = 60;
 
-static ALLEGRO_DISPLAY *display = nullptr;
-static ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
-static ALLEGRO_TIMER *timer = nullptr;
-static ALLEGRO_BITMAP *screenBitmap = nullptr;
-static ALLEGRO_FONT *font = nullptr;
+/**
+  ---------------------------------------------------------------------------
+   @author     dwlambiri
+   @date       Oct 7, 2017
+   @classname  GraphicsEngine
+   @brief
+	 \n
+   @details
+	\n
+  ---------------------------------------------------------------------------
+ */
+class GraphicsEngine {
+
+public:
+	//--------------------------------------------------
+	// Public Methods (External Type Interface)
+	//--------------------------------------------------
+	/**
+	  --------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 7, 2017
+	   @name    GraphicsEngine::GraphicsEngine
+	   @param   -
+	   @return  -
+	   @details
+		Default constructor of Class GraphicsEngine \n
+	  --------------------------------------------------------------------------
+	 */
+	GraphicsEngine() ;
+
+	/**
+	  --------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 7, 2017
+	   @name    GraphicsEngine::~GraphicsEngine
+	   @param   -
+	   @return  -
+	   @details
+		Default destructor of class GraphicsEngine \n
+	  --------------------------------------------------------------------------
+	 */
+	~GraphicsEngine(){}
+
+
+	bool initAllegro();
+	void moveBitmapToDisplay();
+	bool allegroEventLoop();
+	void allegroExitLoop();
+
+	int drawMap(apmatrix<int>& map, int small, int large);
+	bool drawPixel(int x, int y, MapPixelColour c);
+	void printLowestPathInfo(int lowestElev);
+	void displayMessage(const char* msg);
+	void clearBitmap()  {
+	    //this should clear the bitmap
+	    al_clear_to_color(al_map_rgb(0,0,0));
+	}
+
+private:
+	//--------------------------------------------------
+	// Data Members
+	//--------------------------------------------------
+	ALLEGRO_DISPLAY *display;
+	ALLEGRO_EVENT_QUEUE *event_queue;
+	ALLEGRO_TIMER *timer;
+	ALLEGRO_BITMAP *screenBitmap;
+	ALLEGRO_FONT *font;
+
+private:
+	//--------------------------------------------------
+	// Private Methods
+	//--------------------------------------------------
+	void cleanUp();
+
+}; //end-of-class GraphicsEngine
+
+
+GraphicsEngine::GraphicsEngine() {
+	display = nullptr;
+	event_queue = nullptr;
+	timer = nullptr;
+	screenBitmap = nullptr;
+	font = nullptr;
+}
+
+void GraphicsEngine::cleanUp() {
+	al_destroy_bitmap(screenBitmap);
+	al_destroy_display(display);
+	al_destroy_timer(timer);
+	al_destroy_event_queue(event_queue);
+	al_destroy_font(font);
+}
+
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @mname   GraphicsEngine::initAllegro
+ @details
+ I placed all allegro  initializations in this function
+ The function returns true if all initializations are 'ok' and returns
+ false if any initialization fails
+ --------------------------------------------------------------------------
+ */
+bool GraphicsEngine::initAllegro() {
+
+	//initialize display
+	al_init();
+	display = al_create_display(matrixCols_c, matrixRows_c);
+
+	timer = al_create_timer(1.0 / fps_c);
+
+	if (!al_install_keyboard()) {
+		cerr << "failed to initialize the keyboard!" << endl;
+		return false;
+	}
+
+	if (!timer) {
+		cerr << "failed to create timer!" << endl;
+		return false;
+	}
+
+	// Always check if your allegro routines worked successfully.
+	if (!display) {
+		al_show_native_message_box(display, "Error", "Error",
+				"Failed to initialize display!",
+				nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+		al_destroy_timer(timer);
+		return false;
+	}
+
+	screenBitmap = al_create_bitmap(matrixCols_c, matrixRows_c);
+
+	if (!screenBitmap) {
+		cerr << "failed to create bouncer bitmap!" << endl;
+		al_destroy_display(display);
+		al_destroy_timer(timer);
+		return false;
+	}
+	event_queue = al_create_event_queue();
+	if (!event_queue) {
+		cerr << "failed to create event_queue!" << endl;
+		al_destroy_bitmap(screenBitmap);
+		al_destroy_display(display);
+		al_destroy_timer(timer);
+		return false;
+	}
+
+	al_init_font_addon(); // initialize the font addon
+	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
+
+	font = al_load_ttf_font("font.ttf", 30, 0);
+
+	if (!font) {
+		cerr << "Could not load 'font.ttf'" << endl;
+		al_destroy_event_queue(event_queue);
+		al_destroy_bitmap(screenBitmap);
+		al_destroy_display(display);
+		al_destroy_timer(timer);
+		return false;
+	}
+
+	al_register_event_source(event_queue, al_get_display_event_source(display));
+	al_register_event_source(event_queue, al_get_timer_event_source(timer));
+	al_register_event_source(event_queue, al_get_keyboard_event_source());
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 6, 2017
+	 *  The next function call will set the bitmap as the target
+	 *  	for all the allegro writes
+	 */
+
+	al_set_target_bitmap(screenBitmap);
+	al_set_window_title(display, "Mountain region map");
+	return true;
+} // end-of-function initAllegro
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @mname   GraphicsEngine::moveBitmapToDisplay
+ @details
+   Allegro has a feature that allows all commands to be directed to a bitmap
+   I utilized this property by creating a bitmap the same size as the screen
+   	   and filling this bitmap.
+   Every time I want to move the contents of the bitmap to the display I change
+   	   the target of the write to the display itself, copy the bitmap to the display
+   	   buffer, flip the display and then set the write target back to the bitmap.
+ --------------------------------------------------------------------------
+ */
+void GraphicsEngine::moveBitmapToDisplay() {
+
+	al_set_target_bitmap(al_get_backbuffer(display));
+	al_draw_bitmap(screenBitmap, 0, 0, 0);
+	al_flip_display();
+	al_set_target_bitmap(screenBitmap);
+
+} // end-of-function moveBitmapToDisplay
+
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @mname   GraphicsEngine::allegroEventLoop
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+bool GraphicsEngine::allegroEventLoop() {
+
+	while (true) {
+		ALLEGRO_EVENT ev;
+		al_wait_for_event(event_queue, &ev);
+
+		if (ev.type == ALLEGRO_EVENT_TIMER) {
+			continue;
+		} else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+			cleanUp();
+			return false;
+		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+			return true;
+		}
+
+	}
+	return true;
+} // end-of-function allegroEventLoop
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @mname   GraphicsEngine::allegroExitLoop
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+void GraphicsEngine::allegroExitLoop() {
+
+	while (true) {
+		ALLEGRO_EVENT ev;
+		al_wait_for_event(event_queue, &ev);
+
+		if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+			cleanUp();
+			return;
+		}
+	}
+} // end-of-function allegroExitLoop
+
+
+/**
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    GraphicsEngine::drawMap
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
+int GraphicsEngine::drawMap(apmatrix<int>& map, int small, int large) {
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 5, 2017
+	 *  I picked two altitudes at which I change colours.
+	 *   Below heights[0] there is green vegetation.
+	 *   The lower the altitude the more vegetation and therefore I use a darker colour.
+	 *   Between height[0] and height[1] we use a different colour range and use darker colours
+	 *   	to denote altitudes closer to height[1]
+	 *   Above height[1] is the permanent snow area and I am using a monochromatic scheme with
+	 *   	grayer shades at lower altitudes where there is lower snow.
+	 *   I an doing linear interpolation obtain the colour shade for a given height
+	 */
+
+	int heights[] = { 1800, 2700 };
+
+	for (int y = 0; y < matrixRows_c; y++) {
+		for (int x = 0; x < matrixCols_c; x++) {
+			if (map[y][x] <= heights[0]) {
+				int shade = (map[y][x] - small) * 255 / (heights[0] - small);
+				al_draw_pixel(x, y, al_map_rgb(0, shade, 0));
+			} else if ((map[y][x] > heights[0]) && (map[y][x] <= heights[1])) {
+				int shade1 = -(map[y][x] - heights[0]) * (0xf0 - 0xd0)
+						/ (heights[1] - heights[0]) + 0xd0;
+				int shade2 = -(map[y][x] - heights[0]) * (0x66 - 0x22)
+						/ (heights[1] - heights[0]) + 0x66;
+				int shade3 = -(map[y][x] - heights[0]) * (0xf0 - 0xa0)
+						/ (heights[1] - heights[0]) + 0xf0;
+
+				al_draw_pixel(x, y, al_map_rgb(shade3, shade1, shade2));
+			} else {
+				int shade = (map[y][x] - heights[1]) * (0xff - 0xa0)
+						/ (large - heights[1]) + 0xa0;
+				al_draw_pixel(x, y, al_map_rgb(shade, shade, shade));
+			}
+		}
+	}
+	moveBitmapToDisplay();
+	return 0;
+}
+
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Sep 30, 2017
+ @mname   GraphicsEngine::DrawPixel
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+bool GraphicsEngine::drawPixel(int x, int y, MapPixelColour c) {
+	switch (c) {
+	case redPixel_c:
+		al_draw_pixel(x, y, al_map_rgb(0xff, 0, 0));
+		break;
+	case greeenPixel_c:
+		al_draw_pixel(x, y, al_map_rgb(0, 0xff, 0));
+		break;
+	case bluePixel_c:
+		al_draw_pixel(x, y, al_map_rgb(0, 0, 0xff));
+		break;
+	default:
+		return false;
+	} //end-of-switch
+	return true;
+
+} // end-of-function DrawPixel
+
+/**
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    GraphicsEngine::printLowestPathInfo
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
+void GraphicsEngine::printLowestPathInfo(int lowestElev) {
+
+	al_draw_textf(font, al_map_rgb(255, 255, 255), 200, 50,
+			ALLEGRO_ALIGN_CENTRE, "Lowest Elevation: %d", lowestElev);
+
+}
+
+/**
+ --------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 6, 2017
+ @name    GraphicsEngine::displayMessage
+ @param   enclosing_method_arguments
+ @return  return_type
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
+void GraphicsEngine::displayMessage(const char* msg) {
+
+	al_draw_textf(font, al_map_rgb(255, 255, 255), 275, 100,
+			ALLEGRO_ALIGN_CENTRE, "%s", msg);
+}
+
+
+
 
 static const int invalidValue_c = -1;
+GraphicsEngine ge;
 
 bool mapDataReader(apmatrix<int> &map);
 int findMin(apmatrix<int> &map);
 int findMax(apmatrix<int> &map);
-bool initAllegro();
-void moveBitmapToDisplay();
-void cleanUpAllegro();
-bool allegroEventLoop();
-void allegroExitLoop();
-int drawMap(apmatrix<int>& map, int small, int large);
-bool drawPixel(int x, int y, MapPixelColour c);
-void printLowestPathInfo(int lowestElev);
-void displayMessage(const char* msg);
+
+
 int findPath(apmatrix<int>& map, int startRow, int maxvalue,
 		MapPixelColour colour, apvector<int> &path);
 int markAllPaths(apmatrix<int>& map, int maxValue);
+
 void initMatrices(apmatrix<int>& map);
 bool relaxVertex(int currentX, int y, int nextX, int wheight,
 		apmatrix<int>& distance, apmatrix<int>& predecesor);
@@ -168,296 +530,6 @@ int findMax(apmatrix<int> &map) {
 	return largest;
 } // END OF findMin
 
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @mname   initAllegro
- @details
- I placed all allegro  initializations in this function
- The function returns true if all initializations are 'ok' and returns
- false if any initialization fails
- --------------------------------------------------------------------------
- */
-bool initAllegro() {
-
-	//initialize display
-	al_init();
-	display = al_create_display(matrixCols_c, matrixRows_c);
-
-	timer = al_create_timer(1.0 / fps_c);
-
-	if (!al_install_keyboard()) {
-		cerr << "failed to initialize the keyboard!" << endl;
-		return false;
-	}
-
-	if (!timer) {
-		cerr << "failed to create timer!" << endl;
-		return false;
-	}
-
-	// Always check if your allegro routines worked successfully.
-	if (!display) {
-		al_show_native_message_box(display, "Error", "Error",
-				"Failed to initialize display!",
-				nullptr, ALLEGRO_MESSAGEBOX_ERROR);
-		al_destroy_timer(timer);
-		return false;
-	}
-
-	screenBitmap = al_create_bitmap(matrixCols_c, matrixRows_c);
-
-	if (!screenBitmap) {
-		cerr << "failed to create bouncer bitmap!" << endl;
-		al_destroy_display(display);
-		al_destroy_timer(timer);
-		return false;
-	}
-	event_queue = al_create_event_queue();
-	if (!event_queue) {
-		cerr << "failed to create event_queue!" << endl;
-		al_destroy_bitmap(screenBitmap);
-		al_destroy_display(display);
-		al_destroy_timer(timer);
-		return false;
-	}
-
-	al_init_font_addon(); // initialize the font addon
-	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
-
-	font = al_load_ttf_font("font.ttf", 30, 0);
-
-	if (!font) {
-		cerr << "Could not load 'font.ttf'" << endl;
-		al_destroy_event_queue(event_queue);
-		al_destroy_bitmap(screenBitmap);
-		al_destroy_display(display);
-		al_destroy_timer(timer);
-		return false;
-	}
-
-	al_register_event_source(event_queue, al_get_display_event_source(display));
-	al_register_event_source(event_queue, al_get_timer_event_source(timer));
-	al_register_event_source(event_queue, al_get_keyboard_event_source());
-
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 6, 2017
-	 *  The next function call will set the bitmap as the target
-	 *  	for all the allegro writes
-	 */
-
-	al_set_target_bitmap(screenBitmap);
-	al_set_window_title(display, "Mountain region map");
-	return true;
-} // end-of-function initAllegro
-
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @mname   moveBitmapToDisplay
- @details
-   Allegro has a feature that allows all commands to be directed to a bitmap
-   I utilized this property by creating a bitmap the same size as the screen
-   	   and filling this bitmap.
-   Every time I want to move the contents of the bitmap to the display I change
-   	   the target of the write to the display itself, copy the bitmap to the display
-   	   buffer, flip the display and then set the write target back to the bitmap.
- --------------------------------------------------------------------------
- */
-void moveBitmapToDisplay() {
-
-	al_set_target_bitmap(al_get_backbuffer(display));
-	al_draw_bitmap(screenBitmap, 0, 0, 0);
-	al_flip_display();
-	al_set_target_bitmap(screenBitmap);
-
-} // end-of-function moveBitmapToDisplay
-
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @mname   cleanUp
- @details
- I am collecting all allegro cleanups in this function.
- This function is called before main exits to properly clean up the allegro library
- --------------------------------------------------------------------------
- */
-void cleanUpAllegro() {
-	al_destroy_bitmap(screenBitmap);
-	al_destroy_display(display);
-	al_destroy_timer(timer);
-	al_destroy_event_queue(event_queue);
-	al_destroy_font(font);
-} // end-of-function cleanUp
-
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @mname   allegroEventLoop
- @details
- \n
- --------------------------------------------------------------------------
- */
-bool allegroEventLoop() {
-
-	while (true) {
-		ALLEGRO_EVENT ev;
-		al_wait_for_event(event_queue, &ev);
-
-		if (ev.type == ALLEGRO_EVENT_TIMER) {
-			continue;
-		} else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-			cleanUpAllegro();
-			return false;
-		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-			return true;
-		}
-
-	}
-	return true;
-} // end-of-function allegroEventLoop
-
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @mname   allegroExitLoop
- @details
- \n
- --------------------------------------------------------------------------
- */
-void allegroExitLoop() {
-
-	while (true) {
-		ALLEGRO_EVENT ev;
-		al_wait_for_event(event_queue, &ev);
-
-		if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-			cleanUpAllegro();
-			return;
-		}
-	}
-} // end-of-function allegroExitLoop
-
-/**
- --------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @name    drawMap
- @param   enclosing_method_arguments
- @return  return_type
- @details
- \n
- -------------------------------------------------------------------------
- */
-int drawMap(apmatrix<int>& map, int small, int large) {
-
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 5, 2017
-	 *  I picked two altitudes at which I change colours.
-	 *   Below heights[0] there is green vegetation.
-	 *   The lower the altitude the more vegetation and therefore I use a darker colour.
-	 *   Between height[0] and height[1] we use a different colour range and use darker colours
-	 *   	to denote altitudes closer to height[1]
-	 *   Above height[1] is the permanent snow area and I am using a monochromatic scheme with
-	 *   	grayer shades at lower altitudes where there is lower snow.
-	 *   I an doing linear interpolation obtain the colour shade for a given height
-	 */
-
-	int heights[] = { 1800, 2700 };
-
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
-			if (map[y][x] <= heights[0]) {
-				int shade = (map[y][x] - small) * 255 / (heights[0] - small);
-				al_draw_pixel(x, y, al_map_rgb(0, shade, 0));
-			} else if ((map[y][x] > heights[0]) && (map[y][x] <= heights[1])) {
-				int shade1 = -(map[y][x] - heights[0]) * (0xf0 - 0xd0)
-						/ (heights[1] - heights[0]) + 0xd0;
-				int shade2 = -(map[y][x] - heights[0]) * (0x66 - 0x22)
-						/ (heights[1] - heights[0]) + 0x66;
-				int shade3 = -(map[y][x] - heights[0]) * (0xf0 - 0xa0)
-						/ (heights[1] - heights[0]) + 0xf0;
-
-				al_draw_pixel(x, y, al_map_rgb(shade3, shade1, shade2));
-			} else {
-				int shade = (map[y][x] - heights[1]) * (0xff - 0xa0)
-						/ (large - heights[1]) + 0xa0;
-				al_draw_pixel(x, y, al_map_rgb(shade, shade, shade));
-			}
-		}
-	}
-	moveBitmapToDisplay();
-	return 0;
-}
-
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Sep 30, 2017
- @mname   DrawPixel
- @details
- \n
- --------------------------------------------------------------------------
- */
-bool drawPixel(int x, int y, MapPixelColour c) {
-	switch (c) {
-	case redPixel_c:
-		al_draw_pixel(x, y, al_map_rgb(0xff, 0, 0));
-		break;
-	case greeenPixel_c:
-		al_draw_pixel(x, y, al_map_rgb(0, 0xff, 0));
-		break;
-	case bluePixel_c:
-		al_draw_pixel(x, y, al_map_rgb(0, 0, 0xff));
-		break;
-	default:
-		return false;
-	} //end-of-switch
-	return true;
-
-} // end-of-function DrawPixel
-
-/**
- --------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @name    printLowestPathInfo
- @param   enclosing_method_arguments
- @return  return_type
- @details
- \n
- -------------------------------------------------------------------------
- */
-void printLowestPathInfo(int lowestElev) {
-
-	al_draw_textf(font, al_map_rgb(255, 255, 255), 200, 50,
-			ALLEGRO_ALIGN_CENTRE, "Lowest Elevation: %d", lowestElev);
-
-}
-
-/**
- --------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @name    displayMessage
- @param   enclosing_method_arguments
- @return  return_type
- @details
- \n
- -------------------------------------------------------------------------
- */
-void displayMessage(const char* msg) {
-
-	al_draw_textf(font, al_map_rgb(255, 255, 255), 275, 100,
-			ALLEGRO_ALIGN_CENTRE, "%s", msg);
-}
 
 /**
  ---------------------------------------------------------------------------
@@ -533,10 +605,10 @@ int findPath(apmatrix<int>& map, int startRow, int maxvalue,
 			totalPathLength += edge1weight;
 		}
 		path[columnIndex] = currentRow;
-		drawPixel(columnIndex, currentRow, colour);
+		ge.drawPixel(columnIndex, currentRow, colour);
 
 	} //end-of-for
-	moveBitmapToDisplay();
+	ge.moveBitmapToDisplay();
 	return totalPathLength;
 } // end-of-function findpath
 
@@ -607,10 +679,10 @@ int markAllPaths(apmatrix<int>& map, int maxValue) {
 	 */
 
 	for (int i = 0; i < map.numcols(); i++) {
-		drawPixel(i, bestRun[i], bluePixel_c);
+		ge.drawPixel(i, bestRun[i], bluePixel_c);
 	} //end-of-for
 
-	moveBitmapToDisplay();
+	ge.moveBitmapToDisplay();
 
 	return total1;
 } // end-of-function markAllPaths
@@ -799,10 +871,10 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 	} //end-of-for
 
 	for (int i = 0; i < map.numcols(); i++) {
-		drawPixel(i, bestPath[i], redPixel_c);
+		ge.drawPixel(i, bestPath[i], redPixel_c);
 	} //end-of-for
 
-	moveBitmapToDisplay();
+	ge.moveBitmapToDisplay();
 	return distanceToStartVertex[row][matrixCols_c - 1];
 } // end-of-function shortestPathsFromVertex
 
@@ -873,7 +945,7 @@ int markAllPaths2(apmatrix<int>& map) {
 	 */
 
 	for (int i = 0; i < map.numcols(); i++) {
-		drawPixel(i, bestRun[i], bluePixel_c);
+		ge.drawPixel(i, bestRun[i], bluePixel_c);
 	} //end-of-for
 
 	return runsize;
@@ -885,7 +957,7 @@ int main(int argc, char **argv) {
 	//we need full main declaration in osx
 	//Initializes pseudo randomization
 	srand(time(nullptr));
-	if (initAllegro() == false) {
+	if (ge.initAllegro() == false) {
 		cerr << "program error: could not initialize allegro" << endl;
 		return 1;
 	}
@@ -915,18 +987,18 @@ int main(int argc, char **argv) {
 	 *   	(3 * matrixCols_c * matrixRows_c) the animation is very fast.
 	 */
 
-    drawMap(mountainMat, smallestSize, largestSize);
+    ge.drawMap(mountainMat, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
     int pathLength = markAllPaths(mountainMat, largestSize);
-    printLowestPathInfo(pathLength);
-    displayMessage("Press any key to see next algorithm");
-    moveBitmapToDisplay();
+    ge.printLowestPathInfo(pathLength);
+    ge.displayMessage("Press any key to see next algorithm");
+    ge.moveBitmapToDisplay();
 
     // Wait for key press
-    if(allegroEventLoop() == false) return 0;
+    if(ge.allegroEventLoop() == false) return 0;
 
     //this should clear the bitmap
-    al_clear_to_color(al_map_rgb(0,0,0));
+    ge.clearBitmap();
 
     /*
     	 * @author   dwlambiri
@@ -942,12 +1014,12 @@ int main(int argc, char **argv) {
     	 *   	((n + 3n) * maxRows_c) this runs maxRows_c slower.
     	 */
 
-    drawMap(mountainMat, smallestSize, largestSize);
+    ge.drawMap(mountainMat, smallestSize, largestSize);
     pathLength = markAllPaths2(mountainMat);
-    printLowestPathInfo(pathLength);
-    displayMessage("Close window to exit program");
-    moveBitmapToDisplay();
+    ge.printLowestPathInfo(pathLength);
+    ge.displayMessage("Close window to exit program");
+    ge.moveBitmapToDisplay();
 
-    allegroExitLoop();
+    ge.allegroExitLoop();
 	return 0;
 }//RETURN OF MAIN IF EVERTHING GOES WELL
