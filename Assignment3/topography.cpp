@@ -315,7 +315,8 @@ bool allegroEventLoop() {
 			cleanUpAllegro();
 			return false;
 		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-			return true;
+			if(ev.keyboard.keycode == ALLEGRO_KEY_SPACE)
+				return true;
 		}
 
 	}
@@ -926,7 +927,7 @@ int main(int argc, char **argv) {
      //Draws the initial map using a grey scale into an allegro buffer
     int pathLength = markAllPaths(mountainMat, largestSize);
     printLowestPathInfo(pathLength);
-    displayMessage("Press any key to see next algorithm");
+    displayMessage("Press 'space' to see next algorithm");
     moveBitmapToDisplay();
 
     // Wait for key press
