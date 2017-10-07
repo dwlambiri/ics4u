@@ -851,7 +851,7 @@ int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 
 	distanceToStartVertex[start][0] = 0;
 
-	for (int y = 0; y < matrixCols_c - 1; y++) {
+	for (int y = 0; y < matrixCols_c -1; y++) {
 		bool done = false;
 		/*
 		 * @author   dwlambiri
@@ -938,6 +938,7 @@ int MapEngine::shortestPathsFromVertex(GraphicsEngine& ge, int start,
 
 		for (int j = 0; j < matrixRows_c; ++j) {
 			int temp2 = predecesorVertex[j][matrixCols_c - 1];
+			ge.drawPixel(matrixCols_c-1, j, redPixel_c);
 			for (int i = matrixCols_c - 1; i >= 1; i--) {
 				ge.drawPixel(i-1, predecesorVertex[temp2][i], redPixel_c);
 				temp2 = predecesorVertex[temp2][i];

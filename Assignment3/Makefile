@@ -1,4 +1,4 @@
-CCFLAGS =	-O2 -Wall -I/usr/local/include -I.. -I ../apclasses  -fmessage-length=0
+CCFLAGS =	-O2 -std=c++11 -Wall -I/usr/local/include -I.. -I ../apclasses  -fmessage-length=0
 CC = g++
 
 OBJS =		topography.o
