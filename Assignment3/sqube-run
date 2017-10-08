@@ -1,5 +1,1 @@
-#/cygdrive/c/Program\ Files\ \(x86\)/build-wrapper-win-x86/build-wrapper-win-x86-64 --out-dir bw-output make clean all
-#/cygdrive/c/Program\ Files\ \(x86\)/sonar-scanner-3.0.3.778-windows/bin/sonar-scanner.bat -Dsonar.projectKey=isc4u -Dsonar.sources=. -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=dwlambiri -Dsonar.login=a18ccbee0aef1d2c8eb5db7e29f2bef720cda34e
-
-build-wrapper-macos-x86-64 --out-dir bw-output make clean all
-sonar-scanner.bat -Dsonar.projectKey=isc4u -Dsonar.sources=. -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=dwlambiri -Dsonar.login=a18ccbee0aef1d2c8eb5db7e29f2bef720cda34e
+#
