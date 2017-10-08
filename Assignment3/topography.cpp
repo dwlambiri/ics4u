@@ -91,11 +91,11 @@ int markAllPaths2(apmatrix<int>& map);
  @author  dwlambiri
  @date    Oct 6, 2017
  @name    mapDataReader
- @param   enclosing_method_arguments
- @return  return_type
+ @param   reference to matrix that will store the data
+ @return  true if read 'ok' and false if an error occurs
  @details
- function that reads in data from a file
- the function draws the map depending on the elevation of each variable
+ function that reads in data from a file and populates
+ results in a matrix
  \n
  -------------------------------------------------------------------------
  */
@@ -105,20 +105,19 @@ bool mapDataReader(apmatrix<int> &map) {
 	file.open(fileName_c);
 	//checks if the file is open
 	if (!file.is_open()) {
-		cerr << "ERROR FILE NOT OPEN" << endl;
+		cerr << "error: cannot open file: " << fileName_c << endl;
 		return false;
 	}
 	// draws every every pixel using its relative position in the matrix to the display
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
+	for (int y = 0; y < map.numrows(); y++) {
+		for (int x = 0; x < map.numcols(); x++) {
 			file >> map[y][x];
 		}
 	}
 	//closes file
 	file.close();
-	//returns to prove the function works
 	return true;
-} //END OF mapDataReader
+} // end-of-function mapDataReader
 
 /**
  --------------------------------------------------------------------------
@@ -540,7 +539,7 @@ int findPath(apmatrix<int>& map, int startRow, int maxvalue,
 			currentRow += 2 * rand() % 2 - 1;
 			totalPathLength += edge1weight;
 		} else if ((edge1weight == edge2weight)
-				&& (edge1weight == edge3weight)) {
+				&& (edge2weight == edge3weight)) {
 			currentRow += rand() % 3 - 1;
 			totalPathLength += edge1weight;
 		}

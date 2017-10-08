@@ -1,4 +1,7 @@
-CCFLAGS =	-O2 -Wall -I/usr/local/include -I.. -I ../apclasses  -fmessage-length=0
+#CCFLAGS =	-O2 -std=c++11 -Wall -I/usr/local/include -I.. -I ../apclasses  -fmessage-length=0
+#CLFLAGS =   
+CCFLAGS =	-O0 -fprofile-arcs -ftest-coverage -std=c++11 -Wall -I/usr/local/include -I.. -I ../apclasses  -fmessage-length=0
+CLFLAGS =   -fprofile-arcs -ftest-coverage 
 CC = g++
 
 OBJS =		topography.o
@@ -10,7 +13,7 @@ LIBS = -L/usr/local/lib -lallegro -lallegro_main -lallegro_image -lallegro_primi
 TARGET =	topography.exe
 
 $(TARGET):	$(OBJS)
-	$(CC) -o $(TARGET) $(OBJS) $(LIBS)
+	$(CC) $(CLFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
 
 
 $(OBJS) : topography.cpp
