@@ -717,10 +717,15 @@ bool relaxVertex(int currentX, int y, int nextX, int wheight,
    This is better than the FW algorithm by a large factor.
    Considering how long this algorithm takes to finish, FW would have taken
    	   a looooooooooooooooong time to complete.
+
+   If printAll is true the function prints all paths from a given source to
+   points on the last column.
+   If printAll is false the function prints the shortest path between the source
+   and any point on the last column.
  --------------------------------------------------------------------------
  */
 int shortestPathsFromVertex(int start, apmatrix<int>& map,
-		apvector<int>& bestPath) {
+		apvector<int>& bestPath, bool printAll) {
 
 	/*
 	 * @author   dwlambiri
@@ -821,9 +826,28 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 		temp2 = predecesorVertex[temp2][i];
 	} //end-of-for
 
-	for (int i = 0; i < map.numcols(); i++) {
-		drawPixel(i, bestPath[i], redPixel_c);
-	} //end-of-for
+
+	if(printAll == false) {
+		for (int i = 0; i < map.numcols(); i++) {
+			drawPixel(i, bestPath[i], redPixel_c);
+		} //end-of-for
+	}
+	else {
+
+		for (int j = 0; j < map.numrows(); ++j) {
+			int temp2 = predecesorVertex[j][map.numcols() - 1];
+			drawPixel(map.numcols()-1, j, redPixel_c);
+			for (int i = map.numcols() - 1; i >= 1; i--) {
+				drawPixel(i-1, predecesorVertex[temp2][i], redPixel_c);
+				temp2 = predecesorVertex[temp2][i];
+			} //end-of-for
+		}
+
+		for (int i = 0; i < map.numcols(); i++) {
+			drawPixel(i, bestPath[i], bluePixel_c);
+		} //end-of-for
+	}
+
 
 	moveBitmapToDisplay();
 	return distanceToStartVertex[row][map.numcols() - 1];
@@ -871,7 +895,7 @@ int markAllPaths2(apmatrix<int>& map) {
 		 */
 
 		apvector<int> tempRun(map.numcols());
-		int temp = shortestPathsFromVertex(i, map, tempRun);
+		int temp = shortestPathsFromVertex(i, map, tempRun, false);
 
 		/*
 		 * @author   dwlambiri
@@ -951,6 +975,21 @@ int main(int argc, char **argv) {
     drawMap(mountainMat, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
     int pathLength = markAllPaths(mountainMat, largestSize);
+    printLowestPathInfo(pathLength);
+    displayMessage("Press 'space' to see next algorithm");
+    moveBitmapToDisplay();
+
+    // Wait for key press
+    if(allegroEventLoop() == false) return 0;
+
+    //this should clear the bitmap
+    al_clear_to_color(al_map_rgb(0,0,0));
+
+
+    drawMap(mountainMat, smallestSize, largestSize);
+     //Draws the initial map using a grey scale into an allegro buffer
+    apvector<int> bestPath(matrixCols_c);
+    pathLength = shortestPathsFromVertex(240, mountainMat,bestPath, true);
     printLowestPathInfo(pathLength);
     displayMessage("Press 'space' to see next algorithm");
     moveBitmapToDisplay();
