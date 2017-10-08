@@ -1,0 +1,1369 @@
+        -:    0:Source:topography.cpp
+        -:    0:Graph:topography.gcno
+        -:    0:Data:topography.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*****************************************************************************
+        -:    2: *	Name:   Darius W Lambiri (dwlambiri)
+        -:    3: *	File:   topography.cpp
+        -:    4: *	Course: ICS4U
+        -:    5: *	Date:   Oct 6, 2017
+        -:    6: *
+        -:    7: *	Purpose: This program reads in data relating to a topographical map into a
+        -:    8: *			 matrix. It then draws the map and calculates routes to traverse the map
+        -:    9: *			 from east to west in order to travel a path with the least change in
+        -:   10: *			 elevation.
+        -:   11: *
+        -:   12: *	Usage:   Just run the program. The green line represents the optimal path
+        -:   13: *			 with the least change. Each red path represents every possible
+        -:   14: *			 east west path involving a minimal amount of height change.
+        -:   15: *
+        -:   16: *	Revision History:
+        -:   17: *
+        -:   18: *	Known Issues:
+        -:   19: *
+        -:   20: *****************************************************************************/
+        -:   21:
+        -:   22://includes
+        -:   23:#include <iostream>
+        -:   24:#include <fstream>
+        -:   25:#include <time.h>
+        -:   26:#include <allegro5/allegro.h>
+        -:   27:#include <allegro5/allegro_native_dialog.h>
+        -:   28:#include <allegro5/allegro_ttf.h>
+        -:   29:#include <allegro5/allegro_font.h>
+        -:   30:#include <apmatrix.h>
+        -:   31:#include <apvector.h>
+        -:   32:
+        -:   33:using namespace std;
+        -:   34:
+        -:   35:/**
+        -:   36: ---------------------------------------------------------------------------
+        -:   37: @author     dwlambiri
+        -:   38: @date       Sep 30, 2017
+        -:   39: @name       MapPixelColour
+        -:   40: @brief
+        -:   41:
+        -:   42: ---------------------------------------------------------------------------
+        -:   43: */
+        -:   44:/*
+        -:   45: the enum is used to select a colour of the line drawn in the findpath function*/
+        -:   46:enum MapPixelColour {
+        -:   47:	redPixel_c, greeenPixel_c, bluePixel_c
+        -:   48:};
+        -:   49://end-of-enum MapPixelColour
+        -:   50:
+        -:   51://constants that determine the initial values of the variables
+        -:   52:// initialize the allegro display
+        -:   53://Constant variables
+        -:   54:static const int matrixCols_c = 844;
+        -:   55:static const int matrixRows_c = 480;
+        -:   56:static const char* fileName_c = "Colorado_844x480.dat";
+        -:   57:static const int fps_c = 60;
+        -:   58:
+        -:   59:static ALLEGRO_DISPLAY *display = nullptr;
+        -:   60:static ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
+        -:   61:static ALLEGRO_TIMER *timer = nullptr;
+        -:   62:static ALLEGRO_BITMAP *screenBitmap = nullptr;
+        -:   63:static ALLEGRO_FONT *font = nullptr;
+        -:   64:
+        -:   65:static const int invalidValue_c = -1;
+        -:   66:
+        -:   67:bool mapDataReader(apmatrix<int> &map);
+        -:   68:int findMin(apmatrix<int> &map);
+        -:   69:int findMax(apmatrix<int> &map);
+        -:   70:bool initAllegro();
+        -:   71:void moveBitmapToDisplay();
+        -:   72:void cleanUpAllegro();
+        -:   73:bool allegroEventLoop();
+        -:   74:void allegroExitLoop();
+        -:   75:void drawMap(apmatrix<int>& map, int small, int large);
+        -:   76:bool drawPixel(int x, int y, MapPixelColour c);
+        -:   77:void printLowestPathInfo(int lowestElev);
+        -:   78:void displayMessage(const char* msg);
+        -:   79:int findPath(apmatrix<int>& map, int startRow, int maxvalue,
+        -:   80:		MapPixelColour colour, apvector<int> &path);
+        -:   81:int markAllPaths(apmatrix<int>& map, int maxValue);
+        -:   82:void initMatrices(apmatrix<int>& map);
+        -:   83:bool relaxVertex(int currentX, int y, int nextX, int wheight,
+        -:   84:		apmatrix<int>& distance, apmatrix<int>& predecesor);
+        -:   85:int shortestPathsFromVertex(int start, apmatrix<int>& map,
+        -:   86:		apvector<int>& bestPath);
+        -:   87:int markAllPaths2(apmatrix<int>& map);
+        -:   88:
+        -:   89:/**
+        -:   90: --------------------------------------------------------------------------
+        -:   91: @author  dwlambiri
+        -:   92: @date    Oct 6, 2017
+        -:   93: @name    mapDataReader
+        -:   94: @param   reference to matrix that will store the data
+        -:   95: @return  true if read 'ok' and false if an error occurs
+        -:   96: @details
+        -:   97: function that reads in data from a file and populates
+        -:   98: results in a matrix
+        -:   99: \n
+        -:  100: -------------------------------------------------------------------------
+        -:  101: */
+        -:  102:bool mapDataReader(apmatrix<int> &map) {
+        1:  103:	ifstream file;
+        -:  104:	//opens file
+        1:  105:	file.open(fileName_c);
+        1:  105-block  0
+        -:  106:	//checks if the file is open
+        1:  107:	if (!file.is_open()) {
+        1:  107-block  0
+        1:  107-block  1
+    #####:  108:		cerr << "error: cannot open file: " << fileName_c << endl;
+    $$$$$:  108-block  0
+    $$$$$:  108-block  1
+    $$$$$:  108-block  2
+    #####:  109:		return false;
+    $$$$$:  109-block  0
+        -:  110:	}
+        -:  111:	// draws every every pixel using its relative position in the matrix to the display
+      481:  112:	for (int y = 0; y < map.numrows(); y++) {
+        1:  112-block  0
+      481:  112-block  1
+      481:  112-block  2
+      480:  112-block  3
+   405600:  113:		for (int x = 0; x < map.numcols(); x++) {
+      480:  113-block  0
+   405600:  113-block  1
+   405600:  113-block  2
+   405120:  113-block  3
+   405120:  114:			file >> map[y][x];
+   405120:  114-block  0
+   405120:  114-block  1
+   405120:  114-block  2
+   405120:  115:		}
+   405120:  115-block  0
+      480:  116:	}
+      480:  116-block  0
+        -:  117:	//closes file
+        1:  118:	file.close();
+        1:  118-block  0
+        1:  119:	return true;
+        1:  119-block  0
+        1:  120:} // end-of-function mapDataReader
+    $$$$$:  120-block  0
+        1:  120-block  1
+    $$$$$:  120-block  2
+        -:  121:
+        -:  122:/**
+        -:  123: --------------------------------------------------------------------------
+        -:  124: @author  dwlambiri
+        -:  125: @date    Oct 6, 2017
+        -:  126: @name    findMin
+        -:  127: @param   a reference to the matrix that contains the data
+        -:  128: @return  returns an integer representing the smallest data value
+        -:  129: @details
+        -:  130:    Iterates through the matrix and with two for loops to find the
+        -:  131:    lowest value.
+        -:  132: -------------------------------------------------------------------------
+        -:  133: */
+        -:  134:int findMin(apmatrix<int> &map) {
+        1:  135:	int lowest = map[0][0];
+        -:  136:	//
+      481:  137:	for (int y = 0; y < map.numrows(); y++) {
+        1:  137-block  0
+      481:  137-block  1
+      480:  137-block  2
+   405600:  138:		for (int x = 0; x < map.numcols(); x++) {
+      480:  138-block  0
+   405600:  138-block  1
+   405120:  138-block  2
+   405120:  139:			if (lowest > map[y][x]) {
+   405120:  139-block  0
+      166:  140:				lowest = map[y][x];
+      166:  141:			}
+      166:  141-block  0
+   405120:  142:		}
+   405120:  142-block  0
+      480:  143:	}
+      480:  143-block  0
+        1:  144:	return lowest;
+        1:  144-block  0
+        -:  145:} // end-of-function findMin
+        -:  146:
+        -:  147:/**
+        -:  148: --------------------------------------------------------------------------
+        -:  149: @author  dwlambiri
+        -:  150: @date    Oct 6, 2017
+        -:  151: @name    findMax
+        -:  152: @param   takes a reference to the matrix
+        -:  153: @return  returns an integer representing the largest numerical value in the matrix
+        -:  154: @details
+        -:  155:	Iterates through every data point in the matrix.
+        -:  156: -------------------------------------------------------------------------
+        -:  157: */
+        -:  158:int findMax(apmatrix<int> &map) {
+        1:  159:	int largest = map[0][0];
+        -:  160:
+      481:  161:	for (int y = 0; y < map.numrows(); y++) {
+        1:  161-block  0
+      481:  161-block  1
+      480:  161-block  2
+   405600:  162:		for (int x = 0; x < map.numcols(); x++) {
+      480:  162-block  0
+   405600:  162-block  1
+   405120:  162-block  2
+   405120:  163:			if (largest < map[y][x]) {
+   405120:  163-block  0
+       44:  164:				largest = map[y][x];
+       44:  165:			}
+       44:  165-block  0
+   405120:  166:		}
+   405120:  166-block  0
+      480:  167:	}
+      480:  167-block  0
+        1:  168:	return largest;
+        1:  168-block  0
+        -:  169:} // end-of-function findMin
+        -:  170:
+        -:  171:/**
+        -:  172: ---------------------------------------------------------------------------
+        -:  173: @author  dwlambiri
+        -:  174: @date    Oct 6, 2017
+        -:  175: @mname   initAllegro
+        -:  176: @details
+        -:  177: I placed all allegro  initializations in this function
+        -:  178: The function returns true if all initializations are 'ok' and returns
+        -:  179: false if any initialization fails
+        -:  180: --------------------------------------------------------------------------
+        -:  181: */
+        -:  182:bool initAllegro() {
+        -:  183:
+        -:  184:	//initialize allegro
+        1:  185:	if(al_init() == false) {
+        1:  185-block  0
+        1:  185-block  1
+    #####:  186:		cerr << "fatal error: cannot init allegro" << endl;
+    #####:  187:	}
+    $$$$$:  187-block  0
+        -:  188:
+        -:  189:	//create display
+        1:  190:	display = al_create_display(matrixCols_c, matrixRows_c);
+        -:  191:
+        -:  192:	// Always check if your allegro routines worked successfully.
+        1:  193:	if (!display) {
+        1:  193-block  0
+    #####:  194:		cerr << "fatal error: failed to intialize display!" << endl;
+    #####:  195:		return false;
+    $$$$$:  195-block  0
+        -:  196:	}
+        -:  197:
+        -:  198:	//install keyboard
+        1:  199:	if (!al_install_keyboard()) {
+        1:  199-block  0
+    #####:  200:		cerr << "fatal error: failed to initialize the keyboard!" << endl;
+    #####:  201:		return false;
+    $$$$$:  201-block  0
+        -:  202:	}
+        -:  203:
+        -:  204:	//create a timer
+        1:  205:	timer = al_create_timer(1.0 / fps_c);
+        -:  206:
+        1:  207:	if (!timer) {
+        1:  207-block  0
+    #####:  208:		cerr << "fatal error: failed to create timer!" << endl;
+    #####:  209:		return false;
+    $$$$$:  209-block  0
+        -:  210:	}
+        -:  211:
+        -:  212:	//create a bitmap
+        1:  213:	screenBitmap = al_create_bitmap(matrixCols_c, matrixRows_c);
+        -:  214:
+        1:  215:	if (!screenBitmap) {
+        1:  215-block  0
+    #####:  216:		cerr << "fatal error: failed to create bouncer bitmap!" << endl;
+    #####:  217:		al_destroy_display(display);
+    #####:  218:		al_destroy_timer(timer);
+    #####:  219:		return false;
+    $$$$$:  219-block  0
+        -:  220:	}
+        1:  221:	event_queue = al_create_event_queue();
+        1:  222:	if (!event_queue) {
+        1:  222-block  0
+    #####:  223:		cerr << "fatal error: failed to create event_queue!" << endl;
+    #####:  224:		al_destroy_bitmap(screenBitmap);
+    #####:  225:		al_destroy_display(display);
+    #####:  226:		al_destroy_timer(timer);
+    #####:  227:		return false;
+    $$$$$:  227-block  0
+        -:  228:	}
+        -:  229:
+        1:  230:	al_init_font_addon(); // initialize the font addon
+        1:  231:	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
+        -:  232:
+        1:  233:	font = al_load_ttf_font("font.ttf", 30, 0);
+        -:  234:
+        1:  235:	if (!font) {
+        1:  235-block  0
+    #####:  236:		cerr << "fatal error: could not load 'font.ttf'" << endl;
+    #####:  237:		al_destroy_event_queue(event_queue);
+    #####:  238:		al_destroy_bitmap(screenBitmap);
+    #####:  239:		al_destroy_display(display);
+    #####:  240:		al_destroy_timer(timer);
+    #####:  241:		return false;
+    $$$$$:  241-block  0
+        -:  242:	}
+        -:  243:
+        1:  244:	al_register_event_source(event_queue, al_get_display_event_source(display));
+        1:  245:	al_register_event_source(event_queue, al_get_timer_event_source(timer));
+        1:  246:	al_register_event_source(event_queue, al_get_keyboard_event_source());
+        -:  247:
+        -:  248:	/*
+        -:  249:	 * @author   dwlambiri
+        -:  250:	 * @date     Oct 6, 2017
+        -:  251:	 *  The next function call will set the bitmap as the target
+        -:  252:	 *  	for all the allegro writes
+        -:  253:	 */
+        -:  254:
+        1:  255:	al_set_target_bitmap(screenBitmap);
+        1:  256:	al_set_window_title(display, fileName_c);
+        1:  257:	return true;
+        1:  257-block  0
+        1:  258:} // end-of-function initAllegro
+        1:  258-block  0
+        -:  259:
+        -:  260:/**
+        -:  261: ---------------------------------------------------------------------------
+        -:  262: @author  dwlambiri
+        -:  263: @date    Oct 6, 2017
+        -:  264: @mname   moveBitmapToDisplay
+        -:  265: @details
+        -:  266:   Allegro has a feature that allows all commands to be directed to a bitmap
+        -:  267:   I utilized this property by creating a bitmap the same size as the screen
+        -:  268:   	   and filling this bitmap.
+        -:  269:   Every time I want to move the contents of the bitmap to the display I change
+        -:  270:   	   the target of the write to the display itself, copy the bitmap to the display
+        -:  271:   	   buffer, flip the display and then set the write target back to the bitmap.
+        -:  272: --------------------------------------------------------------------------
+        -:  273: */
+        -:  274:void moveBitmapToDisplay() {
+        -:  275:
+      968:  276:	al_set_target_bitmap(al_get_backbuffer(display));
+      968:  276-block  0
+      968:  277:	al_draw_bitmap(screenBitmap, 0, 0, 0);
+      968:  278:	al_flip_display();
+      968:  279:	al_set_target_bitmap(screenBitmap);
+        -:  280:
+      968:  281:} // end-of-function moveBitmapToDisplay
+      968:  281-block  0
+        -:  282:
+        -:  283:/**
+        -:  284: ---------------------------------------------------------------------------
+        -:  285: @author  dwlambiri
+        -:  286: @date    Oct 6, 2017
+        -:  287: @mname   cleanUp
+        -:  288: @details
+        -:  289: I am collecting all allegro cleanups in this function.
+        -:  290: This function is called before main exits to properly clean up the allegro library
+        -:  291: --------------------------------------------------------------------------
+        -:  292: */
+        -:  293:void cleanUpAllegro() {
+        1:  294:	al_destroy_bitmap(screenBitmap);
+        1:  294-block  0
+        1:  295:	al_destroy_display(display);
+        1:  296:	al_destroy_timer(timer);
+        1:  297:	al_destroy_event_queue(event_queue);
+        1:  298:	al_destroy_font(font);
+        1:  299:} // end-of-function cleanUp
+        1:  299-block  0
+        -:  300:
+        -:  301:/**
+        -:  302: ---------------------------------------------------------------------------
+        -:  303: @author  dwlambiri
+        -:  304: @date    Oct 6, 2017
+        -:  305: @mname   allegroEventLoop
+        -:  306: @details
+        -:  307: 	 This loop reads and processes allegro events. We are interested in display
+        -:  308: 	 close and key presses.
+        -:  309: 	 The function returns false if the display is closed and true otherwise.
+        -:  310: --------------------------------------------------------------------------
+        -:  311: */
+        -:  312:bool allegroEventLoop() {
+        -:  313:
+        3:  314:	while (true) {
+        2:  314-block  0
+        2:  314-block  1
+        3:  314-block  2
+        -:  315:		ALLEGRO_EVENT ev;
+        5:  316:		al_wait_for_event(event_queue, &ev);
+        -:  317:
+        5:  318:		if (ev.type == ALLEGRO_EVENT_TIMER) {
+        5:  318-block  0
+    #####:  319:			continue;
+    $$$$$:  319-block  0
+        5:  320:		} else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+        5:  320-block  0
+    #####:  321:			cleanUpAllegro();
+    #####:  322:			return false;
+    $$$$$:  322-block  0
+        5:  323:		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+        5:  323-block  0
+        2:  324:			if(ev.keyboard.keycode == ALLEGRO_KEY_SPACE)
+        2:  324-block  0
+        2:  325:				return true;
+        2:  325-block  0
+    #####:  326:		}
+    $$$$$:  326-block  0
+        -:  327:
+        -:  328:	}
+        -:  329:	return true;
+        2:  330:} // end-of-function allegroEventLoop
+        2:  330-block  0
+        -:  331:
+        -:  332:/**
+        -:  333: ---------------------------------------------------------------------------
+        -:  334: @author  dwlambiri
+        -:  335: @date    Oct 6, 2017
+        -:  336: @mname   allegroExitLoop
+        -:  337: @details
+        -:  338: 	 This function processes a display close event and it is called at the
+        -:  339: 	 end of the program when no other user input is allowed
+        -:  340: --------------------------------------------------------------------------
+        -:  341: */
+        -:  342:void allegroExitLoop() {
+        -:  343:
+        2:  344:	while (true) {
+        1:  344-block  0
+        1:  344-block  1
+        2:  344-block  2
+        -:  345:		ALLEGRO_EVENT ev;
+        3:  346:		al_wait_for_event(event_queue, &ev);
+        -:  347:
+        3:  348:		if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+        3:  348-block  0
+        1:  349:			cleanUpAllegro();
+        1:  350:			return;
+        1:  350-block  0
+        -:  351:		}
+        -:  352:	}
+        -:  353:} // end-of-function allegroExitLoop
+        -:  354:
+        -:  355:/**
+        -:  356: --------------------------------------------------------------------------
+        -:  357: @author  dwlambiri
+        -:  358: @date    Oct 6, 2017
+        -:  359: @name    drawMap
+        -:  360: @param   enclosing_method_arguments
+        -:  361: @return  none
+        -:  362: @details
+        -:  363: 	 This function writes each data pixel into the bitmap.
+        -:  364: 	 After writing all pixels it puts the bitmap on the screen.
+        -:  365: -------------------------------------------------------------------------
+        -:  366: */
+        -:  367:void drawMap(apmatrix<int>& map, int small, int large) {
+        -:  368:
+        -:  369:	/*
+        -:  370:	 * @author   dwlambiri
+        -:  371:	 * @date     Oct 5, 2017
+        -:  372:	 *  I picked two altitudes at which I change colours.
+        -:  373:	 *   Below heights[0] there is green vegetation.
+        -:  374:	 *   The lower the altitude the more vegetation and therefore I use a darker colour.
+        -:  375:	 *   Between height[0] and height[1] we use a different colour range and use darker colours
+        -:  376:	 *   	to denote altitudes closer to height[1]
+        -:  377:	 *   Above height[1] is the permanent snow area and I am using a monochromatic scheme with
+        -:  378:	 *   	grayer shades at lower altitudes where there is lower snow.
+        -:  379:	 *   I an doing linear interpolation obtain the colour shade for a given height
+        -:  380:	 */
+        -:  381:
+        3:  382:	int heights[] = { 1800, 2700 };
+        -:  383:
+     1443:  384:	for (int y = 0; y < matrixRows_c; y++) {
+        3:  384-block  0
+     1443:  384-block  1
+     1440:  384-block  2
+  1216800:  385:		for (int x = 0; x < matrixCols_c; x++) {
+     1440:  385-block  0
+  1216800:  385-block  1
+  1215360:  385-block  2
+  1215360:  386:			if (map[y][x] <= heights[0]) {
+  1215360:  386-block  0
+   513720:  387:				int shade = (map[y][x] - small) * 255 / (heights[0] - small);
+   513720:  388:				al_draw_pixel(x, y, al_map_rgb(0, shade, 0));
+   701640:  389:			} else if ((map[y][x] > heights[0]) && (map[y][x] <= heights[1])) {
+   513720:  389-block  0
+   701640:  389-block  1
+   701640:  389-block  2
+        -:  390:				/*
+        -:  391:				 * @author   dwlambiri
+        -:  392:				 * @date     Oct 7, 2017
+        -:  393:				 *  I needed to interpolate through R, G, B to get a reasonable shading
+        -:  394:				 *  	of the alpine region.
+        -:  395:				 */
+        -:  396:
+   449154:  397:				int shade1 = -(map[y][x] - heights[0]) * (0xf0 - 0xd0)
+   449154:  398:						/ (heights[1] - heights[0]) + 0xd0;
+   449154:  399:				int shade2 = -(map[y][x] - heights[0]) * (0x66 - 0x22)
+   449154:  400:						/ (heights[1] - heights[0]) + 0x66;
+   449154:  401:				int shade3 = -(map[y][x] - heights[0]) * (0xf0 - 0xa0)
+   449154:  402:						/ (heights[1] - heights[0]) + 0xf0;
+        -:  403:
+   449154:  404:				al_draw_pixel(x, y, al_map_rgb(shade3, shade1, shade2));
+   449154:  405:			} else {
+   449154:  405-block  0
+   252486:  406:				int shade = (map[y][x] - heights[1]) * (0xff - 0xa0)
+   252486:  407:						/ (large - heights[1]) + 0xa0;
+   252486:  408:				al_draw_pixel(x, y, al_map_rgb(shade, shade, shade));
+   252486:  408-block  0
+        -:  409:			}
+  1215360:  410:		}
+  1215360:  410-block  0
+     1440:  411:	}
+     1440:  411-block  0
+        3:  412:	moveBitmapToDisplay();
+        3:  413:}
+        3:  413-block  0
+        -:  414:
+        -:  415:/**
+        -:  416: ---------------------------------------------------------------------------
+        -:  417: @author  dwlambiri
+        -:  418: @date    Sep 30, 2017
+        -:  419: @mname   DrawPixel
+        -:  420: @details
+        -:  421: 	 Draws a pixel at position (x,y) on the bitmap using colour c.
+        -:  422: 	 If an invalid colour is provided the function returns false otherwise it
+        -:  423: 	 returns true.
+        -:  424: --------------------------------------------------------------------------
+        -:  425: */
+        -:  426:bool drawPixel(int x, int y, MapPixelColour c) {
+  1217412:  427:	switch (c) {
+  1217412:  427-block  0
+        -:  428:	case redPixel_c:
+  1214880:  429:		al_draw_pixel(x, y, al_map_rgb(0xff, 0, 0));
+  1214880:  430:		break;
+  1214880:  430-block  0
+        -:  431:	case greeenPixel_c:
+    #####:  432:		al_draw_pixel(x, y, al_map_rgb(0, 0xff, 0));
+    #####:  433:		break;
+    $$$$$:  433-block  0
+        -:  434:	case bluePixel_c:
+     2532:  435:		al_draw_pixel(x, y, al_map_rgb(0, 0, 0xff));
+     2532:  436:		break;
+     2532:  436-block  0
+        -:  437:	default:
+    #####:  438:		return false;
+    $$$$$:  438-block  0
+        -:  439:	} //end-of-switch
+  1217412:  440:	return true;
+  1217412:  440-block  0
+        -:  441:
+  1217412:  442:} // end-of-function DrawPixel
+  1217412:  442-block  0
+        -:  443:
+        -:  444:/**
+        -:  445: --------------------------------------------------------------------------
+        -:  446: @author  dwlambiri
+        -:  447: @date    Oct 6, 2017
+        -:  448: @name    printLowestPathInfo
+        -:  449: @param   enclosing_method_arguments
+        -:  450: @return  return_type
+        -:  451: @details
+        -:  452: 	 Displays the lowest path length of the run.
+        -:  453: -------------------------------------------------------------------------
+        -:  454: */
+        -:  455:void printLowestPathInfo(int lowestElev) {
+        -:  456:
+        3:  457:	al_draw_textf(font, al_map_rgb(255, 255, 255), 200, 50,
+        3:  458:			ALLEGRO_ALIGN_CENTRE, "Lowest Path Length: %d", lowestElev);
+        -:  459:
+        3:  460:}
+        3:  460-block  0
+        -:  461:
+        -:  462:/**
+        -:  463: --------------------------------------------------------------------------
+        -:  464: @author  dwlambiri
+        -:  465: @date    Oct 6, 2017
+        -:  466: @name    displayMessage
+        -:  467: @param   enclosing_method_arguments
+        -:  468: @return  return_type
+        -:  469: @details
+        -:  470: 	 Displays a custom message on the screen.
+        -:  471: -------------------------------------------------------------------------
+        -:  472: */
+        -:  473:void displayMessage(const char* msg) {
+        -:  474:
+        3:  475:	al_draw_textf(font, al_map_rgb(255, 255, 255), 275, 100,
+        3:  476:			ALLEGRO_ALIGN_CENTRE, "%s", msg);
+        3:  477:}
+        3:  477-block  0
+        -:  478:
+        -:  479:/**
+        -:  480: ---------------------------------------------------------------------------
+        -:  481: @author  dwlambiri
+        -:  482: @date    Sep 30, 2017
+        -:  483: @mname   findPath
+        -:  484: @details
+        -:  485:   This function implements the first algorithm described in the  assignment
+        -:  486:   for the starting point (startRow , 0).
+        -:  487:   It then draws the path in red in the bitmap.
+        -:  488:   It flips the bitmap to display and returns the length of the path.
+        -:  489: --------------------------------------------------------------------------
+        -:  490: */
+        -:  491:int findPath(apmatrix<int>& map, int startRow, int maxvalue,
+        -:  492:		MapPixelColour colour, apvector<int> &path) {
+      480:  493:	int totalPathLength = 0;
+      480:  494:	int currentRow = startRow;
+        -:  495:	//The vector path is a vector that stores the row values of each column in a route
+      480:  496:	path[0] = startRow;
+   405120:  497:	for (int columnIndex = 1; columnIndex < map.numcols(); columnIndex++) {
+      480:  497-block  0
+   405120:  497-block  1
+   404640:  497-block  2
+        -:  498:		/*
+        -:  499:		 * @author   dwlambiri
+        -:  500:		 * @date     Oct 1, 2017
+        -:  501:		 *  I initialized the deltas with very large values.
+        -:  502:		 *  because I know the maximum delta a value of one hundred delta will never be selected
+        -:  503:		 *  I used this for the matrix boundaries
+        -:  504:		 *
+        -:  505:		 */
+        -:  506:
+        -:  507:		//The n variables contain the elevation difference values of each possible edge
+   404640:  508:		int edge1weight = 1001 * maxvalue;
+   404640:  509:		int edge3weight = 1001 * maxvalue;
+        -:  510:
+        -:  511:		//If the row that I am currently in is greater than row zero
+   404640:  512:		if ((currentRow - 1) >= 0) {
+   404640:  512-block  0
+   404412:  513:			edge1weight = abs(
+   404412:  514:					map[currentRow - 1][columnIndex]
+   404412:  515:							- map[currentRow][columnIndex - 1]);
+   404412:  516:		} //end-of-if
+   404412:  516-block  0
+        -:  517:		  //Initiallized the second 'edge'
+   404640:  518:		int edge2weight = abs(
+   404640:  519:				map[currentRow][columnIndex]
+   404640:  520:						- map[currentRow][columnIndex - 1]);
+        -:  521:		// if the third row is equal to the total value of the row then do not assign it a proper value
+   404640:  522:		if ((currentRow + 1) < matrixRows_c) {
+   404640:  522-block  0
+   404631:  523:			edge3weight = abs(
+   404631:  524:					map[currentRow + 1][columnIndex]
+   404631:  525:							- map[currentRow][columnIndex - 1]);
+   404631:  526:		} //end-of-if
+   404631:  526-block  0
+        -:  527:
+        -:  528:		//The following if statements compare the differences in elevation and return the lowest one
+        -:  529:		//checks value
+   404640:  530:		if ((edge1weight < edge2weight) && (edge1weight < edge3weight)) {
+   404640:  530-block  0
+   118768:  530-block  1
+    95869:  531:			currentRow--;
+    95869:  532:			totalPathLength += edge1weight;
+   308771:  533:		} else if ((edge2weight < edge1weight) && (edge2weight < edge3weight)) {
+    95869:  533-block  0
+   308771:  533-block  1
+   259810:  533-block  2
+   161781:  534:			totalPathLength += edge2weight;
+   161781:  535:		} else if ((edge3weight < edge2weight) && (edge3weight < edge1weight)) {
+   161781:  535-block  0
+   146990:  535-block  1
+   110162:  535-block  2
+   107405:  536:			currentRow++;
+   107405:  537:			totalPathLength += edge3weight;
+   107405:  538:		} else if ((edge1weight == edge2weight)
+   107405:  538-block  0
+    21536:  538-block  1
+    39585:  539:				&& (edge1weight < edge3weight)) {
+    39585:  539-block  0
+    12970:  540:			currentRow -= rand() % 2;
+    12970:  541:			totalPathLength += edge1weight;
+    26615:  542:		} else if ((edge3weight == edge2weight)
+    12970:  542-block  0
+    23858:  542-block  1
+    26615:  543:				&& (edge3weight < edge1weight)) {
+    26615:  543-block  0
+    15292:  544:			currentRow += rand() % 2;
+    15292:  545:			totalPathLength += edge3weight;
+    15292:  546:		} else if ((edge1weight == edge3weight)
+    15292:  546-block  0
+    11323:  546-block  1
+    11323:  547:				&& (edge1weight < edge2weight)) {
+    11323:  547-block  0
+     2757:  548:			currentRow += 2 * rand() % 2 - 1;
+     2757:  549:			totalPathLength += edge1weight;
+     8566:  550:		} else if ((edge1weight == edge2weight)
+     2757:  550-block  0
+     8566:  550-block  1
+     8566:  551:				&& (edge2weight == edge3weight)) {
+     8566:  551-block  0
+     8566:  552:			currentRow += rand() % 3 - 1;
+     8566:  553:			totalPathLength += edge1weight;
+     8566:  554:		}
+     8566:  554-block  0
+   404640:  555:		path[columnIndex] = currentRow;
+   404640:  556:		drawPixel(columnIndex, currentRow, colour);
+        -:  557:
+   404640:  558:	} //end-of-for
+   404640:  558-block  0
+      480:  559:	moveBitmapToDisplay();
+      480:  560:	return totalPathLength;
+      480:  560-block  0
+        -:  561:} // end-of-function findpath
+        -:  562:
+        -:  563:/**
+        -:  564: ---------------------------------------------------------------------------
+        -:  565: @author  dwlambiri
+        -:  566: @date    Sep 30, 2017
+        -:  567: @mname   markAllPaths
+        -:  568: @details
+        -:  569: 	 This calls the findPath function for all possible starting points.
+        -:  570: 	 It calculates the best possible path of all runs and writes it in blue
+        -:  571: 	 in the bitmap. It then flips the bitmap to the screen.
+        -:  572: --------------------------------------------------------------------------
+        -:  573: */
+        -:  574:int markAllPaths(apmatrix<int>& map, int maxValue) {
+        1:  575:	int total1 = -1;
+        1:  576:	int rowvalue = 0;
+        -:  577:	/*
+        -:  578:	 * @author   dwlambiri
+        -:  579:	 * @date     Oct 1, 2017
+        -:  580:	 *  I store the row numbers for the best path of the run.
+        -:  581:	 *
+        -:  582:	 *  This is to ensure that the green path that is displayed
+        -:  583:	 *  is the path with the smallest delta sum.
+        -:  584:	 *
+        -:  585:	 *  Because of the use of random number generation
+        -:  586:	 *  there are many possible paths from a starting point.
+        -:  587:	 *
+        -:  588:	 *  Therefore even if a given starting point has the smallest path
+        -:  589:	 *  of the run when we run the function again the new path might not
+        -:  590:	 *  be the smallest
+        -:  591:	 */
+        -:  592:
+        1:  593:	apvector<int> bestRun(map.numcols());
+      481:  594:	for (int i = 0; i < map.numrows(); i++) {
+        1:  594-block  0
+      481:  594-block  1
+      481:  594-block  2
+      480:  594-block  3
+        -:  595:		/*
+        -:  596:		 * @author   dwlambiri
+        -:  597:		 * @date     Oct 1, 2017
+        -:  598:		 *  For each starting point (row) we return the actual path
+        -:  599:		 *  as row positions in a vector who's indeces represent the columns.
+        -:  600:		 */
+        -:  601:
+      480:  602:		apvector<int> tempRun(map.numcols());
+      480:  602-block  0
+      480:  602-block  1
+      480:  603:		int temp = findPath(map, i, maxValue, redPixel_c, tempRun);
+      480:  603-block  0
+      480:  604:		if (i == 11) {
+      480:  604-block  0
+        1:  605:			std::cout << "Min Path Index = " << i << " Value = " << temp
+        1:  605-block  0
+        1:  605-block  1
+        1:  605-block  2
+        1:  605-block  3
+        1:  606:					<< std::endl;
+        1:  606-block  0
+        1:  607:		}
+        1:  607-block  0
+        -:  608:
+        -:  609:		/*
+        -:  610:		 * @author   dwlambiri
+        -:  611:		 * @date     Oct 1, 2017
+        -:  612:		 *  If the current path has a smaller sum than the current best
+        -:  613:		 *  I store the starting row value and the path vector.
+        -:  614:		 */
+        -:  615:
+      480:  616:		if (total1 < 0 || total1 > temp) {
+      480:  616-block  0
+      479:  616-block  1
+        4:  617:			total1 = temp;
+        4:  618:			rowvalue = i;
+        4:  619:			bestRun = tempRun;
+        4:  619-block  0
+        4:  620:		}
+        4:  620-block  0
+      480:  621:	}
+    $$$$$:  621-block  0
+      480:  621-block  1
+        -:  622:
+        1:  623:	std::cout << "Min Path Index = " << rowvalue << " Value = " << total1
+        1:  623-block  0
+        1:  623-block  1
+        1:  623-block  2
+        1:  623-block  3
+        1:  624:			<< std::endl;
+        1:  624-block  0
+        -:  625:	/*
+        -:  626:	 * @author   dwlambiri
+        -:  627:	 * @date     Oct 1, 2017
+        -:  628:	 *  I am drawing the best path of the run in green.
+        -:  629:	 */
+        -:  630:
+      845:  631:	for (int i = 0; i < map.numcols(); i++) {
+        1:  631-block  0
+      845:  631-block  1
+      845:  631-block  2
+      844:  631-block  3
+      844:  632:		drawPixel(i, bestRun[i], bluePixel_c);
+      844:  632-block  0
+      844:  632-block  1
+      844:  633:	} //end-of-for
+      844:  633-block  0
+        -:  634:
+        1:  635:	moveBitmapToDisplay();
+        1:  635-block  0
+        -:  636:
+        1:  637:	return total1;
+        1:  638:} // end-of-function markAllPaths
+    $$$$$:  638-block  0
+        1:  638-block  1
+    $$$$$:  638-block  2
+    $$$$$:  638-block  3
+        -:  639:
+        -:  640:/*
+        -:  641: * @author   dwlambiri
+        -:  642: * @date     Oct 4, 2017
+        -:  643: *  THIS MARKS THE BEGINING OF THE ALGORITHM TWO FUNCTIONS
+        -:  644: *  THE FOLLOWING ARE FOR ALGORITHM 2
+        -:  645: */
+        -:  646:
+        -:  647:/**
+        -:  648: ---------------------------------------------------------------------------
+        -:  649: @author  dwlambiri
+        -:  650: @date    Oct 4, 2017
+        -:  651: @mname   InitMatrices
+        -:  652: @details
+        -:  653:  Initializes a provided matrix to invalidValue_c which is utilized in the
+        -:  654:  second algorithm.
+        -:  655: --------------------------------------------------------------------------
+        -:  656: */
+        -:  657:void initMatrices(apmatrix<int>& map) {
+        -:  658:
+   462722:  659:	for (int i = 0; i < map.numrows(); i++) {
+      962:  659-block  0
+   462722:  659-block  1
+   461760:  659-block  2
+390187200:  660:		for (int j = 0; j < map.numcols(); j++) {
+   461760:  660-block  0
+390187200:  660-block  1
+389725440:  660-block  2
+389725440:  661:			map[i][j] = invalidValue_c;
+389725440:  662:		} //end-of-for
+389725440:  662-block  0
+   461760:  663:	} //end-of-for
+   461760:  663-block  0
+      962:  664:} // end-of-function InitMatrices
+      962:  664-block  0
+        -:  665:
+        -:  666:/**
+        -:  667: ---------------------------------------------------------------------------
+        -:  668: @author  dwlambiri
+        -:  669: @date    Oct 4, 2017
+        -:  670: @mname   relax
+        -:  671: @details
+        -:  672:  This function implements the algorithm found in section 24.1 (page 586)
+        -:  673:   of the second edition of the CLR algorithms book.
+        -:  674: --------------------------------------------------------------------------
+        -:  675: */
+        -:  676:bool relaxVertex(int currentX, int y, int nextX, int wheight,
+        -:  677:		apmatrix<int>& distance, apmatrix<int>& predecesor) {
+        -:  678:
+472550633:  679:	if (currentX < 0 || (nextX >= matrixRows_c))
+472550633:  679-block  0
+472550633:  679-block  1
+    #####:  680:		return false;
+    $$$$$:  680-block  0
+472550633:  681:	if (y >= matrixCols_c - 1)
+472550633:  681-block  0
+    #####:  682:		return false;
+    $$$$$:  682-block  0
+472550633:  683:	if ((distance[nextX][y + 1] == invalidValue_c)
+314609834:  683-block  0
+472550633:  684:			|| (distance[nextX][y + 1] > distance[currentX][y] + wheight)) {
+472550633:  684-block  0
+278966476:  685:		distance[nextX][y + 1] = distance[currentX][y] + wheight;
+278966476:  686:		predecesor[nextX][y + 1] = currentX;
+278966476:  687:	}
+278966476:  687-block  0
+472550633:  688:	return true;
+472550633:  688-block  0
+472550633:  689:} // end-of-function relax
+472550633:  689-block  0
+        -:  690:
+        -:  691:/**
+        -:  692: ---------------------------------------------------------------------------
+        -:  693: @author  dwlambiri
+        -:  694: @date    Oct 4, 2017
+        -:  695: @mname   shortestPathsFromSingleStart
+        -:  696: @details
+        -:  697:   This function implements the algorithm found in section 24.2 (page 592)
+        -:  698:   	   of the second edition of the CLR algorithms book.
+        -:  699:   The algorithm finds shortest paths from a given source to all nodes on
+        -:  700:   	   the last column if a path exists.
+        -:  701:   Please note there are node pairs that do not have connecting paths using
+        -:  702:   	   the three edge connectivity property of this problem.
+        -:  703:   After finding all the pats the algorithm will iterate through all the found
+        -:  704:   	   paths to find the best possible path among this set.
+        -:  705:   This path is then displayed to the screen as a red line.
+        -:  706:
+        -:  707:   I picked this algorithm because the map with the three edges can be modeled
+        -:  708:   	   as an acyclical, directed graph with no negative edge values.
+        -:  709:   The CLR book states that the performance of Floyd-Warshall is proportional
+        -:  710:   	   with n^3 where n is the number of vertices.
+        -:  711:   In our problem n = maxCols_c * maxRows_c
+        -:  712:   The algorithm I chose has a performance of n + e where e is the number of edges.
+        -:  713:   This algorithm is called in markAllPaths2 maxRows_c times.
+        -:  714:   The number of edges is at most 3*n for our problem.
+        -:  715:   Therefore the running time of finding the shortest path with this method is
+        -:  716:   	   (n + 3n) * maxRows_c
+        -:  717:   This is better than the FW algorithm by a large factor.
+        -:  718:   Considering how long this algorithm takes to finish, FW would have taken
+        -:  719:   	   a looooooooooooooooong time to complete.
+        -:  720:
+        -:  721:   If printAll is true the function prints all paths from a given source to
+        -:  722:   points on the last column.
+        -:  723:   If printAll is false the function prints the shortest path between the source
+        -:  724:   and any point on the last column.
+        -:  725: --------------------------------------------------------------------------
+        -:  726: */
+        -:  727:int shortestPathsFromVertex(int start, apmatrix<int>& map,
+        -:  728:		apvector<int>& bestPath, bool printAll) {
+        -:  729:
+        -:  730:	/*
+        -:  731:	 * @author   dwlambiri
+        -:  732:	 * @date     Oct 6, 2017
+        -:  733:	 *  I declared these two variables static to avoid being created every
+        -:  734:	 *  	time the function is called.
+        -:  735:	 *  This way the variables are created only the first time the function
+        -:  736:	 *  	is called.
+        -:  737:	 *  In CLR distanceToStartVertex is denoted by d and
+        -:  738:	 *  	predecesorVertex is denoted by pi.
+        -:  739:	 */
+        -:  740:
+      481:  741:	static apmatrix<int> distanceToStartVertex(map.numrows(), map.numcols());
+      481:  741-block  0
+        1:  741-block  1
+        1:  741-block  2
+        1:  741-block  3
+        1:  741-block  4
+        1:  741-block  5
+    $$$$$:  741-block  6
+    $$$$$:  741-block  7
+      481:  742:	static apmatrix<int> predecesorVertex(map.numrows(), map.numcols());
+      481:  742-block  0
+        1:  742-block  1
+        1:  742-block  2
+        1:  742-block  3
+        1:  742-block  4
+        1:  742-block  5
+    $$$$$:  742-block  6
+        -:  743:
+      481:  744:	int row = 0;
+        -:  745:
+      481:  746:	initMatrices(distanceToStartVertex);
+      481:  747:	initMatrices(predecesorVertex);
+        -:  748:
+      481:  749:	distanceToStartVertex[start][0] = 0;
+        -:  750:
+   405964:  751:	for (int y = 0; y < map.numcols() - 1; y++) {
+      481:  751-block  0
+   405964:  751-block  1
+   405483:  751-block  2
+   405483:  752:		bool done = false;
+        -:  753:		/*
+        -:  754:		 * @author   dwlambiri
+        -:  755:		 * @date     Oct 6, 2017
+        -:  756:		 *  Each column we start using this expression.
+        -:  757:		 *  	int x = ((start - y) >= 0) ? (start - y) : 0
+        -:  758:		 */
+        -:  759:
+158115883:  760:		for (int x = ((start - y) >= 0) ? (start - y) : 0; x < map.numrows();
+   405483:  760-block  0
+   115681:  760-block  1
+   289802:  760-block  2
+   405483:  760-block  3
+158115883:  760-block  4
+157710400:  760-block  5
+157710400:  761:				x++) {
+        -:  762:
+157825599:  763:			if ((done == false)
+   405483:  763-block  0
+157825599:  764:					&& (distanceToStartVertex[x][y] == invalidValue_c))
+157825599:  764-block  0
+    #####:  765:				continue;
+    $$$$$:  765-block  0
+        -:  766:
+        -:  767:			/*
+        -:  768:			 * @author   dwlambiri
+        -:  769:			 * @date     Oct 6, 2017
+        -:  770:			 *  The variable done is used to reduce the number of iterations.
+        -:  771:			 *  We need to stop processing nodes in a column when we encounter
+        -:  772:			 *  	an invalidValue_c after we have seen nodes with positive path lengths.
+        -:  773:			 */
+        -:  774:
+157825599:  775:			if ((done == true)
+157420116:  775-block  0
+157825599:  776:					&& (distanceToStartVertex[x][y] == invalidValue_c))
+157825599:  776-block  0
+   115199:  777:				break;
+   115199:  777-block  0
+        -:  778:
+157710400:  779:			if (x == 0) {
+157710400:  779-block  0
+        -:  780:				//top row
+   290283:  781:				int edge1weight = abs(map[x][y] - map[x][y + 1]);
+   290283:  782:				int edge2weight = abs(map[x][y] - map[x + 1][y + 1]);
+   290283:  783:				relaxVertex(x, y, x, edge1weight, distanceToStartVertex,
+        -:  784:						predecesorVertex);
+   290283:  785:				relaxVertex(x, y, (x + 1), edge2weight, distanceToStartVertex,
+        -:  786:						predecesorVertex);
+   290283:  787:				done = true;
+157420117:  788:			} else if (x == matrixRows_c - 1) {
+   290283:  788-block  0
+157420117:  788-block  1
+   290284:  789:				int edge1weight = abs(map[x][y] - map[x][y + 1]);
+   290284:  790:				int edge3weight = abs(map[x][y] - map[x - 1][y + 1]);
+   290284:  791:				relaxVertex(x, y, x, edge1weight, distanceToStartVertex,
+        -:  792:						predecesorVertex);
+   290284:  793:				relaxVertex(x, y, (x - 1), edge3weight, distanceToStartVertex,
+        -:  794:						predecesorVertex);
+   290284:  795:				done = true;
+   290284:  796:			} else {
+   290284:  796-block  0
+157129833:  797:				int edge1weight = abs(map[x][y] - map[x][y + 1]);
+157129833:  798:				int edge2weight = abs(map[x][y] - map[x + 1][y + 1]);
+157129833:  799:				int edge3weight = abs(map[x][y] - map[x - 1][y + 1]);
+157129833:  800:				relaxVertex(x, y, x, edge1weight, distanceToStartVertex,
+        -:  801:						predecesorVertex);
+157129833:  802:				relaxVertex(x, y, (x + 1), edge2weight, distanceToStartVertex,
+        -:  803:						predecesorVertex);
+157129833:  804:				relaxVertex(x, y, (x - 1), edge3weight, distanceToStartVertex,
+        -:  805:						predecesorVertex);
+157129833:  806:				done = true;
+157129833:  806-block  0
+        -:  807:			}
+157710400:  808:		} //end-of-for
+157710400:  808-block  0
+   405483:  809:	} //end-of-for
+   405483:  809-block  0
+        -:  810:
+   231361:  811:	for (int i = 0; i < map.numrows(); i++) {
+      481:  811-block  0
+   231361:  811-block  1
+   230880:  811-block  2
+   230880:  812:		if (distanceToStartVertex[i][map.numcols() - 1] == invalidValue_c)
+   230880:  812-block  0
+    #####:  813:			continue;
+    $$$$$:  813-block  0
+   230880:  814:		if ((distanceToStartVertex[row][map.numcols() - 1] == invalidValue_c)
+   230880:  814-block  0
+   230880:  815:				|| (distanceToStartVertex[row][map.numcols() - 1]
+   230880:  815-block  0
+   230880:  816:						> distanceToStartVertex[i][map.numcols() - 1])) {
+    60379:  817:			row = i;
+    60379:  818:		} //end-of-if
+    60379:  818-block  0
+   230880:  819:	} //end-of-for
+   230880:  819-block  0
+        -:  820:
+      481:  821:	int temp2 = predecesorVertex[row][map.numcols() - 1];
+      481:  822:	bestPath[map.numcols() - 1] = row;
+        -:  823:
+   405964:  824:	for (int i = map.numcols() - 1; i >= 1; i--) {
+      481:  824-block  0
+   405964:  824-block  1
+   405483:  824-block  2
+   405483:  825:		bestPath[i - 1] = predecesorVertex[temp2][i];
+   405483:  826:		temp2 = predecesorVertex[temp2][i];
+   405483:  827:	} //end-of-for
+   405483:  827-block  0
+        -:  828:
+        -:  829:
+      481:  830:	if(printAll == false) {
+      481:  830-block  0
+   405600:  831:		for (int i = 0; i < map.numcols(); i++) {
+      480:  831-block  0
+   405600:  831-block  1
+   405120:  831-block  2
+   405120:  832:			drawPixel(i, bestPath[i], redPixel_c);
+   405120:  833:		} //end-of-for
+   405120:  833-block  0
+      480:  834:	}
+      480:  834-block  0
+        -:  835:	else {
+        -:  836:
+      481:  837:		for (int j = 0; j < map.numrows(); ++j) {
+        1:  837-block  0
+      481:  837-block  1
+      480:  837-block  2
+      480:  838:			int temp2 = predecesorVertex[j][map.numcols() - 1];
+      480:  839:			drawPixel(map.numcols()-1, j, redPixel_c);
+   405120:  840:			for (int i = map.numcols() - 1; i >= 1; i--) {
+      480:  840-block  0
+   405120:  840-block  1
+   404640:  840-block  2
+   404640:  841:				drawPixel(i-1, predecesorVertex[temp2][i], redPixel_c);
+   404640:  842:				temp2 = predecesorVertex[temp2][i];
+   404640:  843:			} //end-of-for
+   404640:  843-block  0
+      480:  844:		}
+      480:  844-block  0
+        -:  845:
+      845:  846:		for (int i = 0; i < map.numcols(); i++) {
+        1:  846-block  0
+      845:  846-block  1
+      844:  846-block  2
+      844:  847:			drawPixel(i, bestPath[i], bluePixel_c);
+      844:  848:		} //end-of-for
+      844:  848-block  0
+        -:  849:	}
+        -:  850:
+        -:  851:
+      481:  852:	moveBitmapToDisplay();
+      481:  853:	return distanceToStartVertex[row][map.numcols() - 1];
+      481:  853-block  0
+    #####:  854:} // end-of-function shortestPathsFromVertex
+        -:  855:
+        -:  856:/**
+        -:  857: ---------------------------------------------------------------------------
+        -:  858: @author  dwlambiri
+        -:  859: @date    Sep 30, 2017
+        -:  860: @mname   markAllPaths2
+        -:  861: @details
+        -:  862:  This function calls shortestPathsFromVertex() for each node in the first
+        -:  863:  	  column of the matrix.
+        -:  864:  Similar to markAllPaths() it then remembers the best possible path up to that point
+        -:  865:      in the run.
+        -:  866:
+        -:  867: --------------------------------------------------------------------------
+        -:  868: */
+        -:  869:int markAllPaths2(apmatrix<int>& map) {
+        1:  870:	int runsize = -1;
+        1:  871:	int rowvalue = 0;
+        -:  872:	/*
+        -:  873:	 * @author   dwlambiri
+        -:  874:	 * @date     Oct 1, 2017
+        -:  875:	 *  I store the row numbers for the best path of the run.
+        -:  876:	 *
+        -:  877:	 *  This is to ensure that the green path that is displayed
+        -:  878:	 *  is the path with the smallest delta sum.
+        -:  879:	 *
+        -:  880:	 *  Because of the use of random number generation
+        -:  881:	 *  there are many possible paths from a starting point.
+        -:  882:	 *
+        -:  883:	 *  Therefore even if a given starting point has the smallest path
+        -:  884:	 *  of the run when we run the function again the new path might not
+        -:  885:	 *  be the smallest
+        -:  886:	 */
+        -:  887:
+        1:  888:	apvector<int> bestRun(map.numcols());
+      481:  889:	for (int i = 0; i < map.numrows(); i++) {
+        1:  889-block  0
+      481:  889-block  1
+      481:  889-block  2
+      480:  889-block  3
+        -:  890:		/*
+        -:  891:		 * @author   dwlambiri
+        -:  892:		 * @date     Oct 1, 2017
+        -:  893:		 *  For each starting point (row) we return the actual path
+        -:  894:		 *  as row positions in a vector who's indeces represent the columns.
+        -:  895:		 */
+        -:  896:
+      480:  897:		apvector<int> tempRun(map.numcols());
+      480:  897-block  0
+      480:  897-block  1
+      480:  898:		int temp = shortestPathsFromVertex(i, map, tempRun, false);
+      480:  898-block  0
+        -:  899:
+        -:  900:		/*
+        -:  901:		 * @author   dwlambiri
+        -:  902:		 * @date     Oct 1, 2017
+        -:  903:		 *  If the current path has a smaller sum than the current best
+        -:  904:		 *  I store the starting row value and the path vector.
+        -:  905:		 */
+        -:  906:
+      480:  907:		if (runsize < 0 || runsize > temp) {
+      480:  907-block  0
+      479:  907-block  1
+       10:  908:			runsize = temp;
+       10:  909:			rowvalue = i;
+       10:  910:			bestRun = tempRun;
+       10:  910-block  0
+       10:  911:		}
+       10:  911-block  0
+      480:  912:	}
+    $$$$$:  912-block  0
+      480:  912-block  1
+        -:  913:
+        1:  914:	std::cout << "Min Path Index = " << rowvalue << " Value = " << runsize
+        1:  914-block  0
+        1:  914-block  1
+        1:  914-block  2
+        1:  914-block  3
+        1:  915:			<< std::endl;
+        1:  915-block  0
+        -:  916:	/*
+        -:  917:	 * @author   dwlambiri
+        -:  918:	 * @date     Oct 1, 2017
+        -:  919:	 *  I am drawing the best path of the run in green.
+        -:  920:	 */
+        -:  921:
+      845:  922:	for (int i = 0; i < map.numcols(); i++) {
+        1:  922-block  0
+      845:  922-block  1
+      845:  922-block  2
+      844:  922-block  3
+      844:  923:		drawPixel(i, bestRun[i], bluePixel_c);
+      844:  923-block  0
+      844:  923-block  1
+      844:  924:	} //end-of-for
+      844:  924-block  0
+        -:  925:
+        1:  926:	return runsize;
+        1:  927:} // end-of-function markAllPaths
+    $$$$$:  927-block  0
+        1:  927-block  1
+    $$$$$:  927-block  2
+    $$$$$:  927-block  3
+        -:  928:
+        -:  929:/**
+        -:  930:  --------------------------------------------------------------------------
+        -:  931:   @author  dwlambiri
+        -:  932:   @date    Oct 8, 2017
+        -:  933:   @name    on macos allegro requires a main with argc, argv
+        -:  934:   @param   enclosing_method_arguments
+        -:  935:   @return  return_type
+        -:  936:   @details
+        -:  937:	\n
+        -:  938:  -------------------------------------------------------------------------
+        -:  939: */
+        -:  940:int main(int argc, char **argv) {
+        -:  941:
+        -:  942:	//we need full main declaration in osx
+        -:  943:	//Initializes pseudo randomization
+        1:  944:	srand(time(nullptr));
+        1:  945:	if (initAllegro() == false) {
+        1:  945-block  0
+    #####:  946:		cerr << "fatal error: could not initialize allegro" << endl;
+    #####:  947:		return 1;
+    $$$$$:  947-block  0
+        -:  948:	}
+        -:  949:
+        -:  950:	//Initializes an apmatrix to store all the map's data
+        1:  951:	apmatrix<int> mountainMat(matrixRows_c, matrixCols_c, 0);
+        1:  952:	mapDataReader(mountainMat);
+        1:  952-block  0
+        -:  953:
+        -:  954:	//saves the smallest and largest peaks on the mountains into two variables
+        1:  955:	int largestSize = findMax(mountainMat);
+        1:  955-block  0
+        1:  956:	int smallestSize = findMin(mountainMat);
+        1:  956-block  0
+        -:  957:
+        -:  958:	//Prints the value of the largest and smallest peaks on the mountain
+        1:  959:	std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
+        1:  959-block  0
+        1:  959-block  1
+        1:  959-block  2
+        1:  959-block  3
+        1:  959-block  4
+        1:  959-block  5
+        -:  960:
+        -:  961:    /*
+        -:  962:	 * @author   dwlambiri
+        -:  963:	 * @date     Oct 6, 2017
+        -:  964:	 *  The method runs in three steps.
+        -:  965:	 *  1. It draws the map
+        -:  966:	 *  2. It calculates and draws paths
+        -:  967:	 *  3. It highlights the optimal path
+        -:  968:	 *  4. It waits for user input to either continue with the next method or exit.
+        -:  969:	 *
+        -:  970:	 *   The method is animated and the paths are drawn as they are calculated.
+        -:  971:	 *   Because the computational complexity of the markAllPaths is low,
+        -:  972:	 *   	(3 * matrixCols_c * matrixRows_c) the animation is very fast.
+        -:  973:	 */
+        -:  974:
+        1:  975:    drawMap(mountainMat, smallestSize, largestSize);
+        1:  975-block  0
+        -:  976:     //Draws the initial map using a grey scale into an allegro buffer
+        1:  977:    int pathLength = markAllPaths(mountainMat, largestSize);
+        1:  977-block  0
+        1:  978:    printLowestPathInfo(pathLength);
+        1:  978-block  0
+        1:  979:    displayMessage("Press 'space' to see next algorithm");
+        1:  979-block  0
+        1:  980:    moveBitmapToDisplay();
+        1:  980-block  0
+        -:  981:
+        -:  982:    // Wait for key press
+        1:  983:    if(allegroEventLoop() == false) return 0;
+        1:  983-block  0
+        1:  983-block  1
+    $$$$$:  983-block  2
+        -:  984:
+        -:  985:    //this should clear the bitmap
+        1:  986:    al_clear_to_color(al_map_rgb(0,0,0));
+        1:  986-block  0
+        1:  986-block  1
+        -:  987:
+        -:  988:
+        1:  989:    drawMap(mountainMat, smallestSize, largestSize);
+        1:  989-block  0
+        -:  990:     //Draws the initial map using a grey scale into an allegro buffer
+        1:  991:    apvector<int> bestPath(matrixCols_c);
+        1:  991-block  0
+        1:  992:    pathLength = shortestPathsFromVertex(240, mountainMat,bestPath, true);
+        1:  992-block  0
+        1:  993:    printLowestPathInfo(pathLength);
+        1:  993-block  0
+        1:  994:    displayMessage("Press 'space' to see next algorithm");
+        1:  994-block  0
+        1:  995:    moveBitmapToDisplay();
+        1:  995-block  0
+        -:  996:
+        -:  997:    // Wait for key press
+        1:  998:    if(allegroEventLoop() == false) return 0;
+        1:  998-block  0
+        1:  998-block  1
+    $$$$$:  998-block  2
+        -:  999:
+        -: 1000:    //this should clear the bitmap
+        1: 1001:    al_clear_to_color(al_map_rgb(0,0,0));
+        1: 1001-block  0
+        1: 1001-block  1
+        -: 1002:
+        -: 1003:    /*
+        -: 1004:    	 * @author   dwlambiri
+        -: 1005:    	 * @date     Oct 6, 2017
+        -: 1006:    	 *  The method runs in three steps.
+        -: 1007:    	 *  1. It draws the map
+        -: 1008:    	 *  2. It calculates and draws paths
+        -: 1009:    	 *  3. It highlights the optimal path
+        -: 1010:    	 *  4. It waits for user input to either continue with the next method or exit.
+        -: 1011:    	 *
+        -: 1012:    	 *   The method is animated and the paths are drawn as they are calculated.
+        -: 1013:    	 *   The computational complexity is much greater than for the previous algorithm,
+        -: 1014:    	 *   	((n + 3n) * maxRows_c) this runs maxRows_c slower.
+        -: 1015:    	 */
+        -: 1016:
+        1: 1017:    drawMap(mountainMat, smallestSize, largestSize);
+        1: 1017-block  0
+        1: 1018:    pathLength = markAllPaths2(mountainMat);
+        1: 1018-block  0
+        1: 1019:    printLowestPathInfo(pathLength);
+        1: 1019-block  0
+        1: 1020:    displayMessage("Close window to exit program");
+        1: 1020-block  0
+        1: 1021:    moveBitmapToDisplay();
+        1: 1021-block  0
+        -: 1022:
+        1: 1023:    allegroExitLoop();
+        1: 1023-block  0
+        1: 1024:	return 0;
+        1: 1024-block  0
+        1: 1025:}//RETURN OF MAIN IF EVERTHING GOES WELL
+    $$$$$: 1025-block  0
+    $$$$$: 1025-block  1
+        1: 1025-block  2
+        1: 1025-block  3
+    $$$$$: 1025-block  4
+        1: 1025-block  5
+    $$$$$: 1025-block  6
