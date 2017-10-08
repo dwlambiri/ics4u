@@ -72,7 +72,7 @@ void moveBitmapToDisplay();
 void cleanUpAllegro();
 bool allegroEventLoop();
 void allegroExitLoop();
-int drawMap(apmatrix<int>& map, int small, int large);
+void drawMap(apmatrix<int>& map, int small, int large);
 bool drawPixel(int x, int y, MapPixelColour c);
 void printLowestPathInfo(int lowestElev);
 void displayMessage(const char* msg);
@@ -124,48 +124,49 @@ bool mapDataReader(apmatrix<int> &map) {
  @author  dwlambiri
  @date    Oct 6, 2017
  @name    findMin
- @param   enclosing_method_arguments
- @return  return_type
+ @param   a reference to the matrix that contains the data
+ @return  returns an integer representing the smallest data value
  @details
- finds the smallest peak of the set of heights\n
+    Iterates through the matrix and with two for loops to find the
+    lowest value.
  -------------------------------------------------------------------------
  */
 int findMin(apmatrix<int> &map) {
 	int lowest = map[0][0];
 	//
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
+	for (int y = 0; y < map.numrows(); y++) {
+		for (int x = 0; x < map.numcols(); x++) {
 			if (lowest > map[y][x]) {
 				lowest = map[y][x];
 			}
 		}
 	}
 	return lowest;
-} // END OF findMin
+} // end-of-function findMin
 
 /**
  --------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 6, 2017
  @name    findMax
- @param   enclosing_method_arguments
- @return  return_type
+ @param   takes a reference to the matrix
+ @return  returns an integer representing the largest numerical value in the matrix
  @details
- finds the largest peak of the set of heights\n
+	Iterates through every data point in the matrix.
  -------------------------------------------------------------------------
  */
 int findMax(apmatrix<int> &map) {
 	int largest = map[0][0];
 
-	for (int y = 0; y < matrixRows_c; y++) {
-		for (int x = 0; x < matrixCols_c; x++) {
+	for (int y = 0; y < map.numrows(); y++) {
+		for (int x = 0; x < map.numcols(); x++) {
 			if (largest < map[y][x]) {
 				largest = map[y][x];
 			}
 		}
 	}
 	return largest;
-} // END OF findMin
+} // end-of-function findMin
 
 /**
  ---------------------------------------------------------------------------
@@ -182,7 +183,7 @@ bool initAllegro() {
 
 	//initialize allegro
 	if(al_init() == false) {
-		cerr << "cannot init allegro" << endl;
+		cerr << "fatal error: cannot init allegro" << endl;
 	}
 
 	//create display
@@ -190,13 +191,13 @@ bool initAllegro() {
 
 	// Always check if your allegro routines worked successfully.
 	if (!display) {
-		cerr << "failed to intialize display!" << endl;
+		cerr << "fatal error: failed to intialize display!" << endl;
 		return false;
 	}
 
 	//install keyboard
 	if (!al_install_keyboard()) {
-		cerr << "failed to initialize the keyboard!" << endl;
+		cerr << "fatal error: failed to initialize the keyboard!" << endl;
 		return false;
 	}
 
@@ -204,7 +205,7 @@ bool initAllegro() {
 	timer = al_create_timer(1.0 / fps_c);
 
 	if (!timer) {
-		cerr << "failed to create timer!" << endl;
+		cerr << "fatal error: failed to create timer!" << endl;
 		return false;
 	}
 
@@ -212,14 +213,14 @@ bool initAllegro() {
 	screenBitmap = al_create_bitmap(matrixCols_c, matrixRows_c);
 
 	if (!screenBitmap) {
-		cerr << "failed to create bouncer bitmap!" << endl;
+		cerr << "fatal error: failed to create bouncer bitmap!" << endl;
 		al_destroy_display(display);
 		al_destroy_timer(timer);
 		return false;
 	}
 	event_queue = al_create_event_queue();
 	if (!event_queue) {
-		cerr << "failed to create event_queue!" << endl;
+		cerr << "fatal error: failed to create event_queue!" << endl;
 		al_destroy_bitmap(screenBitmap);
 		al_destroy_display(display);
 		al_destroy_timer(timer);
@@ -232,7 +233,7 @@ bool initAllegro() {
 	font = al_load_ttf_font("font.ttf", 30, 0);
 
 	if (!font) {
-		cerr << "Could not load 'font.ttf'" << endl;
+		cerr << "fatal error: could not load 'font.ttf'" << endl;
 		al_destroy_event_queue(event_queue);
 		al_destroy_bitmap(screenBitmap);
 		al_destroy_display(display);
@@ -252,7 +253,7 @@ bool initAllegro() {
 	 */
 
 	al_set_target_bitmap(screenBitmap);
-	al_set_window_title(display, "Mountain region map");
+	al_set_window_title(display, fileName_c);
 	return true;
 } // end-of-function initAllegro
 
@@ -303,7 +304,9 @@ void cleanUpAllegro() {
  @date    Oct 6, 2017
  @mname   allegroEventLoop
  @details
- \n
+ 	 This loop reads and processes allegro events. We are interested in display
+ 	 close and key presses.
+ 	 The function returns false if the display is closed and true otherwise.
  --------------------------------------------------------------------------
  */
 bool allegroEventLoop() {
@@ -332,7 +335,8 @@ bool allegroEventLoop() {
  @date    Oct 6, 2017
  @mname   allegroExitLoop
  @details
- \n
+ 	 This function processes a display close event and it is called at the
+ 	 end of the program when no other user input is allowed
  --------------------------------------------------------------------------
  */
 void allegroExitLoop() {
@@ -354,12 +358,13 @@ void allegroExitLoop() {
  @date    Oct 6, 2017
  @name    drawMap
  @param   enclosing_method_arguments
- @return  return_type
+ @return  none
  @details
- \n
+ 	 This function writes each data pixel into the bitmap.
+ 	 After writing all pixels it puts the bitmap on the screen.
  -------------------------------------------------------------------------
  */
-int drawMap(apmatrix<int>& map, int small, int large) {
+void drawMap(apmatrix<int>& map, int small, int large) {
 
 	/*
 	 * @author   dwlambiri
@@ -405,7 +410,6 @@ int drawMap(apmatrix<int>& map, int small, int large) {
 		}
 	}
 	moveBitmapToDisplay();
-	return 0;
 }
 
 /**
@@ -414,7 +418,9 @@ int drawMap(apmatrix<int>& map, int small, int large) {
  @date    Sep 30, 2017
  @mname   DrawPixel
  @details
- \n
+ 	 Draws a pixel at position (x,y) on the bitmap using colour c.
+ 	 If an invalid colour is provided the function returns false otherwise it
+ 	 returns true.
  --------------------------------------------------------------------------
  */
 bool drawPixel(int x, int y, MapPixelColour c) {
@@ -443,13 +449,13 @@ bool drawPixel(int x, int y, MapPixelColour c) {
  @param   enclosing_method_arguments
  @return  return_type
  @details
- \n
+ 	 Displays the lowest path length of the run.
  -------------------------------------------------------------------------
  */
 void printLowestPathInfo(int lowestElev) {
 
 	al_draw_textf(font, al_map_rgb(255, 255, 255), 200, 50,
-			ALLEGRO_ALIGN_CENTRE, "Lowest Elevation: %d", lowestElev);
+			ALLEGRO_ALIGN_CENTRE, "Lowest Path Length: %d", lowestElev);
 
 }
 
@@ -461,7 +467,7 @@ void printLowestPathInfo(int lowestElev) {
  @param   enclosing_method_arguments
  @return  return_type
  @details
- \n
+ 	 Displays a custom message on the screen.
  -------------------------------------------------------------------------
  */
 void displayMessage(const char* msg) {
@@ -476,7 +482,10 @@ void displayMessage(const char* msg) {
  @date    Sep 30, 2017
  @mname   findPath
  @details
- \n
+   This function implements the first algorithm described in the  assignment
+   for the starting point (startRow , 0).
+   It then draws the path in red in the bitmap.
+   It flips the bitmap to display and returns the length of the path.
  --------------------------------------------------------------------------
  */
 int findPath(apmatrix<int>& map, int startRow, int maxvalue,
@@ -557,7 +566,9 @@ int findPath(apmatrix<int>& map, int startRow, int maxvalue,
  @date    Sep 30, 2017
  @mname   markAllPaths
  @details
- \n
+ 	 This calls the findPath function for all possible starting points.
+ 	 It calculates the best possible path of all runs and writes it in blue
+ 	 in the bitmap. It then flips the bitmap to the screen.
  --------------------------------------------------------------------------
  */
 int markAllPaths(apmatrix<int>& map, int maxValue) {
@@ -639,13 +650,14 @@ int markAllPaths(apmatrix<int>& map, int maxValue) {
  @date    Oct 4, 2017
  @mname   InitMatrices
  @details
- \n
+  Initializes a provided matrix to invalidValue_c which is utilized in the
+  second algorithm.
  --------------------------------------------------------------------------
  */
 void initMatrices(apmatrix<int>& map) {
 
-	for (int i = 0; i < matrixRows_c; i++) {
-		for (int j = 0; j < matrixCols_c; j++) {
+	for (int i = 0; i < map.numrows(); i++) {
+		for (int j = 0; j < map.numcols(); j++) {
 			map[i][j] = invalidValue_c;
 		} //end-of-for
 	} //end-of-for
@@ -731,7 +743,7 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 
 	distanceToStartVertex[start][0] = 0;
 
-	for (int y = 0; y < matrixCols_c - 1; y++) {
+	for (int y = 0; y < map.numcols() - 1; y++) {
 		bool done = false;
 		/*
 		 * @author   dwlambiri
@@ -740,7 +752,7 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 		 *  	int x = ((start - y) >= 0) ? (start - y) : 0
 		 */
 
-		for (int x = ((start - y) >= 0) ? (start - y) : 0; x < matrixRows_c;
+		for (int x = ((start - y) >= 0) ? (start - y) : 0; x < map.numrows();
 				x++) {
 
 			if ((done == false)
@@ -791,20 +803,20 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 		} //end-of-for
 	} //end-of-for
 
-	for (int i = 0; i < matrixRows_c; i++) {
-		if (distanceToStartVertex[i][matrixCols_c - 1] == invalidValue_c)
+	for (int i = 0; i < map.numrows(); i++) {
+		if (distanceToStartVertex[i][map.numcols() - 1] == invalidValue_c)
 			continue;
-		if ((distanceToStartVertex[row][matrixCols_c - 1] == invalidValue_c)
-				|| (distanceToStartVertex[row][matrixCols_c - 1]
-						> distanceToStartVertex[i][matrixCols_c - 1])) {
+		if ((distanceToStartVertex[row][map.numcols() - 1] == invalidValue_c)
+				|| (distanceToStartVertex[row][map.numcols() - 1]
+						> distanceToStartVertex[i][map.numcols() - 1])) {
 			row = i;
 		} //end-of-if
 	} //end-of-for
 
-	int temp2 = predecesorVertex[row][matrixCols_c - 1];
-	bestPath[matrixCols_c - 1] = row;
+	int temp2 = predecesorVertex[row][map.numcols() - 1];
+	bestPath[map.numcols() - 1] = row;
 
-	for (int i = matrixCols_c - 1; i >= 1; i--) {
+	for (int i = map.numcols() - 1; i >= 1; i--) {
 		bestPath[i - 1] = predecesorVertex[temp2][i];
 		temp2 = predecesorVertex[temp2][i];
 	} //end-of-for
@@ -814,7 +826,7 @@ int shortestPathsFromVertex(int start, apmatrix<int>& map,
 	} //end-of-for
 
 	moveBitmapToDisplay();
-	return distanceToStartVertex[row][matrixCols_c - 1];
+	return distanceToStartVertex[row][map.numcols() - 1];
 } // end-of-function shortestPathsFromVertex
 
 /**
@@ -890,14 +902,24 @@ int markAllPaths2(apmatrix<int>& map) {
 	return runsize;
 } // end-of-function markAllPaths
 
-//MAIN FUNCTION
+/**
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 8, 2017
+   @name    on macos allegro requires a main with argc, argv
+   @param   enclosing_method_arguments
+   @return  return_type
+   @details
+	\n
+  -------------------------------------------------------------------------
+ */
 int main(int argc, char **argv) {
 
 	//we need full main declaration in osx
 	//Initializes pseudo randomization
 	srand(time(nullptr));
 	if (initAllegro() == false) {
-		cerr << "program error: could not initialize allegro" << endl;
+		cerr << "fatal error: could not initialize allegro" << endl;
 		return 1;
 	}
 
