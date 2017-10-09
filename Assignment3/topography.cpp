@@ -169,6 +169,47 @@ int findMax(apmatrix<int> &map) {
 } // end-of-function findMin
 
 /**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 9, 2017
+   @mname   findMinAndMax
+   @details
+	  Found on page 184 of CLR which optimises the method of calculating the
+	  	  minimum and maximum values
+	  3(n/2)
+  --------------------------------------------------------------------------
+ */
+void
+findMinAndMax(apmatrix<int> &map, int &minValue, int &maxValue) {
+	minValue = map[0][0];
+	maxValue = map[0][0];
+	for (int i = 0; i < map.numrows(); i++ ) {
+		for (int j = 0; (j + 1) < map.numcols(); j+=2 ) {
+			if (map[i][j] > map[i][j+1]){
+				if (minValue >  map[i][j+1]) {
+					minValue =  map[i][j+1];
+				} //end-of-if
+				if (maxValue <  map[i][j]) {
+					maxValue =  map[i][j];
+				} //end-of-if
+			}
+
+			else{
+				if (minValue >  map[i][j]) {
+					minValue =  map[i][j];
+				} //end-of-if
+				if (maxValue <  map[i][j+1]) {
+					maxValue =  map[i][j+1];
+				} //end-of-if
+			}
+
+		} //end-of-for
+	} //end-of-for
+} // end-of-function findMinAndMax
+
+
+
+/**
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 6, 2017
@@ -954,9 +995,13 @@ int main(int argc, char **argv) {
 	//saves the smallest and largest peaks on the mountains into two variables
 	int largestSize = findMax(mountainMat);
 	int smallestSize = findMin(mountainMat);
-
 	//Prints the value of the largest and smallest peaks on the mountain
 	std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
+
+
+	findMinAndMax(mountainMat, smallestSize, largestSize);
+	std::cout << "The largest size is: " << largestSize << endl <<"And the smallest size is: " << smallestSize << std::endl;
+
 
     /*
 	 * @author   dwlambiri
@@ -988,9 +1033,11 @@ int main(int argc, char **argv) {
 
     drawMap(mountainMat, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
-    apvector<int> bestPath(matrixCols_c);
-    pathLength = shortestPathsFromVertex(240, mountainMat,bestPath, true);
-    printLowestPathInfo(pathLength);
+    apvector<int> bestPath(matrixCols_c);{
+    for (int i = 0; i < matrixRows_c; i++)
+    	pathLength = shortestPathsFromVertex(i, mountainMat,bestPath, true);
+    	//printLowestPathInfo(pathLength);
+    }
     displayMessage("Press 'space' to see next algorithm");
     moveBitmapToDisplay();
 
