@@ -19,10 +19,12 @@ bool randomDates(apvector<int> &daysOfYear, int &day){
 
 int main(){
     srand(time(0));
-
-    int counter = 0;
-    for (int i = 0; i < 10000; i++){
     apvector<int> daysOfYear(365, 0);
+    int counter = 0;
+    apvector<int> reset(365, 0);
+
+    for (int i = 0; i < 10000; i++){
+    daysOfYear = reset;
     int day = -1;
     if (randomDates(daysOfYear, day)){
         std::cout << "2 Birthdays are the same!! Day #: "<< day<< std::endl;
