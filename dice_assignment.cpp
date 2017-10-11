@@ -1,37 +1,41 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
-#include <apvector.h>
+#include "apclasses/apvector.h"
 
-bool randomDates(apvector<int> &daysOfYear, int &day){
-    for (int i = 0; i < 20; i++){
-        int temp = rand()% 365;
-        daysOfYear[temp]++;
-    }
-    for (int i = 0; i < 365; i++){
-        if (daysOfYear[i] >= 2){
-            day = i;
-            return true;
-        }
-    }
-    return false;
+const int daysInAYear_c = 365;
+const int peopleInClass_c = 20;
+
+bool randomDates(apvector<int> &daysOfYear, int &day) {
+	for (int i = 0; i < peopleInClass_c; i++) {
+		daysOfYear[(rand() % daysInAYear_c + 1)]++;
+	}
+	for (int i = 0; i < daysInAYear_c; i++) {
+		if (daysOfYear[i] >= 2) {
+			day = i;
+			return true;
+		}
+	}
+	return false;
 }
 
-int main(){
-    srand(time(0));
-    apvector<int> daysOfYear(365, 0);
-    int counter = 0;
-    apvector<int> reset(365, 0);
+int main() {
+	srand(time(0));
 
-    for (int i = 0; i < 10000; i++){
-    daysOfYear = reset;
-    int day = -1;
-    if (randomDates(daysOfYear, day)){
-        std::cout << "2 Birthdays are the same!! Day #: "<< day<< std::endl;
-        counter++;
-    }
-    //else std::cout << "No similar Birthdays" << std::endl;
-    }
-    std::cout << "Number of times 2 birthdays were the same was " << counter<< "/10000" << std::endl;
-    return 0;
+	int counter = 0;
+
+
+	for (int i = 0; i < 10000; i++) {
+		apvector<int> daysOfYear((daysInAYear_c + 1), 0);
+		int day = -1;
+		if (randomDates(daysOfYear, day)) {
+			std::cout << "2 Birthdays are the same!! Day #: " << day
+					<< std::endl;
+			counter++;
+		}
+		//else std::cout << "No similar Birthdays" << std::endl;
+	}
+	std::cout << std::endl << "Number of times at least 2 birthdays were the same was " << counter
+			<< "/10000" << std::endl;
+	return 0;
 }
