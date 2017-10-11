@@ -1033,8 +1033,9 @@ int main(int argc, char **argv) {
 
     drawMap(mountainMat, smallestSize, largestSize);
      //Draws the initial map using a grey scale into an allegro buffer
-    apvector<int> bestPath(matrixCols_c);{
-    for (int i = 0; i < matrixRows_c; i++)
+    apvector<int> bestPath(matrixCols_c);
+
+    for (int i = 0; i < matrixRows_c; i++){
     	pathLength = shortestPathsFromVertex(i, mountainMat,bestPath, true);
     	//printLowestPathInfo(pathLength);
     }
