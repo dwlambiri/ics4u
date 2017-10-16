@@ -31,19 +31,19 @@ int main(){
     //std::cout << "error6 ";
     switch (operation){
     case '+':
-        std::cout << num1 + num2 << std::endl;
+        std::cout << "=" << num1 + num2 << std::endl;
         break;
     case '-':
-        std::cout << num1 - num2 << std::endl;
+        std::cout << "=" << num1 - num2 << std::endl;
         break;
     case '*':
-        std::cout << num1 * num2 << std::endl;
+        std::cout << "=" << num1 * num2 << std::endl;
         break;
     case '/':
-        std::cout << num1 / num2 << std::endl;
+        std::cout << "=" << num1 / num2 << std::endl;
         break;
     default:
-        std:: cout << "ERROR YOU'RE GAY ";
+        std:: cout << "ERROR INVALID OPERATOR";
         break;
     }
     return 0;
