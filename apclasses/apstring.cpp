@@ -34,7 +34,7 @@ apstring::apstring()
     myCstring[0] = '\0';           // make c-style string zero length
 }
 
-bool apstring::math(apstring &superstring, int &result){
+bool apstring::math(apstring &superstring, int &result) const{
 
    //Reads the user input
    getline(std::cin, superstring);
