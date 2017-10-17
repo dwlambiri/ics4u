@@ -44,7 +44,7 @@ class apstring
     int    find( char ch )            const;    // index of first occurrence of ch
     apstring substr( int pos, int len ) const;    // substring of len chars
                                                 // starting at pos
-    bool math(apstring &superstring, int &result) const;    // Solves a mathematical expression read in as a string
+    bool math(int &result) const;    // Solves a mathematical expression read in as a string
     const char * c_str( )             const;    // explicit conversion to char *
 
   // indexing

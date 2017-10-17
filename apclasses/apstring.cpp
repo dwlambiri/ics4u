@@ -34,31 +34,29 @@ apstring::apstring()
     myCstring[0] = '\0';           // make c-style string zero length
 }
 
-bool apstring::math(apstring &superstring, int &result) const{
+bool apstring::math(int &result) const{
 
-   //Reads the user input
-   getline(std::cin, superstring);
 
    //Finds the first available space
-   int spacePlace = superstring.find(' ');
+   int spacePlace = find(' ');
    if (spacePlace <= 0){
        std::cerr << "error: invalid input " << spacePlace << std::endl;
        return false;
    }
    //reads the input into another string and converts it to an int
-   apstring tempNumber1 = superstring.substr(0, spacePlace);
+   apstring tempNumber1 = substr(0, spacePlace);
    int num1 = atoi(tempNumber1.c_str());
    //finds the operator
-   char operation = superstring[spacePlace + 1];
+   char operation = myCstring[spacePlace + 1];
    //string used to encapsulate the second number
    apstring tempNumber2;
-   for (int i = spacePlace + 3; i < superstring.length() ; i++){
-       tempNumber2 += superstring[i];
+   for (int i = spacePlace + 3; i < length() ; i++){
+       tempNumber2 += myCstring[i];
    }
 
    int num2 = atoi(tempNumber2.c_str());
    //performs an operation based on the user entered operator
-   bool operationValue = true;
+   bool operationOK = true;
    switch (operation){
    case '+':
        result = num1 + num2;
@@ -74,10 +72,10 @@ bool apstring::math(apstring &superstring, int &result) const{
        break;
    default:
        std:: cerr << "error: invalid operator";
-       operationValue = false;
+       operationOK = false;
        break;
    }
-   return operationValue;
+   return operationOK;
 }
 
 apstring::apstring(const char * s)
