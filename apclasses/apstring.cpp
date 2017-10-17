@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 const int npos = -1;
 
@@ -33,6 +34,54 @@ apstring::apstring()
     myCstring[0] = '\0';           // make c-style string zero length
 }
 
+bool apstring::math(apstring &superstring, int &result){
+
+   //Reads the user input
+   getline(std::cin, superstring);
+
+   //Finds the first available space
+   int spacePlace = superstring.find(' ');
+   if (spacePlace <= 0){
+       std::cout << "INVALID INPUT" << spacePlace << std::endl;
+       return 1;
+   }
+   //reads the input into another string and converts it to an int
+   apstring tempNumber1 = superstring.substr(0, spacePlace);
+   int num1 = atoi(tempNumber1.c_str());
+   //finds the operator
+   char operation = superstring[spacePlace + 1];
+   //string used to encapsulate the second number
+   apstring tempNumber2;
+   for (int i = spacePlace + 3; i < superstring.length() ; i++){
+       tempNumber2 += superstring[i];
+   }
+
+   int num2 = atoi(tempNumber2.c_str());
+   //preforms an operation based on the user entered operator
+   switch (operation){
+   case '+':
+       result = num1 + num2;
+       return true;
+       break;
+   case '-':
+       result = num1 - num2;
+       break;
+       return true;
+   case '*':
+       result num1 * num2;
+       break;
+       return true;
+   case '/':
+       result num1 / num2;
+       break;
+       return true;
+   default:
+       std:: cout << "ERROR INVALID OPERATOR";
+       break;
+       return false;
+   }
+   return false;
+}
 
 apstring::apstring(const char * s)
 //description:   constructs a string object from a literal string
