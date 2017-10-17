@@ -42,8 +42,8 @@ bool apstring::math(apstring &superstring, int &result){
    //Finds the first available space
    int spacePlace = superstring.find(' ');
    if (spacePlace <= 0){
-       std::cout << "INVALID INPUT" << spacePlace << std::endl;
-       return 1;
+       std::cerr << "error: invalid input " << spacePlace << std::endl;
+       return false;
    }
    //reads the input into another string and converts it to an int
    apstring tempNumber1 = superstring.substr(0, spacePlace);
@@ -57,30 +57,27 @@ bool apstring::math(apstring &superstring, int &result){
    }
 
    int num2 = atoi(tempNumber2.c_str());
-   //preforms an operation based on the user entered operator
+   //performs an operation based on the user entered operator
+   bool operationValue = true;
    switch (operation){
    case '+':
        result = num1 + num2;
-       return true;
        break;
    case '-':
        result = num1 - num2;
        break;
-       return true;
    case '*':
-       result num1 * num2;
+       result = num1 * num2;
        break;
-       return true;
    case '/':
-       result num1 / num2;
+       result = num1 / num2;
        break;
-       return true;
    default:
-       std:: cout << "ERROR INVALID OPERATOR";
+       std:: cerr << "error: invalid operator";
+       operationValue = false;
        break;
-       return false;
    }
-   return false;
+   return operationValue;
 }
 
 apstring::apstring(const char * s)
