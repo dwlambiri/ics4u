@@ -125,13 +125,7 @@ StringStack::top() const{
 void
 StringStack::push(std::string& param) {
 	if (full()) {
-		mStackSize *= 2;
-		std::string* tmp = new std::string[mStackSize];
-		for (unsigned int i = 0; i < mElementsInStack; i++ ) {
-			tmp[i] = mStack[i];
-		} //end-of-for
-		delete [] mStack;
-		mStack = tmp;
+		expand();
 	} //end-of-if
 	mStack[mElementsInStack++] = param;
 } // end-of-method StringStack::push
@@ -147,17 +141,8 @@ StringStack::push(std::string& param) {
  */
 void
 StringStack::push(const char* param) {
-
-	if (full()) {
-		mStackSize *= 2;
-		std::string* tmp = new std::string[mStackSize];
-		for (unsigned int i = 0; i < mElementsInStack; i++ ) {
-			tmp[i] = mStack[i];
-		} //end-of-for
-		delete [] mStack;
-		mStack = tmp;
-    } //end-of-if
-	mStack[mElementsInStack++] = std::string(param);
+	std::string s(param);
+	push(s);
 } // end-of-method StringStack::push
 
 
@@ -181,6 +166,27 @@ StringStack::pop() {
 	} //end-of-if
 } // end-of-method StringStack::pop
 
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 23, 2017
+   @mname   StringStack::expand
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+StringStack::expand() {
+	mStackSize *= 2;
+	std::string* tmp = new std::string[mStackSize];
+	for (unsigned int i = 0; i < mElementsInStack; i++ ) {
+		tmp[i] = mStack[i];
+	} //end-of-for
+	delete [] mStack;
+	mStack = tmp;
+
+} // end-of-method StringStack::expand
 
 
 
