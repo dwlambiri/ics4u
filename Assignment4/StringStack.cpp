@@ -104,8 +104,8 @@ StringStack::StringStack(unsigned int stackSize) {
   --------------------------------------------------------------------------
  */
 std::string*
-StringStack::top() {
-	if (mElementsInStack == 0) {
+StringStack::top() const{
+	if (empty()) {
 		return nullptr;
 	} //end-of-if
 	return &(mStack[mElementsInStack - 1]);
@@ -122,7 +122,7 @@ StringStack::top() {
  */
 void
 StringStack::push(std::string& param) {
-	if (mElementsInStack >= mStackSize) {
+	if (full()) {
 		return;
 	} else {
 		mStack[mElementsInStack++] = param;
@@ -141,7 +141,7 @@ StringStack::push(std::string& param) {
 void
 StringStack::push(const char* param) {
 
-	if (mElementsInStack >= mStackSize) {
+	if (full()) {
 		return;
 	} else {
 		mStack[mElementsInStack++] = std::string(param);
@@ -162,7 +162,7 @@ StringStack::push(const char* param) {
 void
 StringStack::pop() {
 
-	if (mElementsInStack == 0) {
+	if (empty()) {
 		return;
 	} else {
 		mElementsInStack--;

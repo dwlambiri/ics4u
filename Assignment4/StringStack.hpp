@@ -91,7 +91,8 @@ public:
 	   @param
 	   @return  int
 	   @details
-		  \n
+		  This is an accessor method that returns the maximum number of
+		  elements that can be stored in the object. \n
 	  -------------------------------------------------------------------------
 	 */
 	int getStackSize() const { return mStackSize; }
@@ -102,10 +103,14 @@ public:
 	   @param
 	   @return  std::string&
 	   @details
-		  \n
+		  It is an accessor method that returns the top element in the
+		  stack or a nullptr if no elements are present.
+		  This method does NOT remove the top element.
+		  This interface is inspired by the std::stack class.
+		  See here http://www.cplusplus.com/reference/stack/stack/\n
 	  -------------------------------------------------------------------------
 	 */
-	std::string* top();
+	std::string* top() const;
 
 	/**
 	  -------------------------------------------------------------------------
@@ -113,7 +118,8 @@ public:
 	   @param  std::string&
 	   @return  void
 	   @details
-		  \n
+		  This is a modifier method that adds an element to the stack
+		  if the stack is not full. Otherwise it returns without adding.\n
 	  -------------------------------------------------------------------------
 	 */
 	void push(std::string&);
@@ -124,7 +130,7 @@ public:
 	   @param  const char*
 	   @return  void
 	   @details
-		  \n
+		  This is the same as the method above but for const char* types.\n
 	  -------------------------------------------------------------------------
 	 */
 	void push(const char*);
@@ -136,7 +142,9 @@ public:
 	   @param
 	   @return  void
 	   @details
-		  \n
+		  If the stack is not empty, this modifier removes the top element
+		  in the stack. It does not return the element to the user.
+		  This behaviour is inspired by the std::stack.pop() method.\n
 	  -------------------------------------------------------------------------
 	 */
 	void pop();
@@ -147,10 +155,23 @@ public:
 	   @param
 	   @return  bool
 	   @details
-		  \n
+		  This method checks checks if the stack is empty and returns true
+		  if it is. \n
 	  -------------------------------------------------------------------------
 	 */
-	bool isEmpty() const {return (mElementsInStack == 0);}
+	bool empty() const {return (mElementsInStack == 0);}
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 23, 2017
+	   @mname   full
+	   @details
+		  This method checks if the stack is full and returns true if it is. \n
+	  --------------------------------------------------------------------------
+	 */
+	bool full() {return mElementsInStack >= mStackSize;} // end-of-method full
+
 
 private:
 	//--------------------------------------------------
