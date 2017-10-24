@@ -27,7 +27,8 @@
    @brief
 	 \n
    @details
-	\n
+	 This is a string stack class that dynamically resizes itself once full.
+	 \n
   ---------------------------------------------------------------------------
  */
 class StringStack {
@@ -119,7 +120,9 @@ public:
 	   @return  void
 	   @details
 		  This is a modifier method that adds an element to the stack
-		  if the stack is not full. Otherwise it returns without adding.\n
+		  if the stack is not full. Otherwise it doubles the maximum size
+		  of the stack, copies all of the original elements and adds the new
+		  element.\n
 	  -------------------------------------------------------------------------
 	 */
 	void push(std::string&);

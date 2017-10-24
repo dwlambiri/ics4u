@@ -86,10 +86,12 @@ StringStack::StringStack(StringStack& param) {
 
 StringStack::StringStack(unsigned int stackSize) {
 
-	mStackSize = stackSize;
-	if (mStackSize > 0) {
-		mStack = new std::string[mStackSize];
+	if (stackSize == 0) {
+		mStackSize = 1;
+	} else {
+		mStackSize = stackSize;
 	} //end-of-if
+	mStack = new std::string[mStackSize];
 	mElementsInStack = 0;
 } // end-of-method StringStack::StringStack
 
@@ -123,10 +125,15 @@ StringStack::top() const{
 void
 StringStack::push(std::string& param) {
 	if (full()) {
-		return;
-	} else {
-		mStack[mElementsInStack++] = param;
+		mStackSize *= 2;
+		std::string* tmp = new std::string[mStackSize];
+		for (unsigned int i = 0; i < mElementsInStack; i++ ) {
+			tmp[i] = mStack[i];
+		} //end-of-for
+		delete [] mStack;
+		mStack = tmp;
 	} //end-of-if
+	mStack[mElementsInStack++] = param;
 } // end-of-method StringStack::push
 
 /**
@@ -142,10 +149,15 @@ void
 StringStack::push(const char* param) {
 
 	if (full()) {
-		return;
-	} else {
-		mStack[mElementsInStack++] = std::string(param);
-	} //end-of-if
+		mStackSize *= 2;
+		std::string* tmp = new std::string[mStackSize];
+		for (unsigned int i = 0; i < mElementsInStack; i++ ) {
+			tmp[i] = mStack[i];
+		} //end-of-for
+		delete [] mStack;
+		mStack = tmp;
+    } //end-of-if
+	mStack[mElementsInStack++] = std::string(param);
 } // end-of-method StringStack::push
 
 

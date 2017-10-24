@@ -34,7 +34,7 @@
 int
 main(int argc, char **argv) {
 
-	StringStack testStack;
+	StringStack testStack(0);
 
 	testStack.push("one");
 	testStack.push("+");
