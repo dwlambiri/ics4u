@@ -52,6 +52,26 @@ StringStack::~StringStack() {
 
 } // end-of-method StringStack::~StringStack
 
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 23, 2017
+   @mname   StringStack::StringStack
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+
+StringStack::StringStack(StringStack& param) {
+
+	mStackSize = param.mStackSize;
+	mStack = new std::string[mStackSize];
+	mElementsInStack = param.mElementsInStack;
+	for (unsigned int i = 0; i < mElementsInStack; i++ ) {
+		mStack[i] = param.mStack[i];
+	} //end-of-for
+} // end-of-method StringStack::StringStack
+
 
 
 /**
@@ -67,7 +87,9 @@ StringStack::~StringStack() {
 StringStack::StringStack(unsigned int stackSize) {
 
 	mStackSize = stackSize;
-	mStack = new std::string[mStackSize];
+	if (mStackSize > 0) {
+		mStack = new std::string[mStackSize];
+	} //end-of-if
 	mElementsInStack = 0;
 } // end-of-method StringStack::StringStack
 

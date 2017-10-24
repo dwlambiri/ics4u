@@ -60,6 +60,18 @@ public:
 	 */
 	 StringStack(unsigned int);
 
+
+	 /**
+	  -------------------------------------------------------------------------
+	   @name  StringStack
+	   @param  StringStack&
+	   @return
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	 StringStack(StringStack&);
+
 	/**
 	  --------------------------------------------------------------------------
 	   @author  dwlambiri
@@ -144,8 +156,31 @@ private:
 	//--------------------------------------------------
 	// Data Members
 	//--------------------------------------------------
+
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 23, 2017
+	 *  mStack is dynamically allocated when the object is constructed,
+	 *  and deleted when the object is destroyed.
+	 *  It stores the strings passed to the object.
+	 */
 	std::string*    mStack;
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 23, 2017
+	 *  mStackSize remembers the maximum number of elements that mStack can store.
+	 */
 	unsigned int    mStackSize;
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 23, 2017
+	 *   mElementsInStack represents the number of elements in the stack.
+	 *   The index of the top of the stack is mElementsInStack - 1, if
+	 *     mElementsInStack > 0.
+	 */
 	unsigned int    mElementsInStack;
 
 private:

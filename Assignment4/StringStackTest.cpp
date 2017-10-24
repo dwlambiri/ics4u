@@ -40,12 +40,22 @@ main(int argc, char **argv) {
 	testStack.push("+");
 	testStack.push("two");
 
+	StringStack copyStack(testStack);
+
 	std::cout << *testStack.top() << std::endl;
 	testStack.pop();
 	std::cout << *testStack.top() << std::endl;
 	testStack.pop();
 	std::cout << *testStack.top() << std::endl;
 	testStack.pop();
+
+	std::cout << *copyStack.top() << std::endl;
+	copyStack.pop();
+	std::cout << *copyStack.top() << std::endl;
+	copyStack.pop();
+	std::cout << *copyStack.top() << std::endl;
+	copyStack.pop();
+
 
 	return 0;
 }
