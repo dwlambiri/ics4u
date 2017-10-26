@@ -1,6 +1,6 @@
 /*****************************************************************************
  *	Name:   Darius W Lambiri (dwlambiri)
- *	File:   StringStack.hpp
+ *	File:   FloatStack.hpp
  *	Course: ICS4U
  *	Date:   Oct 23, 2017
  *
@@ -23,7 +23,7 @@
   ---------------------------------------------------------------------------
    @author     dwlambiri
    @date       Oct 23, 2017
-   @classname  StringStack
+   @classname  FloatStack
    @brief
 	 \n
    @details
@@ -31,7 +31,7 @@
 	 \n
   ---------------------------------------------------------------------------
  */
-class StringStack {
+class FloatStack {
 
 public:
 	//--------------------------------------------------
@@ -41,50 +41,50 @@ public:
 	  --------------------------------------------------------------------------
 	   @author  dwlambiri
 	   @date    Oct 23, 2017
-	   @name    StringStack::StringStack
+	   @name    FloatStack::FloatStack
 	   @param   -
 	   @return  -
 	   @details
-		Default constructor of Class StringStack \n
+		Default constructor of Class FloatStack \n
 	  --------------------------------------------------------------------------
 	 */
-	StringStack();
+	FloatStack();
 
 	/**
 	  -------------------------------------------------------------------------
-	   @name  StringStack
+	   @name  FloatStack
 	   @param  int
 	   @return
 	   @details
 		  \n
 	  -------------------------------------------------------------------------
 	 */
-	 StringStack(unsigned int);
+	 FloatStack(unsigned int);
 
 
 	 /**
 	  -------------------------------------------------------------------------
-	   @name  StringStack
-	   @param  StringStack&
+	   @name  FloatStack
+	   @param  FloatStack&
 	   @return
 	   @details
 		  \n
 	  -------------------------------------------------------------------------
 	 */
-	 StringStack(StringStack&);
+	 FloatStack(FloatStack&);
 
 	/**
 	  --------------------------------------------------------------------------
 	   @author  dwlambiri
 	   @date    Oct 23, 2017
-	   @name    StringStack::~StringStack
+	   @name    FloatStack::~FloatStack
 	   @param   -
 	   @return  -
 	   @details
-		Default destructor of class StringStack \n
+		Default destructor of class FloatStack \n
 	  --------------------------------------------------------------------------
 	 */
-	~StringStack();
+	~FloatStack();
 
 	/**
 	  -------------------------------------------------------------------------
@@ -125,7 +125,7 @@ public:
 		  element.\n
 	  -------------------------------------------------------------------------
 	 */
-	void push(float&);
+	void push(float);
 
 	/**
 	  -------------------------------------------------------------------------
@@ -175,12 +175,7 @@ public:
 	 */
 	bool full() {return mElementsInStack >= mStackSize;} // end-of-method full
 
-
-private:
-	//--------------------------------------------------
-	// Data Members
-	//--------------------------------------------------
-
+protected:
 
 	/*
 	 * @author   dwlambiri
@@ -190,6 +185,12 @@ private:
 	 *  It stores the strings passed to the object.
 	 */
 	float*    mStack;
+
+
+private:
+	//--------------------------------------------------
+	// Data Members
+	//--------------------------------------------------
 
 	/*
 	 * @author   dwlambiri
@@ -215,7 +216,7 @@ private:
 	  -------------------------------------------------------------------------
 	   @author  dwlambiri
 	   @date    Oct 23, 2017
-	   @name    StringStack::expand
+	   @name    FloatStack::expand
 	   @param
 	   @return  type
 	   @details
@@ -224,7 +225,10 @@ private:
 	 */
 	void expand();
 
-}; //end-of-class StringStack
+}; //end-of-class FloatStack
 
 
 #endif /* ASSIGNMENT4_STRINGSTACK_HPP_ */
+
+
+

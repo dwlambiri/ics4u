@@ -1,6 +1,6 @@
 /*****************************************************************************
  *	Name:   Darius W Lambiri (dwlambiri)
- *	File:   StringStack.cpp
+ *	File:   FloatStackStack.cpp
  *	Course: ICS4U
  *	Date:   Oct 23, 2017
  *
@@ -20,49 +20,48 @@
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 23, 2017
-   @mname   StringStack::StringStack
+   @mname   FloatStack::FloatStack
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 
-StringStack::StringStack() {
+FloatStack::FloatStack() {
 	mStackSize = 50;
 	mStack = new float[mStackSize];
 	mElementsInStack = 0;
 
-} // end-of-method StringStack::StringStack
-
+} // end-of-method FloatStack::FloatStack
 
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 23, 2017
-   @mname   StringStack::~StringStack
+   @mname   FloatStack::~FloatStack
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 
-StringStack::~StringStack() {
+FloatStack::~FloatStack() {
 
 	if (mStackSize > 0) {
 		delete [] mStack;
 	} //end-of-if
 
-} // end-of-method StringStack::~StringStack
+} // end-of-method FloatStack::~FloatStack
 
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 23, 2017
-   @mname   StringStack::StringStack
+   @mname   FloatStack::FloatStack
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 
-StringStack::StringStack(StringStack& param) {
+FloatStack::FloatStack(FloatStack& param) {
 
 	mStackSize = param.mStackSize;
 	mStack = new float[mStackSize];
@@ -70,7 +69,7 @@ StringStack::StringStack(StringStack& param) {
 	for (unsigned int i = 0; i < mElementsInStack; i++ ) {
 		mStack[i] = param.mStack[i];
 	} //end-of-for
-} // end-of-method StringStack::StringStack
+} // end-of-method FloatStack::FloatStack
 
 
 
@@ -78,13 +77,13 @@ StringStack::StringStack(StringStack& param) {
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 23, 2017
-   @mname   StringStack::StringStack
+   @mname   FloatStack::FloatStack
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 
-StringStack::StringStack(unsigned int stackSize) {
+FloatStack::FloatStack(unsigned int stackSize) {
 
 	if (stackSize == 0) {
 		mStackSize = 1;
@@ -93,75 +92,75 @@ StringStack::StringStack(unsigned int stackSize) {
 	} //end-of-if
 	mStack = new float[mStackSize];
 	mElementsInStack = 0;
-} // end-of-method StringStack::StringStack
+} // end-of-method FloatStack::FloatStack
 
 
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 23, 2017
-   @mname   StringStack::top
+   @mname   FloatStack::top
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 float*
-StringStack::top() const{
+FloatStack::top() const{
 	if (empty()) {
 		return nullptr;
 	} //end-of-if
 	return &(mStack[mElementsInStack - 1]);
-} // end-of-method StringStack::top
+} // end-of-method FloatStack::top
 
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 23, 2017
-   @mname   StringStack::push
+   @mname   FloatStack::push
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 void
-StringStack::push(float& param) {
+FloatStack::push(float param) {
 	if (full()) {
 		expand();
 	} //end-of-if
 	mStack[mElementsInStack++] = param;
-} // end-of-method StringStack::push
+} // end-of-method FloatStack::push
 
 
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 23, 2017
-   @mname   StringStack::pop
+   @mname   FloatStack::pop
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 void
-StringStack::pop() {
+FloatStack::pop() {
 
 	if (empty()) {
 		return;
 	} else {
 		mElementsInStack--;
 	} //end-of-if
-} // end-of-method StringStack::pop
+} // end-of-method FloatStack::pop
 
 
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Oct 23, 2017
-   @mname   StringStack::expand
+   @mname   FloatStack::expand
    @details
 	  \n
   --------------------------------------------------------------------------
  */
 void
-StringStack::expand() {
+FloatStack::expand() {
 	mStackSize *= 2;
 	float* tmp = new float[mStackSize];
 	for (unsigned int i = 0; i < mElementsInStack; i++ ) {
@@ -170,7 +169,8 @@ StringStack::expand() {
 	delete [] mStack;
 	mStack = tmp;
 
-} // end-of-method StringStack::expand
+} // end-of-method FloatStack::expand
+
 
 
 
