@@ -15,6 +15,7 @@
  *****************************************************************************/
 
 #include "StringStack.hpp"
+#include "StringStack.cpp"
 #include <iostream>
 
 
