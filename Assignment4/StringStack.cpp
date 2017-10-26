@@ -58,7 +58,7 @@ StringStack::~StringStack() {
    @date    Oct 23, 2017
    @mname   StringStack::StringStack
    @details
-	  \n
+	  The efficiency of the algorithm is: n
   --------------------------------------------------------------------------
  */
 
@@ -173,7 +173,13 @@ StringStack::pop() {
    @date    Oct 23, 2017
    @mname   StringStack::expand
    @details
-	  \n
+	  The efficiency of this algorithm is 2n (with n representing the number
+        of elements in the stack.
+      There are n steps in the first loop, which copies the contents of the
+        first stack, iterates through each element of the stack and copies
+        it into a temporary array.
+      The second loop is implicit and occurs with the use of the '=' sign
+        to copy the contents of the temporary array back into the stack array
   --------------------------------------------------------------------------
  */
 void
@@ -187,8 +193,6 @@ StringStack::expand() {
 	mStack = tmp;
 
 } // end-of-method StringStack::expand
-
-
 
 
 
