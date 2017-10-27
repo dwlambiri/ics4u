@@ -88,6 +88,7 @@ Calculator::Commands(char term[]) {
               break;
           default: return false;
         }
+      return true;
     }
 
 } // end-of-method Calculator::Commands
