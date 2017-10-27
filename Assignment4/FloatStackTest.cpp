@@ -15,7 +15,7 @@
  *****************************************************************************/
 
 #include "FloatStack.hpp"
-#include "FloatStack.cpp"
+//#include "FloatStack.cpp"
 #include <iostream>
 
 

@@ -129,18 +129,6 @@ public:
 
 	/**
 	  -------------------------------------------------------------------------
-	   @name  push
-	   @param  const char*
-	   @return  void
-	   @details
-		  This is the same as the method above but for const char* types.\n
-	  -------------------------------------------------------------------------
-	 */
-	void push(const char*);
-
-
-	/**
-	  -------------------------------------------------------------------------
 	   @name  pop
 	   @param
 	   @return  void

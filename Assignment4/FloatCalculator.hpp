@@ -4,7 +4,7 @@
 #define ASSIGNMENT4_FLOATSTACK_HPP_
 
 #include "FloatStack.hpp"
-#include "FloatStack.cpp"
+//#include "FloatStack.cpp"
 #include <iostream>
 #include <string>
 
@@ -51,7 +51,7 @@ public:
 	 */
 	~Calculator();
 
-	 Calculator(std::string&);
+	 Calculator(char userExpression[]);
 
 	 float add();
 
@@ -70,14 +70,18 @@ public:
 		  \n
 	  --------------------------------------------------------------------------
 	 */
-	bool Commands();
+	bool Commands(char term[]);
 
+	bool newExpression(char newE[]);
+
+	bool parse();
 
 private:
 	//--------------------------------------------------
 	// Data Members
 	//--------------------------------------------------
-	std::string expression;
+	char* expression;
+    int exSize = 200;
 
 private:
 	//--------------------------------------------------

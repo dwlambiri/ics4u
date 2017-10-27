@@ -1,17 +1,20 @@
 
 #include "FloatCalculator.hpp"
+#include <stdlib.h>
+#include <string.h>
 
 
 Calculator::Calculator(){
-	expression = "";
+    expression[exSize];
+	strcpy(expression, "");
 }
 
 Calculator::~Calculator(){
-	delete expression;
+	delete[] expression;
 }
 
-Calculator::Calculator(std::string& userExpression){
-	expression = userExpression;
+Calculator::Calculator(char userExpression[]){
+	strcpy(expression, userExpression);
 }
 
 float Calculator::add(){
@@ -46,6 +49,10 @@ float Calculator::divide(){
     pop();
     float value2 = *top();
     pop();
+    //This is error checker for divide by zero
+    if (value1 == 0){
+        return 0;
+    }
     push(value2 / value1);
     return *top();
 }
@@ -60,9 +67,43 @@ float Calculator::divide(){
   --------------------------------------------------------------------------
  */
 bool
-Calculator::Commands() {
+Calculator::Commands(char term[]) {
 
+    if (term[0] <= '0' && term[0] >= term[0]){
+        push(atof(term));
+    }
+    else{
+        switch(term[0]){
+          case '+':
+              add();
+              break;
+          case '-':
+              subtract();
+              break;
+          case '*':
+              multiply();
+              break;
+          case '/':
+              divide();
+              break;
+          default: return false;
+        }
+    }
 
 } // end-of-method Calculator::Commands
 
+
+bool
+Calculator::newExpression(char newE[]){
+    if(exSize < strlen(newE)){
+        return false;
+    }
+    strcpy(expression, newE);
+    return true;
+}
+
+bool
+Calculator::parse(){
+
+}
 
