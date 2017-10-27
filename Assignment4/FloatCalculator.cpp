@@ -66,10 +66,9 @@ float Calculator::divide(){
 	  \n
   --------------------------------------------------------------------------
  */
-bool
-Calculator::Commands(char term[]) {
+bool Calculator::Commands(char term[]) {
 
-    if (term[0] <= '0' && term[0] >= term[0]){
+    if (term[0] <= '0' && term[0] >= '9'){
         push(atof(term));
     }
     else{
