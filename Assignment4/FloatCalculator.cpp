@@ -87,9 +87,8 @@ bool Calculator::Commands(char term[]) {
               break;
           default: return false;
         }
-      return true;
     }
-
+    return true;
 } // end-of-method Calculator::Commands
 
 
