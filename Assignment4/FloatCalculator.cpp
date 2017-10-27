@@ -1,14 +1,26 @@
 
 #include "FloatCalculator.hpp"
 
-Calculator::Calculator(std::string&);
+
+Calculator::Calculator(){
+	expression = "";
+}
+
+Calculator::~Calculator(){
+	delete expression;
+}
+
+Calculator::Calculator(std::string& userExpression){
+	expression = userExpression;
+}
 
 float Calculator::add(){
     float value1 = *top();
     pop();
     float value2 = *top();
     pop();
-    return value2 + value1;
+    push(value2 + value1);
+    return *top();
 }
 
 float Calculator::subtract(){
@@ -16,7 +28,8 @@ float Calculator::subtract(){
     pop();
     float value2 = *top();
     pop();
-    return value2 - value1;
+    push(value2 - value1);
+    return *top();
 }
 
 float Calculator::multiply(){
@@ -24,7 +37,8 @@ float Calculator::multiply(){
     pop();
     float value2 = *top();
     pop();
-    return value2 * value1;
+    push(value2 * value1);
+    return *top();
 }
 
 float Calculator::divide(){
@@ -32,5 +46,23 @@ float Calculator::divide(){
     pop();
     float value2 = *top();
     pop();
-    return value2 / value1;
+    push(value2 / value1);
+    return *top();
 }
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 26, 2017
+   @mname   Calculator::Commands
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+Calculator::Commands() {
+
+
+} // end-of-method Calculator::Commands
+
+

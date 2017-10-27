@@ -119,7 +119,11 @@ StringStack::top() const{
    @date    Oct 23, 2017
    @mname   StringStack::push
    @details
-	  \n
+	  The normal computational complexity for pushing an element to the stack
+	  is 1. However if the stack is full, and the user attempts to push in a
+	  new element the stack will increase in size. The two loops present in
+	  the expand() function make the computational complexity of this step
+	  2n+1.
   --------------------------------------------------------------------------
  */
 void

@@ -15,7 +15,7 @@
  *****************************************************************************/
 
 #ifndef ASSIGNMENT4_STRINGSTACK_HPP_
-#define ASSIGNMENT4_STRINGSTACK_HPP_
+#define ASSIGNMENT4_FLOATSTACK_HPP_
 
 #include <string>
 
@@ -228,7 +228,7 @@ private:
 }; //end-of-class FloatStack
 
 
-#endif /* ASSIGNMENT4_STRINGSTACK_HPP_ */
+#endif /* ASSIGNMENT4_FLOATSTACK_HPP_ */
 
 
 

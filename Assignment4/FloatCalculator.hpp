@@ -1,21 +1,89 @@
 
+
+#ifndef ASSIGNMENT4_STRINGSTACK_HPP_
+#define ASSIGNMENT4_FLOATSTACK_HPP_
+
 #include "FloatStack.hpp"
 #include "FloatStack.cpp"
 #include <iostream>
 #include <string>
 
-class Calculator : FloatStack{
+/**
+  ---------------------------------------------------------------------------
+   @author     dwlambiri
+   @date       Oct 26, 2017
+   @classname  Calculator
+   @brief
+	 \n
+   @details
+	\n
+  ---------------------------------------------------------------------------
+ */
+class Calculator : public FloatStack{
+
 public:
-    Calculator(std::string&);
+	//--------------------------------------------------
+	// Public Methods (External Type Interface)
+	//--------------------------------------------------
+	/**
+	  --------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 26, 2017
+	   @name    Calculator::Calculator
+	   @param   -
+	   @return  -
+	   @details
+		Default constructor of Class Calculator \n
+	  --------------------------------------------------------------------------
+	 */
+	Calculator();
 
-    float add();
+	/**
+	  --------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 26, 2017
+	   @name    Calculator::~Calculator
+	   @param   -
+	   @return  -
+	   @details
+		Default destructor of class Calculator \n
+	  --------------------------------------------------------------------------
+	 */
+	~Calculator();
 
-    float subtract();
+	 Calculator(std::string&);
 
-    float multiply();
+	 float add();
 
-    float divide();
+	 float subtract();
+
+	 float multiply();
+
+	 float divide();
+
+	 /**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 26, 2017
+	   @mname   Commands
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	bool Commands();
+
 
 private:
-    std::string expression;
-};
+	//--------------------------------------------------
+	// Data Members
+	//--------------------------------------------------
+	std::string expression;
+
+private:
+	//--------------------------------------------------
+	// Private Methods
+	//--------------------------------------------------
+
+}; //end-of-class Calculator
+
+#endif /* ASSIGNMENT4_FLOATSTACK_HPP_ */
