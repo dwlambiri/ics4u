@@ -1,7 +1,7 @@
 
 
-#ifndef ASSIGNMENT4_STRINGSTACK_HPP_
-#define ASSIGNMENT4_FLOATSTACK_HPP_
+#ifndef ASSIGNMENT4_FLOATCALCULATOR_HPP_
+#define ASSIGNMENT4_FLOATCALCULATOR_HPP_
 
 #include "FloatStack.hpp"
 //#include "FloatStack.cpp"

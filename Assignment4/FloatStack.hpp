@@ -14,10 +14,9 @@
  *
  *****************************************************************************/
 
-#ifndef ASSIGNMENT4_STRINGSTACK_HPP_
+#ifndef ASSIGNMENT4_FLOATSTACK_HPP_
 #define ASSIGNMENT4_FLOATSTACK_HPP_
 
-#include <string>
 
 /**
   ---------------------------------------------------------------------------
@@ -27,7 +26,7 @@
    @brief
 	 \n
    @details
-	 This is a string stack class that dynamically resizes itself once full.
+	 This is a float stack class that dynamically resizes itself once full.
 	 \n
   ---------------------------------------------------------------------------
  */
