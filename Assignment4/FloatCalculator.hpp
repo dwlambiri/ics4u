@@ -51,7 +51,7 @@ public:
 	 */
 	~Calculator();
 
-	 Calculator(char userExpression[]);
+	Calculator(unsigned int);
 
 	 float add();
 
@@ -72,16 +72,16 @@ public:
 	 */
 	bool Commands(char term[]);
 
-	bool newExpression(char newE[]);
+	//bool newExpression(char newE[]);
 
-	bool parse();
+	bool parse(char array[]);
 
 private:
 	//--------------------------------------------------
 	// Data Members
 	//--------------------------------------------------
-	char* expression;
-    int exSize = 200;
+	//char* expression;
+    //int exSize = 200;
 
 private:
 	//--------------------------------------------------

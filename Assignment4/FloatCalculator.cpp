@@ -5,16 +5,15 @@
 
 
 Calculator::Calculator(){
-    expression[exSize];
-	strcpy(expression, "");
+	FloatStack();
 }
 
 Calculator::~Calculator(){
-	delete[] expression;
+	~FloatStack();
 }
 
-Calculator::Calculator(char userExpression[]){
-	strcpy(expression, userExpression);
+Calculator::Calculator(unsigned int sizeOfStack){
+	FloatStack(sizeOfStack);
 }
 
 float Calculator::add(){
@@ -71,7 +70,7 @@ bool Calculator::Commands(char term[]) {
     if (term[0] <= '0' && term[0] >= '9'){
         push(atof(term));
     }
-    else{
+    else if (term[0] != NULL && term[1] == NULL){
         switch(term[0]){
           case '+':
               add();
@@ -87,22 +86,29 @@ bool Calculator::Commands(char term[]) {
               break;
           default: return false;
         }
-    }
     return true;
+    }
+    return false;
 } // end-of-method Calculator::Commands
 
 
-bool
-Calculator::newExpression(char newE[]){
-    if(exSize < strlen(newE)){
-        return false;
-    }
-    strcpy(expression, newE);
-    return true;
-}
 
 bool
-Calculator::parse(){
+Calculator::parse(char array[]){
 
+	if (array[0] == NULL){
+		return false;
+	}
+	char * pch = NULL;
+	pch = strtok(array," ");
+
+	Commands(pch);
+
+	while (pch != NULL){
+		pch = strtok(NULL, " ");
+		Commands(pch);
+	}
+
+return true;
 }
 
