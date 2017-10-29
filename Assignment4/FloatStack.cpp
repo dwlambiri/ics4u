@@ -1,6 +1,6 @@
 /*****************************************************************************
  *	Name:   Darius W Lambiri (dwlambiri)
- *	File:   StringStack.cpp
+ *	File:   FloatStackStack.cpp
  *	Course: ICS4U
  *	Date:   Oct 23, 2017
  *
@@ -15,76 +15,74 @@
  *****************************************************************************/
 
 #include "FloatStack.hpp"
+#include <iostream>
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 23, 2017
-   @mname   StringStack::StringStack
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 23, 2017
+ @mname   FloatStack::FloatStack
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
 
-StringStack::StringStack() {
+FloatStack::FloatStack() {
 	mStackSize = 50;
 	mStack = new float[mStackSize];
 	mElementsInStack = 0;
 
-} // end-of-method StringStack::StringStack
-
+} // end-of-method FloatStack::FloatStack
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 23, 2017
-   @mname   StringStack::~StringStack
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 23, 2017
+ @mname   FloatStack::~FloatStack
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
 
-StringStack::~StringStack() {
+FloatStack::~FloatStack() {
 
 	if (mStackSize > 0) {
-		delete [] mStack;
+		delete[] mStack;
 	} //end-of-if
 
-} // end-of-method StringStack::~StringStack
+} // end-of-method FloatStack::~FloatStack
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 23, 2017
-   @mname   StringStack::StringStack
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 23, 2017
+ @mname   FloatStack::FloatStack
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
 
-StringStack::StringStack(StringStack& param) {
+FloatStack::FloatStack(FloatStack& param) {
 
 	mStackSize = param.mStackSize;
 	mStack = new float[mStackSize];
 	mElementsInStack = param.mElementsInStack;
-	for (unsigned int i = 0; i < mElementsInStack; i++ ) {
+	for (unsigned int i = 0; i < mElementsInStack; i++) {
 		mStack[i] = param.mStack[i];
 	} //end-of-for
-} // end-of-method StringStack::StringStack
-
-
+} // end-of-method FloatStack::FloatStack
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 23, 2017
-   @mname   StringStack::StringStack
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 23, 2017
+ @mname   FloatStack::FloatStack
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
 
-StringStack::StringStack(unsigned int stackSize) {
+FloatStack::FloatStack(unsigned int stackSize) {
 
 	if (stackSize == 0) {
 		mStackSize = 1;
@@ -93,84 +91,113 @@ StringStack::StringStack(unsigned int stackSize) {
 	} //end-of-if
 	mStack = new float[mStackSize];
 	mElementsInStack = 0;
-} // end-of-method StringStack::StringStack
-
+} // end-of-method FloatStack::FloatStack
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 23, 2017
-   @mname   StringStack::top
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 23, 2017
+ @mname   FloatStack::top
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
 float*
-StringStack::top() const{
+FloatStack::top() const {
 	if (empty()) {
 		return nullptr;
 	} //end-of-if
-	return &(mStack[mElementsInStack - 1]);
-} // end-of-method StringStack::top
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 28, 2017
+	 *  This purpose of this temporary variable is to make sure that this
+	 *  function remains and accessor and so that the user is unable to
+	 *  change the value at the top of the stack.
+	 */
+
+	static float v;
+	v = mStack[mElementsInStack - 1];
+	return &v;
+} // end-of-method FloatStack::top
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 23, 2017
-   @mname   StringStack::push
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 23, 2017
+ @mname   FloatStack::push
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
-void
-StringStack::push(float& param) {
+void FloatStack::push(float param) {
 	if (full()) {
 		expand();
 	} //end-of-if
 	mStack[mElementsInStack++] = param;
-} // end-of-method StringStack::push
-
+} // end-of-method FloatStack::push
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 23, 2017
-   @mname   StringStack::pop
-   @details
-	  \n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 23, 2017
+ @mname   FloatStack::pop
+ @details
+ \n
+ --------------------------------------------------------------------------
  */
-void
-StringStack::pop() {
+void FloatStack::pop() {
 
 	if (empty()) {
 		return;
 	} else {
 		mElementsInStack--;
 	} //end-of-if
-} // end-of-method StringStack::pop
+} // end-of-method FloatStack::pop
 
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 23, 2017
+ @mname   FloatStack::expand
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+void FloatStack::expand() {
+	mStackSize *= 2;
+	float* tmp = new float[mStackSize];
+	for (unsigned int i = 0; i < mElementsInStack; i++) {
+		tmp[i] = mStack[i];
+	} //end-of-for
+	delete[] mStack;
+	mStack = tmp;
+
+} // end-of-method FloatStack::expand
 
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
-   @date    Oct 23, 2017
-   @mname   StringStack::expand
+   @date    Oct 28, 2017
+   @mname   FloatStack::printStack
    @details
-	  \n
+	  This function prints the contents of the stack from the bottom of the
+	  stack to the top.
   --------------------------------------------------------------------------
  */
-void
-StringStack::expand() {
-	mStackSize *= 2;
-	float* tmp = new float[mStackSize];
-	for (unsigned int i = 0; i < mElementsInStack; i++ ) {
-		tmp[i] = mStack[i];
-	} //end-of-for
-	delete [] mStack;
-	mStack = tmp;
+bool
+FloatStack::printStack() {
 
-} // end-of-method StringStack::expand
+	if (mElementsInStack == 0){
+		std::cout << "The stack is empty" << std::endl;
+		return false;
+	}
+	else {
+		for (int i = 0; i < mElementsInStack; i++){
+			std::cout << mStack[i] << std::endl;
+		}
+	}
+	return true;
+} // end-of-method FloatStack::printStack
 
 
 

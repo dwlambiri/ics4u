@@ -15,7 +15,7 @@
  *****************************************************************************/
 
 #ifndef ASSIGNMENT4_STRINGSTACK_HPP_
-#define ASSIGNMENT4_STRINGSTACK_HPP_
+#define ASSIGNMENT4_FLOATSTACK_HPP_
 
 #include <string>
 
