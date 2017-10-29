@@ -15,6 +15,8 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <string.h>
+#include <string>
 
 #include "FloatCalculator.hpp"
 /**

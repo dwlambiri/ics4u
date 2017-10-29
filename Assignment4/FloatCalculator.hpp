@@ -21,12 +21,14 @@
 
 #include "FloatStack.hpp"
 #include <iostream>
+#include <string>
+#include <map>
 
 /**
  ---------------------------------------------------------------------------
  @author     dwlambiri
  @date       Oct 26, 2017
- @classname  Calculator
+ @classname  FloatCalculator
  @brief
  \n
  @details
@@ -120,14 +122,85 @@ public:
 	 \n
 	 --------------------------------------------------------------------------
 	 */
-	bool Commands(char term[]);
+	bool compute(char term[]);
 
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   thename
+	   @details
+		  This function parses a string which is entered by the user and then
+		  operates upon the data provided by accessing FloatStack \n.
+	  --------------------------------------------------------------------------
+	 */
 	bool parse(std::string& array);
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   swap
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	bool swap();
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   exponent
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	bool power();
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   series
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	bool series();
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   sum
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	bool sum();
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   product
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	bool product();
+
+
 
 private:
 	//--------------------------------------------------
 	// Data Members
 	//--------------------------------------------------
+	using FCMPF = bool (FloatCalculator::*)(void);
+	using CmdMap = std::map<std::string, FCMPF>;
+
+	CmdMap cmdmap;
 
 private:
 	//--------------------------------------------------
@@ -135,6 +208,6 @@ private:
 	//--------------------------------------------------
 
 };
-//end-of-class Calculator
+//end-of-class FloatCalculator
 
 #endif /* ASSIGNMENT4_FLOATSTACK_HPP_ */
