@@ -126,102 +126,164 @@ public:
 	bool compute(char term[]);
 
 	/**
-	  ---------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 28, 2017
-	   @mname   thename
-	   @details
-		  This function parses a string which is entered by the user and then
-		  operates upon the data provided by accessing FloatStack \n.
-	  --------------------------------------------------------------------------
+	 ---------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 28, 2017
+	 @mname   thename
+	 @details
+	 This function parses a string which is entered by the user and then
+	 operates upon the data provided by accessing FloatStack \n.
+	 --------------------------------------------------------------------------
 	 */
 	bool parse(std::string& array);
 
 	/**
-	  ---------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 28, 2017
-	   @mname   swap
-	   @details
-		  \n
-	  --------------------------------------------------------------------------
+	 ---------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 28, 2017
+	 @mname   swap
+	 @details
+	 \n
+	 --------------------------------------------------------------------------
 	 */
 	bool swap();
 
 	/**
-	  ---------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 28, 2017
-	   @mname   exponent
-	   @details
-		  \n
-	  --------------------------------------------------------------------------
+	 ---------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 28, 2017
+	 @mname   exponent
+	 @details
+	 \n
+	 --------------------------------------------------------------------------
 	 */
 	bool power();
 
 	/**
-	  ---------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 28, 2017
-	   @mname   series
-	   @details
-		  \n
-	  --------------------------------------------------------------------------
+	 ---------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 28, 2017
+	 @mname   series
+	 @details
+	 \n
+	 --------------------------------------------------------------------------
 	 */
 	bool series();
 
 	/**
-	  ---------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 28, 2017
-	   @mname   sum
-	   @details
-		  \n
-	  --------------------------------------------------------------------------
+	 ---------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 28, 2017
+	 @mname   sum
+	 @details
+	 \n
+	 --------------------------------------------------------------------------
 	 */
 	bool sum();
 
 	/**
-	  ---------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 28, 2017
-	   @mname   product
-	   @details
-		  \n
-	  --------------------------------------------------------------------------
+	 ---------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 28, 2017
+	 @mname   product
+	 @details
+	 \n
+	 --------------------------------------------------------------------------
 	 */
 	bool product();
 
 	/**
-	  ---------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 28, 2017
-	   @mname   exponent
-	   @details
-		  \n
-	  --------------------------------------------------------------------------
+	 ---------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 28, 2017
+	 @mname   exponent
+	 @details
+	 \n
+	 --------------------------------------------------------------------------
 	 */
-	bool exponent();
+	bool exponential();
 
 	/**
-	  -------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 29, 2017
-	   @name    FloatCalculator::getTopOfStack
-	   @param   std::vector<float>& f
-	   @return  void
-	   @details
-		  \n
-	  -------------------------------------------------------------------------
+	 -------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 29, 2017
+	 @name    FloatCalculator::sqrt
+	 @param   paramlist: none
+	 @return  type
+	 @details
+	 \n
+	 -------------------------------------------------------------------------
+	 */
+	bool sqrt();
+
+	/**
+	 -------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 29, 2017
+	 @name    FloatCalculator::log
+	 @param   paramlist: none
+	 @return  bool
+	 @details
+	 \n
+	 -------------------------------------------------------------------------
+	 */
+	bool log();
+	/**
+	 -------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 29, 2017
+	 @name    FloatCalculator::cos
+	 @param   paramlist: none
+	 @return  bool
+	 @details
+	 \n
+	 -------------------------------------------------------------------------
+	 */
+	bool cos();
+	/**
+	 -------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 29, 2017
+	 @name    FloatCalculator::sin
+	 @param   paramlist: none
+	 @return  bool
+	 @details
+	 \n
+	 -------------------------------------------------------------------------
+	 */
+	bool sin();
+
+	/**
+	 -------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 29, 2017
+	 @name    FloatCalculator::popOp
+	 @param   paramlist: none
+	 @return  bool
+	 @details
+	 \n
+	 -------------------------------------------------------------------------
+	 */
+	bool popOp();
+	/**
+	 -------------------------------------------------------------------------
+	 @author  dwlambiri
+	 @date    Oct 29, 2017
+	 @name    FloatCalculator::getTopOfStack
+	 @param   std::vector<float>& f
+	 @return  void
+	 @details
+	 \n
+	 -------------------------------------------------------------------------
 	 */
 	void getTopOfStack(std::vector<float>& f, unsigned int num) {
-		int retnum = (num<mElementsInStack)?num:mElementsInStack;
+		int retnum = (num < mElementsInStack) ? num : mElementsInStack;
 		f.resize(retnum);
-		for (unsigned int i = 0; (i < num) && (mElementsInStack >= i+1); i++ ) {
-			f[i] = mStack[mElementsInStack-i-1];
+		for (unsigned int i = 0; (i < num) && (mElementsInStack >= i + 1);
+				i++) {
+			f[i] = mStack[mElementsInStack - i - 1];
 		} //end-of-for
 	}
-
 
 private:
 	//--------------------------------------------------
@@ -266,6 +328,7 @@ private:
 	//--------------------------------------------------
 	// Private Methods
 	//--------------------------------------------------
+	void initMap();
 
 };
 //end-of-class FloatCalculator

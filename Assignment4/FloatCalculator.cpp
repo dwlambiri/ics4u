@@ -35,19 +35,7 @@
 FloatCalculator::FloatCalculator() :
 		FloatStack() {
 
-	cmdmap["+"] = &FloatCalculator::add;
-	cmdmap["-"] = &FloatCalculator::subtract;
-	cmdmap["*"] = &FloatCalculator::multiply;
-	cmdmap["/"] = &FloatCalculator::divide;
-	cmdmap["sum"] = &FloatCalculator::sum;
-	cmdmap["prod"] = &FloatCalculator::product;
-	cmdmap["series"] = &FloatCalculator::series;
-	cmdmap["^"] = &FloatCalculator::power;
-	cmdmap["pow"] = &FloatCalculator::power;
-	cmdmap["swap"] = &FloatCalculator::swap;
-	cmdmap["print"] = &FloatCalculator::printStack;
-	cmdmap["clear"] = &FloatCalculator::clearStack;
-
+	initMap();
 }
 
 /**
@@ -76,6 +64,21 @@ FloatCalculator::~FloatCalculator() {
  */
 FloatCalculator::FloatCalculator(unsigned int sizeOfStack) :
 		FloatStack(sizeOfStack) {
+	initMap();
+
+}
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 29, 2017
+ @mname   FloatCalculator::initMap
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+void FloatCalculator::initMap() {
+
 	cmdmap["+"] = &FloatCalculator::add;
 	cmdmap["-"] = &FloatCalculator::subtract;
 	cmdmap["*"] = &FloatCalculator::multiply;
@@ -88,8 +91,13 @@ FloatCalculator::FloatCalculator(unsigned int sizeOfStack) :
 	cmdmap["swap"] = &FloatCalculator::swap;
 	cmdmap["print"] = &FloatCalculator::printStack;
 	cmdmap["clear"] = &FloatCalculator::clearStack;
-
-}
+	cmdmap["exp"] = &FloatCalculator::exponential;
+	cmdmap["log"] = &FloatCalculator::log;
+	cmdmap["sqrt"] = &FloatCalculator::sqrt;
+	cmdmap["cos"] = &FloatCalculator::cos;
+	cmdmap["sin"] = &FloatCalculator::sin;
+	cmdmap["pop"] = &FloatCalculator::popOp;
+} // end-of-method FloatCalculator::initMap
 
 /**
  ---------------------------------------------------------------------------
@@ -268,39 +276,6 @@ bool FloatCalculator::swap() {
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 28, 2017
- @mname   exponent
- @details
- \n
- --------------------------------------------------------------------------
- */
-bool FloatCalculator::exponent() {
-	float v1;
-	float v2;
-
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
-		return false;
-	}
-
-	if (top()) {
-		v2 = *top();
-		pop();
-	} //end-of-if
-
-	else {
-		return false;
-	}
-	push(pow(v2, v1));
-	return true;
-}
-
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 28, 2017
  @mname   FloatCalculator::sum
  @details
  \n
@@ -334,7 +309,6 @@ bool FloatCalculator::product() {
 	push(totalProduct);
 	return true;
 } // end-of-method FloatCalculator::sum
-
 
 /**
  ---------------------------------------------------------------------------
@@ -408,14 +382,156 @@ bool FloatCalculator::series() {
 	else {
 		return false;
 	}
-	for (float i = firstNum; i <= lastNum; i+= step ) {
+	for (float i = firstNum; i <= lastNum; i += step) {
 		push(i);
 	} //end-of-for
 
 	return true;
 } // end-of-method FloatCalculator::series
 
+/**
+ -------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 29, 2017
+ @name    FloatCalculator::sqrt
+ @param   paramlist: none
+ @return  type
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
 
+bool FloatCalculator::sqrt() {
+	float v1;
+	if (top()) {
+		v1 = *top();
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+	push((float) ::sqrt(v1));
+
+	return true;
+}
+
+/**
+ -------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 29, 2017
+ @name    FloatCalculator::exp
+ @param   paramlist: none
+ @return  bool
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
+bool FloatCalculator::exponential() {
+	float v1;
+	if (top()) {
+		v1 = *top();
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+	push((float) ::exp(v1));
+
+	return true;
+}
+
+/**
+ -------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 29, 2017
+ @name    FloatCalculator::log
+ @param   paramlist: none
+ @return  bool
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
+bool FloatCalculator::log() {
+	float v1;
+	if (top()) {
+		v1 = *top();
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+	push((float) ::log(v1));
+
+	return true;
+}
+/**
+ -------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 29, 2017
+ @name    FloatCalculator::cos
+ @param   paramlist: none
+ @return  bool
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
+bool FloatCalculator::cos() {
+	float v1;
+	if (top()) {
+		v1 = *top();
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+	push((float) ::cos(v1));
+
+	return true;
+}
+/**
+ -------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 29, 2017
+ @name    FloatCalculator::sin
+ @param   paramlist: none
+ @return  bool
+ @details
+ \n
+ -------------------------------------------------------------------------
+ */
+bool FloatCalculator::sin() {
+	float v1;
+	if (top()) {
+		v1 = *top();
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+	push((float) ::sin(v1));
+
+	return true;
+}
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 29, 2017
+ @mname   FloatCalculator::popOp
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+bool FloatCalculator::popOp() {
+
+	if (top()) {
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+	return true;
+} // end-of-method FloatCalculator::popOp
 
 /**
  ---------------------------------------------------------------------------
