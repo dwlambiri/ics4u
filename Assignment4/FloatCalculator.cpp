@@ -35,16 +35,16 @@
 FloatCalculator::FloatCalculator() :
 		FloatStack() {
 
-	cmdmap["+"] = &add;
-	cmdmap["-"] = &subtract;
-	cmdmap["*"] = &multiply;
-	cmdmap["/"] = &divide;
-	cmdmap["sum"] = &sum;
-	cmdmap["prod"] = &product;
-	cmdmap["series"] = &series;
-	cmdmap["^"] = &power;
-	cmdmap["pow"] = &power;
-	cmdmap["swap"] = &swap;
+	cmdmap["+"] = &FloatCalculator::add;
+	cmdmap["-"] = &FloatCalculator::subtract;
+	cmdmap["*"] = &FloatCalculator::multiply;
+	cmdmap["/"] = &FloatCalculator::divide;
+	cmdmap["sum"] = &FloatCalculator::sum;
+	cmdmap["prod"] = &FloatCalculator::product;
+	cmdmap["series"] = &FloatCalculator::series;
+	cmdmap["^"] = &FloatCalculator::power;
+	cmdmap["pow"] = &FloatCalculator::power;
+	cmdmap["swap"] = &FloatCalculator::swap;
 
 }
 
@@ -74,16 +74,16 @@ FloatCalculator::~FloatCalculator() {
  */
 FloatCalculator::FloatCalculator(unsigned int sizeOfStack) :
 		FloatStack(sizeOfStack) {
-	cmdmap["+"] = &add;
-	cmdmap["-"] = &subtract;
-	cmdmap["*"] = &multiply;
-	cmdmap["/"] = &divide;
-	cmdmap["sum"] = &sum;
-	cmdmap["prod"] = &product;
-	cmdmap["series"] = &series;
-	cmdmap["^"] = &power;
-	cmdmap["pow"] = &power;
-	cmdmap["swap"] = &swap;
+	cmdmap["+"] = &FloatCalculator::add;
+	cmdmap["-"] = &FloatCalculator::subtract;
+	cmdmap["*"] = &FloatCalculator::multiply;
+	cmdmap["/"] = &FloatCalculator::divide;
+	cmdmap["sum"] = &FloatCalculator::sum;
+	cmdmap["prod"] = &FloatCalculator::product;
+	cmdmap["series"] = &FloatCalculator::series;
+	cmdmap["^"] = &FloatCalculator::power;
+	cmdmap["pow"] = &FloatCalculator::power;
+	cmdmap["swap"] = &FloatCalculator::swap;
 
 }
 
@@ -376,9 +376,37 @@ bool FloatCalculator::power() {
  */
 bool FloatCalculator::series() {
 
-//	for (int i = firstNum; i < lastNum; i+=step ) {
-//		push(i);
-//	} //end-of-for
+	float firstNum;
+	float lastNum;
+	float step;
+
+	if (top()) {
+		step = *top();
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+
+	if (top()) {
+		lastNum = *top();
+		pop();
+	} //end-of-if
+
+	else {
+		return false;
+	}
+	if (top()) {
+		firstNum = *top();
+		pop();
+	} //end-of-if
+
+	else {
+		return false;
+	}
+	for (float i = firstNum; i <= lastNum; i+= step ) {
+		push(i);
+	} //end-of-for
 
 	return true;
 } // end-of-method FloatCalculator::series
