@@ -15,6 +15,7 @@
  *****************************************************************************/
 
 #include "FloatStack.hpp"
+#include <iostream>
 
 /**
  ---------------------------------------------------------------------------
@@ -172,4 +173,29 @@ void FloatStack::expand() {
 	mStack = tmp;
 
 } // end-of-method FloatStack::expand
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 28, 2017
+   @mname   FloatStack::printStack
+   @details
+	  This function prints the contents of the stack from the bottom of the
+	  stack to the top.
+  --------------------------------------------------------------------------
+ */
+void
+FloatStack::printStack() {
+
+	if (mElementsInStack == 0){
+		std::cout << "The stack is empty" << std::endl;
+	}
+	else {
+		for (int i = 0; i < mElementsInStack; i++){
+			std::cout << mStack[i] << std::endl;
+		}
+	}
+} // end-of-method FloatStack::printStack
+
+
 
