@@ -19,6 +19,8 @@
 #include <string>
 
 #include "FloatCalculator.hpp"
+#include "GraphicsEngine.hpp"
+
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
@@ -36,6 +38,10 @@ int
 main(int argc, char **argv) {
 	FloatCalculator test;
 	std::string array;
+
+	GraphicsEngine ge;
+
+	ge.initAllegro("RPN Calculator", 800, 600);
 
 	while(true) {
 		std::cout << "#";
