@@ -270,4 +270,3 @@ bool FloatCalculator::parse(std::string& array) {
 
 	return noError;
 }
-

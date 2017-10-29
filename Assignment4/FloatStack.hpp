@@ -166,6 +166,29 @@ public:
 		return mElementsInStack >= mStackSize;
 	} // end-of-method full
 
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   clearStack
+	   @details
+		  clears the stack.
+	  --------------------------------------------------------------------------
+	 */
+	void clearStack() {mElementsInStack = 0;} // end-of-method clearStack
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   printStack
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	void printStack();
+
+
 protected:
 
 	/*
@@ -176,6 +199,15 @@ protected:
 	 *  It stores the floats passed to the object.
 	 */
 	float* mStack;
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 23, 2017
+	 *   mElementsInStack represents the number of elements in the stack.
+	 *   The index of the top of the stack is mElementsInStack - 1, if
+	 *     mElementsInStack > 0.
+	 */
+	unsigned int mElementsInStack;
 
 private:
 	//--------------------------------------------------
@@ -189,14 +221,7 @@ private:
 	 */
 	unsigned int mStackSize;
 
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 23, 2017
-	 *   mElementsInStack represents the number of elements in the stack.
-	 *   The index of the top of the stack is mElementsInStack - 1, if
-	 *     mElementsInStack > 0.
-	 */
-	unsigned int mElementsInStack;
+
 
 private:
 	//--------------------------------------------------

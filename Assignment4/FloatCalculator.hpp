@@ -122,7 +122,29 @@ public:
 	 */
 	bool Commands(char term[]);
 
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   thename
+	   @details
+		  This function parses a string which is entered by the user and then
+		  operates upon the data provided by accessing FloatStack \n.
+	  --------------------------------------------------------------------------
+	 */
 	bool parse(std::string& array);
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   swap
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	bool swap();
+
 
 private:
 	//--------------------------------------------------
