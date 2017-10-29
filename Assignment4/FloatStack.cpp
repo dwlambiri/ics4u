@@ -192,7 +192,7 @@ FloatStack::printStack() {
 		return false;
 	}
 	else {
-		for (int i = 0; i < mElementsInStack; i++){
+		for (int i = mElementsInStack-1; i >=0 ; i--){
 			std::cout << mStack[i] << std::endl;
 		}
 	}

@@ -1,1 +1,1 @@
-g++ -std=c++11 -Wall -o rpn.exe CalculatorMain.cpp FloatCalculator.cpp FloatStack.cpp
+g++ -std=c++11 -Wall -I/usr/local/include -L/usr/local/lib -lallegro -lallegro_main -lallegro_image -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_dialog -o rpn.exe CalculatorMain.cpp FloatCalculator.cpp FloatStack.cpp GraphicsEngine.cpp
