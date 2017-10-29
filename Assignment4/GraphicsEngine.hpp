@@ -26,78 +26,6 @@ enum PixelColour {
 //end-of-enum PixelColour
 
 
-/**
-  ---------------------------------------------------------------------------
-   @author     dwlambiri
-   @date       Oct 29, 2017
-   @classname  CalculatorButton
-   @brief
-	 \n
-   @details
-	\n
-  ---------------------------------------------------------------------------
- */
-class CalculatorButton {
-
-public:
-	//--------------------------------------------------
-	// Public Methods (External Type Interface)
-	//--------------------------------------------------
-	/**
-	  --------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 29, 2017
-	   @name    CalculatorButton::CalculatorButton
-	   @param   -
-	   @return  -
-	   @details
-		Default constructor of Class CalculatorButton \n
-	  --------------------------------------------------------------------------
-	 */
-	CalculatorButton(int x, int y, const char* name);
-
-	/**
-	  --------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 29, 2017
-	   @name    CalculatorButton::~CalculatorButton
-	   @param   -
-	   @return  -
-	   @details
-		Default destructor of class CalculatorButton \n
-	  --------------------------------------------------------------------------
-	 */
-	~CalculatorButton() {}
-
-	/**
-	  -------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 29, 2017
-	   @name    CalculatorButton::draw
-	   @param
-	   @return  void
-	   @details
-		  \n
-	  -------------------------------------------------------------------------
-	 */
-	void draw(ALLEGRO_COLOR c, ALLEGRO_FONT* f);
-
-private:
-	//--------------------------------------------------
-	// Data Members
-	//--------------------------------------------------
-	int xpos;
-	int ypos;
-	std::string text;
-	int xlen;
-	int ylen;
-
-private:
-	//--------------------------------------------------
-	// Private Methods
-	//--------------------------------------------------
-
-}; //end-of-class CalculatorButton
 
 
 /**
@@ -150,7 +78,8 @@ public:
 	void allegroExitLoop();
 
 	bool drawPixel(int x, int y, PixelColour c);
-	void displayMessage(const int x, const int y, PixelColour c, const char* msg);
+	void displayStack(PixelColour c);
+	void displayError(PixelColour c);
 	void clearBitmap()  {
 	    //this should clear the bitmap
 	    al_clear_to_color(al_map_rgb(0,0,0));
@@ -158,6 +87,113 @@ public:
 
 	void initCalculator();
 	void drawCalculator();
+
+
+	/**
+	  -------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 29, 2017
+	   @name    GraphicsEngine::setErrorString
+	   @param   std::string& str
+	   @return  void
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	void setErrorString(std::string str) {
+		errorString =  str;
+	}
+
+	/**
+	  -------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 29, 2017
+	   @name    GraphicsEngine::setVector
+	   @param   std::vector<float>& v
+	   @return  void
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	void setVector(std::vector<float>& v) {
+		stack.clear();
+		stack = v;
+	}
+
+	/**
+	  ---------------------------------------------------------------------------
+	   @author     dwlambiri
+	   @date       Oct 29, 2017
+	   @classname  CalculatorButton
+	   @brief
+		 \n
+	   @details
+		\n
+	  ---------------------------------------------------------------------------
+	 */
+	class CalculatorButton {
+
+	public:
+		//--------------------------------------------------
+		// Public Methods (External Type Interface)
+		//--------------------------------------------------
+		/**
+		  --------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 29, 2017
+		   @name    CalculatorButton::CalculatorButton
+		   @param   -
+		   @return  -
+		   @details
+			Default constructor of Class CalculatorButton \n
+		  --------------------------------------------------------------------------
+		 */
+		CalculatorButton(int x, int y, int xw, int yw, const char* name);
+
+		/**
+		  --------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 29, 2017
+		   @name    CalculatorButton::~CalculatorButton
+		   @param   -
+		   @return  -
+		   @details
+			Default destructor of class CalculatorButton \n
+		  --------------------------------------------------------------------------
+		 */
+		~CalculatorButton() {}
+
+		/**
+		  -------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 29, 2017
+		   @name    CalculatorButton::draw
+		   @param
+		   @return  void
+		   @details
+			  \n
+		  -------------------------------------------------------------------------
+		 */
+		void draw(ALLEGRO_COLOR c, ALLEGRO_FONT* f);
+
+
+	private:
+		//--------------------------------------------------
+		// Data Members
+		//--------------------------------------------------
+		int xpos;
+		int ypos;
+		std::string text;
+		int xlen;
+		int ylen;
+
+	private:
+		//--------------------------------------------------
+		// Private Methods
+		//--------------------------------------------------
+
+	}; //end-of-class CalculatorButton
+
 
 private:
 	//--------------------------------------------------
@@ -174,6 +210,17 @@ private:
 	int windowWidth;
 	int windowHeight;
 	int fps;
+	std::string errorString;
+	std::vector<float> stack;
+
+	static const int xButtonStart_c = 20;
+	int yButtonStart;
+	static const int yButtonSpace_c = 20;
+	static const int xButtonSpace_c = 20;
+	int xblen;
+	int yblen;
+	static const int fontSize_c = 30;
+
 
 private:
 	//--------------------------------------------------

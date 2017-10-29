@@ -428,7 +428,28 @@ bool FloatCalculator::series() {
  */
 bool FloatCalculator::compute(char term[]) {
 	bool noError = true;
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 29, 2017
+	 *  The std::map data structure returns an iterator
+	 *  as the result from a find.
+	 *  I used the example from:
+	 *  	 http://www.cplusplus.com/reference/map/map/find/
+	 *  to write my compute function.
+	 *  I first check that the string provided against the map.
+	 *  If the string is part of the map then the string is an
+	 *  operation. The program tries to execute the operation.
+	 *  If the iterator points to cmdmap.end() it means that the
+	 *  string is not a key in the map.
+	 *
+	 *  In that case we try to see if we can transform the string
+	 *  into a float. we use strtod() function.
+	 *  http://www.cplusplus.com/reference/cstdlib/strtod/?kw=strtod
+	 *
+	 */
+
 	CmdMap::iterator it = cmdmap.find(std::string(term));
+
 	if (it != cmdmap.end()) {
 		FCMPF cpf = it->second;
 		if ((this->*cpf)() == false) {

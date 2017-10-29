@@ -42,38 +42,34 @@ main(int argc, char **argv) {
 	std::string array;
 	GraphicsEngine ge;
 
-	ge.initAllegro("RPN Calculator", 800, 600);
+	const int w_c = 1200;
+	const int h_c = 800;
+
+	ge.initAllegro("RPN Calculator", w_c, h_c);
 	ge.initCalculator();
 	ge.drawCalculator();
-	ge.moveBitmapToDisplay();
 
 	while(true) {
 		std::ostringstream out;
-		std::ostringstream  err;
+		std::ostringstream  error;
+		std::vector<float>  topofstack(10);
 
 		std::cout << "#";
 		std::getline(std::cin,array);
 		if(strcmp("quit",array.c_str())== 0) {
 			return 0;
 		}
-		if(test.parse(array) == true) {
-			float* t = test.top();
-			if(t) {
-				out <<"result =  "<< *t << std::endl;
-			}
-			else {
-				out <<"result =  null" << std::endl;
-			}
-			ge.drawCalculator();
-			ge.displayMessage(100, 100, whitePixel_c, out.str().c_str());
-			ge.moveBitmapToDisplay();
+		if(test.parse(array) == false) {
+			error << "error: bad expression" << std::endl;
+			ge.setErrorString(error.str());
 		}
 		else {
-			err << "error: stack is empty" << std::endl;
-			ge.drawCalculator();
-			ge.displayMessage(100, 200, whitePixel_c, err.str().c_str());
-			ge.moveBitmapToDisplay();
+			test.getTopOfStack(topofstack, 10);
+			ge.setVector(topofstack);
+			ge.setErrorString(error.str());
 		}
+		ge.drawCalculator();
+
 	}
 	return 0;
 }

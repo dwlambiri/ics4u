@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
 
 /**
  ---------------------------------------------------------------------------
@@ -202,13 +203,62 @@ public:
 	 */
 	bool exponent();
 
+	/**
+	  -------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 29, 2017
+	   @name    FloatCalculator::getTopOfStack
+	   @param   std::vector<float>& f
+	   @return  void
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	void getTopOfStack(std::vector<float>& f, unsigned int num) {
+		int retnum = (num<mElementsInStack)?num:mElementsInStack;
+		f.resize(retnum);
+		for (unsigned int i = 0; (i < num) && (mElementsInStack >= i+1); i++ ) {
+			f[i] = mStack[mElementsInStack-i-1];
+		} //end-of-for
+	}
+
 
 private:
 	//--------------------------------------------------
 	// Data Members
 	//--------------------------------------------------
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 29, 2017
+	 *  I am using the "using" pattern because
+	 *  it makes the code more readable.
+	 *  FCMPF is a pointer to a member method of the
+	 *  class FloatCalculator.
+	 *  We will use this to access the operation functions
+	 *  	(such as: sum, prod, add, subtract, etc.).
+	 *  CmdMap is a shorthand for a map that has as a key,
+	 *  a string representing the textual description of the
+	 *  operation and as a value a pointer to the actual
+	 *  member method that executes the operation.
+	 */
+
 	using FCMPF = bool (FloatCalculator::*)(void);
 	using CmdMap = std::map<std::string, FCMPF>;
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 29, 2017
+	 *  cmdmap is a member variable that stores all
+	 *  command strings and the actual pointers to
+	 *  members.
+	 *
+	 *  I picked a map because according to Bjarne Stroustrup
+	 *  (chapter 31 of c++ Programming Language [4th Edition])
+	 *  this data structure has O(log(n)) search performance.
+	 *  This means that the calculator will perform very close
+	 *  to constant time when evaluating the expressions irrespective
+	 *  of the number of functions that are being added.
+	 */
 
 	CmdMap cmdmap;
 
