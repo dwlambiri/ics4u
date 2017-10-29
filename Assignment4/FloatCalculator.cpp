@@ -17,11 +17,8 @@
  *****************************************************************************/
 #include <stdlib.h>
 #include <string.h>
-<<<<<<< HEAD
 #include <map>
 #include <string>
-=======
->>>>>>> branch 'rpn#1' of https://github.com/dwlambiri/ics4u.git
 #include <math.h>
 #include "FloatCalculator.hpp"
 
@@ -229,134 +226,6 @@ bool FloatCalculator::divide() {
 }
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 28, 2017
-   @mname   FloatCalculator::swap
-   @details
-	  Swaps the top two characters in the stack\n
-  --------------------------------------------------------------------------
- */
-bool
-FloatCalculator::swap() {
-	float v1;
-	float v2;
-
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else{
-		return false;
-	}
-
-	if (top()) {
-		v2 = *top();
-		pop();
-	} //end-of-if
-
-	else {
-		return false;
-	}
-
-	push(v1);
-	push(v2);
-	return true;
-} // end-of-method FloatCalculator::swap
-
-
-/**
-	  ---------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 28, 2017
-	   @mname   exponent
-	   @details
-		  \n
-	  --------------------------------------------------------------------------
-	 */
-	bool
-	FloatCalculator::exponent(){
-		float v1;
-		float v2;
-
-		if (top()) {
-			v1 = *top();
-			pop();
-		} //end-of-if
-		else{
-			return false;
-		}
-
-		if (top()) {
-			v2 = *top();
-			pop();
-		} //end-of-if
-
-		else {
-			return false;
-		}
-		push(pow(v2, v1));
-		return true;
-	}
-
-/**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 28, 2017
-   @mname   FloatCalculator::series
-   @details
-	  \n
-  --------------------------------------------------------------------------
- */
-void
-FloatCalculator::series(int firstNum, int lastNum, int step) {
-	for (int i = firstNum; i < lastNum; i+=step ) {
-		push(i);
-	} //end-of-for
-
-} // end-of-method FloatCalculator::series
-
-/**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 28, 2017
-   @mname   FloatCalculator::sum
-   @details
-	  \n
-  --------------------------------------------------------------------------
- */
-bool
-FloatCalculator::sum() {
-	float sumation = 0;
-	while(top()){
-		sumation += *top();
-		pop();
-	}
-	push(sumation);
-	return true;
-} // end-of-method FloatCalculator::sum
-
-/**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 28, 2017
-   @mname   FloatCalculator::product
-   @details
-	  \n
-  --------------------------------------------------------------------------
- */
-bool
-FloatCalculator::product() {
-	float totalProduct = 1;
-	while(top()){
-		totalProduct *= *top();
-		pop();
-	}
-	push(totalProduct);
-	return true;
-} // end-of-method FloatCalculator::sum
-
-/**
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 28, 2017
@@ -390,6 +259,78 @@ bool FloatCalculator::swap() {
 	push(v2);
 	return true;
 } // end-of-method FloatCalculator::swap
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 28, 2017
+ @mname   exponent
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+bool FloatCalculator::exponent() {
+	float v1;
+	float v2;
+
+	if (top()) {
+		v1 = *top();
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+
+	if (top()) {
+		v2 = *top();
+		pop();
+	} //end-of-if
+
+	else {
+		return false;
+	}
+	push(pow(v2, v1));
+	return true;
+}
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 28, 2017
+ @mname   FloatCalculator::sum
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+bool FloatCalculator::sum() {
+	float sumation = 0;
+	while (top()) {
+		sumation += *top();
+		pop();
+	}
+	push(sumation);
+	return true;
+} // end-of-method FloatCalculator::sum
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 28, 2017
+ @mname   FloatCalculator::product
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+bool FloatCalculator::product() {
+	float totalProduct = 1;
+	while (top()) {
+		totalProduct *= *top();
+		pop();
+	}
+	push(totalProduct);
+	return true;
+} // end-of-method FloatCalculator::sum
+
 
 /**
  ---------------------------------------------------------------------------
@@ -442,57 +383,19 @@ bool FloatCalculator::series() {
 	return true;
 } // end-of-method FloatCalculator::series
 
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 28, 2017
- @mname   FloatCalculator::sum
- @details
- \n
- --------------------------------------------------------------------------
- */
-bool FloatCalculator::sum() {
-	float sumation = 0;
-	while (top()) {
-		sumation += *top();
-		pop();
-	}
-	push(sumation);
-	return true;
-} // end-of-method FloatCalculator::sum
 
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 28, 2017
- @mname   FloatCalculator::product
- @details
- \n
- --------------------------------------------------------------------------
- */
-bool FloatCalculator::product() {
-	float totalProduct = 1;
-	while (top()) {
-		totalProduct *= *top();
-		pop();
-	}
-	push(totalProduct);
-	return true;
-} // end-of-method FloatCalculator::sum
 
 /**
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 26, 2017
- @mname   Calculator::Commands
+ @mname   FloatCalculator::compute
  @details
  \n
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::compute(char term[]) {
 	bool noError = true;
-<<<<<<< HEAD
-
 	CmdMap::iterator it = cmdmap.find(std::string(term));
 	if (it != cmdmap.end()) {
 		FCMPF cpf = it->second;
@@ -505,35 +408,6 @@ bool FloatCalculator::compute(char term[]) {
 		if (pEnd != term) {
 			push(f);
 		} else {
-=======
-	if (term[0] >= '0' && term[0] <= '9') {
-		float f= (float) strtod(term, nullptr);
-		push(f);
-	}
-	else {
-		switch (term[0]) {
-		case '+':
-			if (add() == false)
-				noError = false;
-			break;
-		case '-':
-			if (subtract() == false)
-				noError = false;
-			break;
-		case '*':
-			if ( multiply() == false)
-				noError = false;
-			break;
-		case '/':
-			if (divide() == false)
-				noError = false;
-			break;
-		case '^':
-			if (exponent() == false)
-				noError = false;
-			break;
-		default:
->>>>>>> branch 'rpn#1' of https://github.com/dwlambiri/ics4u.git
 			noError = false;
 		}
 	}
