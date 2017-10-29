@@ -15,6 +15,7 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <sstream>
 #include <string.h>
 #include <string>
 
@@ -36,14 +37,20 @@
  */
 int
 main(int argc, char **argv) {
+
 	FloatCalculator test;
 	std::string array;
-
 	GraphicsEngine ge;
 
 	ge.initAllegro("RPN Calculator", 800, 600);
+	ge.initCalculator();
+	ge.drawCalculator();
+	ge.moveBitmapToDisplay();
 
 	while(true) {
+		std::ostringstream out;
+		std::ostringstream  err;
+
 		std::cout << "#";
 		std::getline(std::cin,array);
 		if(strcmp("quit",array.c_str())== 0) {
@@ -52,11 +59,20 @@ main(int argc, char **argv) {
 		if(test.parse(array) == true) {
 			float* t = test.top();
 			if(t) {
-				std::cout <<"result =  "<< *t << std::endl;
+				out <<"result =  "<< *t << std::endl;
 			}
 			else {
-				std::cerr << "error: no result on stack" << std::endl;
+				out <<"result =  null" << std::endl;
 			}
+			ge.drawCalculator();
+			ge.displayMessage(100, 100, whitePixel_c, out.str().c_str());
+			ge.moveBitmapToDisplay();
+		}
+		else {
+			err << "error: stack is empty" << std::endl;
+			ge.drawCalculator();
+			ge.displayMessage(100, 200, whitePixel_c, err.str().c_str());
+			ge.moveBitmapToDisplay();
 		}
 	}
 	return 0;

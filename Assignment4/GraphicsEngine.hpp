@@ -10,19 +10,95 @@
 //includes
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <time.h>
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_font.h>
 
 
-/*
- the enum is used to select a colour of the line drawn in the findpath function*/
-enum MapPixelColour {
-	redPixel_c, greeenPixel_c, bluePixel_c
+
+enum PixelColour {
+	redPixel_c, greeenPixel_c, bluePixel_c, whitePixel_c, blackPixel_c
 };
-//end-of-enum MapPixelColour
+//end-of-enum PixelColour
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author     dwlambiri
+   @date       Oct 29, 2017
+   @classname  CalculatorButton
+   @brief
+	 \n
+   @details
+	\n
+  ---------------------------------------------------------------------------
+ */
+class CalculatorButton {
+
+public:
+	//--------------------------------------------------
+	// Public Methods (External Type Interface)
+	//--------------------------------------------------
+	/**
+	  --------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 29, 2017
+	   @name    CalculatorButton::CalculatorButton
+	   @param   -
+	   @return  -
+	   @details
+		Default constructor of Class CalculatorButton \n
+	  --------------------------------------------------------------------------
+	 */
+	CalculatorButton(int x, int y, const char* name);
+
+	/**
+	  --------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 29, 2017
+	   @name    CalculatorButton::~CalculatorButton
+	   @param   -
+	   @return  -
+	   @details
+		Default destructor of class CalculatorButton \n
+	  --------------------------------------------------------------------------
+	 */
+	~CalculatorButton() {}
+
+	/**
+	  -------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 29, 2017
+	   @name    CalculatorButton::draw
+	   @param
+	   @return  void
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	void draw(ALLEGRO_COLOR c, ALLEGRO_FONT* f);
+
+private:
+	//--------------------------------------------------
+	// Data Members
+	//--------------------------------------------------
+	int xpos;
+	int ypos;
+	std::string text;
+	int xlen;
+	int ylen;
+
+private:
+	//--------------------------------------------------
+	// Private Methods
+	//--------------------------------------------------
+
+}; //end-of-class CalculatorButton
+
 
 /**
   ---------------------------------------------------------------------------
@@ -73,12 +149,15 @@ public:
 	bool allegroEventLoop();
 	void allegroExitLoop();
 
-	bool drawPixel(int x, int y, MapPixelColour c);
-	void displayMessage(const char* msg);
+	bool drawPixel(int x, int y, PixelColour c);
+	void displayMessage(const int x, const int y, PixelColour c, const char* msg);
 	void clearBitmap()  {
 	    //this should clear the bitmap
 	    al_clear_to_color(al_map_rgb(0,0,0));
 	}
+
+	void initCalculator();
+	void drawCalculator();
 
 private:
 	//--------------------------------------------------
@@ -89,6 +168,8 @@ private:
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_BITMAP *screenBitmap;
 	ALLEGRO_FONT *font;
+
+	std::vector<CalculatorButton*> buttons;
 
 	int windowWidth;
 	int windowHeight;
