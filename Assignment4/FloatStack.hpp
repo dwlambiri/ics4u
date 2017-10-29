@@ -175,7 +175,7 @@ public:
 		  clears the stack.
 	  --------------------------------------------------------------------------
 	 */
-	void clearStack() {mElementsInStack = 0;} // end-of-method clearStack
+	bool clearStack() {mElementsInStack = 0; return true;} // end-of-method clearStack
 
 	/**
 	  ---------------------------------------------------------------------------
@@ -186,7 +186,7 @@ public:
 		  \n
 	  --------------------------------------------------------------------------
 	 */
-	void printStack();
+	bool printStack();
 
 
 protected:

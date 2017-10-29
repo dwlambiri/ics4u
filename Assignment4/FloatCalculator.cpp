@@ -45,6 +45,8 @@ FloatCalculator::FloatCalculator() :
 	cmdmap["^"] = &FloatCalculator::power;
 	cmdmap["pow"] = &FloatCalculator::power;
 	cmdmap["swap"] = &FloatCalculator::swap;
+	cmdmap["print"] = &FloatCalculator::printStack;
+	cmdmap["clear"] = &FloatCalculator::clearStack;
 
 }
 
@@ -84,6 +86,8 @@ FloatCalculator::FloatCalculator(unsigned int sizeOfStack) :
 	cmdmap["^"] = &FloatCalculator::power;
 	cmdmap["pow"] = &FloatCalculator::power;
 	cmdmap["swap"] = &FloatCalculator::swap;
+	cmdmap["print"] = &FloatCalculator::printStack;
+	cmdmap["clear"] = &FloatCalculator::clearStack;
 
 }
 

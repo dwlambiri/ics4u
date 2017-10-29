@@ -184,17 +184,19 @@ void FloatStack::expand() {
 	  stack to the top.
   --------------------------------------------------------------------------
  */
-void
+bool
 FloatStack::printStack() {
 
 	if (mElementsInStack == 0){
 		std::cout << "The stack is empty" << std::endl;
+		return false;
 	}
 	else {
 		for (int i = 0; i < mElementsInStack; i++){
 			std::cout << mStack[i] << std::endl;
 		}
 	}
+	return true;
 } // end-of-method FloatStack::printStack
 
 
