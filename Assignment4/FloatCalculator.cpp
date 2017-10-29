@@ -17,6 +17,7 @@
  *****************************************************************************/
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "FloatCalculator.hpp"
 
 /**
@@ -178,6 +179,9 @@ bool FloatCalculator::divide() {
 		v1 = *top();
 		pop();
 	} //end-of-if
+	else {
+		return false;
+	}
 
 	if (top()) {
 		v2 = *top();
@@ -194,6 +198,134 @@ bool FloatCalculator::divide() {
 	push(v2 / v1);
 	return true;
 }
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 28, 2017
+   @mname   FloatCalculator::swap
+   @details
+	  Swaps the top two characters in the stack\n
+  --------------------------------------------------------------------------
+ */
+bool
+FloatCalculator::swap() {
+	float v1;
+	float v2;
+
+	if (top()) {
+		v1 = *top();
+		pop();
+	} //end-of-if
+	else{
+		return false;
+	}
+
+	if (top()) {
+		v2 = *top();
+		pop();
+	} //end-of-if
+
+	else {
+		return false;
+	}
+
+	push(v1);
+	push(v2);
+	return true;
+} // end-of-method FloatCalculator::swap
+
+
+/**
+	  ---------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 28, 2017
+	   @mname   exponent
+	   @details
+		  \n
+	  --------------------------------------------------------------------------
+	 */
+	bool
+	FloatCalculator::exponent(){
+		float v1;
+		float v2;
+
+		if (top()) {
+			v1 = *top();
+			pop();
+		} //end-of-if
+		else{
+			return false;
+		}
+
+		if (top()) {
+			v2 = *top();
+			pop();
+		} //end-of-if
+
+		else {
+			return false;
+		}
+		push(pow(v2, v1));
+		return true;
+	}
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 28, 2017
+   @mname   FloatCalculator::series
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+FloatCalculator::series(int firstNum, int lastNum, int step) {
+	for (int i = firstNum; i < lastNum; i+=step ) {
+		push(i);
+	} //end-of-for
+
+} // end-of-method FloatCalculator::series
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 28, 2017
+   @mname   FloatCalculator::sum
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+FloatCalculator::sum() {
+	float sumation = 0;
+	while(top()){
+		sumation += *top();
+		pop();
+	}
+	push(sumation);
+	return true;
+} // end-of-method FloatCalculator::sum
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 28, 2017
+   @mname   FloatCalculator::product
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+FloatCalculator::product() {
+	float totalProduct = 1;
+	while(top()){
+		totalProduct *= *top();
+		pop();
+	}
+	push(totalProduct);
+	return true;
+} // end-of-method FloatCalculator::sum
 
 /**
  ---------------------------------------------------------------------------
@@ -226,6 +358,10 @@ bool FloatCalculator::Commands(char term[]) {
 			break;
 		case '/':
 			if (divide() == false)
+				noError = false;
+			break;
+		case '^':
+			if (exponent() == false)
 				noError = false;
 			break;
 		default:
