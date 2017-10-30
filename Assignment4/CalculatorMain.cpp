@@ -49,6 +49,8 @@ main(int argc, char **argv) {
 	ge.initCalculator();
 	ge.drawCalculator();
 
+	std::cout << "Welcome to the RPN calculator" << std::endl;
+	std::cout << "Type quit to exit the calculator" << std::endl;
 	while(true) {
 		std::ostringstream out;
 		std::ostringstream  error;
