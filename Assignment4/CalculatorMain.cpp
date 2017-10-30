@@ -40,15 +40,20 @@ main(int argc, char **argv) {
 
 	FloatCalculator test;
 	std::string array;
-	GraphicsEngine ge;
 
 	const int w_c = 1200;
 	const int h_c = 800;
+	GraphicsEngine ge;
+
+
 
 	bool initok = ge.initAllegro("RPN Calculator", w_c, h_c);
 	if(initok) {
 		ge.initCalculator();
 		ge.drawCalculator();
+	}
+	else {
+		std::cerr << "error: could not init allegro. running in terminal mode" << std::endl;
 	}
 
 	std::cout << "Welcome to the RPN calculator" << std::endl;
