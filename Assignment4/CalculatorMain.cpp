@@ -23,20 +23,19 @@
 #include "GraphicsEngine.hpp"
 
 /**
-  ---------------------------------------------------------------------------
-   @author  dwlambiri
-   @date    Oct 28, 2017
-   @name    main
-   @param   argc number of command line arguments
-   @param   argv command line arguments
-   @return  the return code
-   @details
-	The main function of the program.
-	\n
-  --------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 28, 2017
+ @name    main
+ @param   argc number of command line arguments
+ @param   argv command line arguments
+ @return  the return code
+ @details
+ The main function of the program.
+ \n
+ --------------------------------------------------------------------------
  */
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
 
 	FloatCalculator test;
 	std::string array;
@@ -45,65 +44,58 @@ main(int argc, char **argv) {
 	const int h_c = 800;
 	GraphicsEngine ge;
 
-
-
 	bool initok = ge.initAllegro("RPN Calculator", w_c, h_c);
-	if(initok) {
+	if (initok) {
 		ge.initCalculator();
 		ge.drawCalculator();
-	}
-	else {
-		std::cerr << "error: could not init allegro. running in terminal mode" << std::endl;
+	} else {
+		std::cerr << "error: could not init allegro. running in terminal mode"
+				<< std::endl;
 	}
 
 	std::cout << "Welcome to the RPN calculator" << std::endl;
 	std::cout << "Type quit to exit the calculator" << std::endl;
-	while(true) {
+	while (true) {
 		std::ostringstream out;
-		std::ostringstream  error;
+		std::ostringstream error;
 		const int topNum_c = 11;
-		std::vector<float>  topofstack(topNum_c);
+		std::vector<float> topofstack(topNum_c);
 
 		std::cout << "#";
-		std::getline(std::cin,array);
-		if(strstr(array.c_str(), "quit") != nullptr) {
+		std::getline(std::cin, array);
+		if (strstr(array.c_str(), "quit") != nullptr) {
 			return 0;
 		}
-		if(test.parse(array) == false) {
+		if (test.parse(array) == false) {
 			error << "error: bad expression" << std::endl;
 
-			if(initok) {
+			if (initok) {
 				ge.setErrorString(error.str());
-			}
-			else {
+			} else {
 				std::cerr << error.str() << std::endl;
 			}
 		}
-		else {
-			test.getTopOfStack(topofstack, topNum_c);
-			if(initok) {
-				ge.setVector(topofstack);
-				ge.setErrorString(error.str());
-			}
-			else {
-				if(topofstack.size() == 0) {
-					std::cout << "empty stack" << std::endl;
-				}
-				else {
-					std::cout << "stack contains " << topofstack[0] << " elements" <<std::endl;
-					for (int i = 1; i < topofstack.size(); i++ ) {
-						std::cout << topofstack[i];
-						if(i == 1) {
-							std::cout << "    [Top of stack]"<< std::endl;
-						}
-						else {
-							std::cout << std::endl;
-						}
-					} //end-of-for
-				}
+		test.getTopOfStack(topofstack, topNum_c);
+		if (initok) {
+			ge.setVector(topofstack);
+			ge.setErrorString(error.str());
+		} else {
+			if (topofstack.size() == 0) {
+				std::cout << "empty stack" << std::endl;
+			} else {
+				std::cout << "stack contains " << topofstack[0] << " elements"
+						<< std::endl;
+				for (int i = 1; i < topofstack.size(); i++) {
+					std::cout << topofstack[i];
+					if (i == 1) {
+						std::cout << "    [Top of stack]" << std::endl;
+					} else {
+						std::cout << std::endl;
+					}
+				} //end-of-for
 			}
 		}
-		if(initok) {
+		if (initok) {
 			ge.drawCalculator();
 		}
 
