@@ -278,10 +278,17 @@ public:
 	 */
 	void getTopOfStack(std::vector<float>& f, unsigned int num) {
 		int retnum = (num < mElementsInStack) ? num : mElementsInStack;
-		f.resize(retnum);
+		if(retnum) {
+			f.resize(retnum+1);
+			f[0] = mElementsInStack;
+		}
+		else {
+			f.resize(0);
+			return;
+		}
 		for (unsigned int i = 0; (i < num) && (mElementsInStack >= i + 1);
 				i++) {
-			f[i] = mStack[mElementsInStack - i - 1];
+			f[i+1] = mStack[mElementsInStack - i - 1];
 		} //end-of-for
 	}
 
