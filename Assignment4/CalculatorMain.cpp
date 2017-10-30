@@ -45,32 +45,62 @@ main(int argc, char **argv) {
 	const int w_c = 1200;
 	const int h_c = 800;
 
-	ge.initAllegro("RPN Calculator", w_c, h_c);
-	ge.initCalculator();
-	ge.drawCalculator();
+	bool initok = ge.initAllegro("RPN Calculator", w_c, h_c);
+	if(initok) {
+		ge.initCalculator();
+		ge.drawCalculator();
+	}
 
 	std::cout << "Welcome to the RPN calculator" << std::endl;
 	std::cout << "Type quit to exit the calculator" << std::endl;
 	while(true) {
 		std::ostringstream out;
 		std::ostringstream  error;
-		std::vector<float>  topofstack(10);
+		const int topNum_c = 11;
+		std::vector<float>  topofstack(topNum_c);
 
 		std::cout << "#";
 		std::getline(std::cin,array);
-		if(strcmp("quit",array.c_str())== 0) {
+		if(strstr(array.c_str(), "quit") != nullptr) {
 			return 0;
 		}
 		if(test.parse(array) == false) {
 			error << "error: bad expression" << std::endl;
-			ge.setErrorString(error.str());
+
+			if(initok) {
+				ge.setErrorString(error.str());
+			}
+			else {
+				std::cerr << error.str() << std::endl;
+			}
 		}
 		else {
-			test.getTopOfStack(topofstack, 10);
-			ge.setVector(topofstack);
-			ge.setErrorString(error.str());
+			test.getTopOfStack(topofstack, topNum_c);
+			if(initok) {
+				ge.setVector(topofstack);
+				ge.setErrorString(error.str());
+			}
+			else {
+				if(topofstack.size() == 0) {
+					std::cout << "empty stack" << std::endl;
+				}
+				else {
+					std::cout << "stack contains " << topofstack[0] << " elements" <<std::endl;
+					for (int i = 1; i < topofstack.size(); i++ ) {
+						std::cout << topofstack[i];
+						if(i == 1) {
+							std::cout << "    [Top of stack]"<< std::endl;
+						}
+						else {
+							std::cout << std::endl;
+						}
+					} //end-of-for
+				}
+			}
 		}
-		ge.drawCalculator();
+		if(initok) {
+			ge.drawCalculator();
+		}
 
 	}
 	return 0;
