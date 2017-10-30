@@ -239,7 +239,7 @@ bool GraphicsEngine::allegroEventLoop() {
 			continue;
 		} else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 			//need to exit from main
-			//return false;
+			return false;
 			std::cerr << "Don't touch that dude!!" << std::endl;
 		}
 		if (ev.type == ALLEGRO_EVENT_MOUSE_AXES

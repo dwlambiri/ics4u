@@ -55,6 +55,9 @@ int main(int argc, char **argv) {
 
 	std::cout << "Welcome to the RPN calculator" << std::endl;
 	std::cout << "Type quit to exit the calculator" << std::endl;
+//	if(initok) {
+//		ge.allegroEventLoop();
+//	}
 	while (true) {
 		std::ostringstream out;
 		std::ostringstream error;
