@@ -69,7 +69,9 @@ public:
 		Default destructor of class GraphicsEngine \n
 	  --------------------------------------------------------------------------
 	 */
-	~GraphicsEngine(){}
+	~GraphicsEngine(){
+		cleanUp();
+	}
 
 
 	bool initAllegro(const char* title, const int w, const int h);
