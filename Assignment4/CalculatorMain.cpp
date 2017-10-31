@@ -6,7 +6,12 @@
  *
  *	Purpose: This program is used to test the FloatCalculator class
  *
- *	Usage:
+ *	Usage: The user inputs either an expression into the terminal, or
+    may press buttons on an allegro display which operate onto a stack. The
+    operands and numbers inputted will be stored into a stack. Any operators
+    placed into the stack will be read in as "keywords" (will be explained
+    further in FloatCalculator.cpp) and will each call a function to preform
+    a specific operation.
  *
  *	Revision History:
  *
@@ -23,14 +28,17 @@
 #include "FloatCalculator.hpp"
 #include "GraphicsEngine.hpp"
 
+/*The following declarations are of a string and two tread conditions.
+    The string, cmdLine reads in a line or expression which will be passed
+    to the FloatCalculator class, interpreted using the parse method and then
+    the output will be printed into an allegro display. */
 static std::string cmdLine;
 static bool ready = false;
 static bool quit = false;
 
 void foo() {
 	while (true) {
-		while (ready == true)
-			;
+		while (ready == true);
 		std::cout << "#";
 		std::getline(std::cin, cmdLine);
 		if (strstr(cmdLine.c_str(), "quit") != nullptr) {
@@ -65,11 +73,22 @@ int main(int argc, char **argv) {
 	std::cout << "Welcome to the RPN calculator" << std::endl;
 	std::cout << "Type quit to exit the calculator" << std::endl;
 
+	/*The following line calls a method in the GraphicsEngine class,
+        initAllegro, which initializes all of the allegro primitives.
+        The method will return false if an allegro initialization has an error
+        and thus the program will run in terminal mode which only accepts input
+        and delivers output from the terminal.*/
 	bool initok = ge.initAllegro("RPN Calculator", w_c, h_c);
 	if (initok) {
 		ge.initCalculator();
 		ge.drawCalculator();
+
+		/*The following declares a thread which accesses a function that loops
+		infinitely in wait of user input in the terminal. While there is no
+		input the terminal, the second thread remains blocked. */
 		std::thread pthread(foo);
+		/*The following method will return false and subsequently destroy the
+		thread if the EventLoop is not able to be created. */
 		if(ge.allegroEventLoop(calculator, &cmdLine, &ready, &quit) == false)
 			pthread.~thread();
 		else
