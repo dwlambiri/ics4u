@@ -294,7 +294,7 @@ bool GraphicsEngine::allegroEventLoop(FloatCalculator& calc, std::string* otherC
 
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
 			if(quit && (*quit == true)) {
-				return false;
+				return true;
 			}
 			if((ready == nullptr) || (*ready == false)) continue;
 			if (calc.parse(*otherCmdLine) == false) {
