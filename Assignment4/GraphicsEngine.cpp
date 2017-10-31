@@ -442,9 +442,15 @@ void GraphicsEngine::displayStack(PixelColour c) {
 										/ (yButtonSpace_c + fontSize_c)));
 				i++) {
 			if (i == 1) {
-				sprintf(msg, "%.3f    [Top of Stack]", stack[i]);
+				if((int)(1000000*(stack[i] - (long)stack[i])))
+					sprintf(msg, "%.20f    [Top of Stack]", stack[i]);
+				else
+					sprintf(msg, "%ld    [Top of Stack]", (long) stack[i]);
 			} else {
-				sprintf(msg, "%.3f", stack[i]);
+				if((int)(1000000*(stack[i] - (long)stack[i])))
+					sprintf(msg, "%.20f", stack[i]);
+				else
+					sprintf(msg, "%ld", (long) stack[i]);
 			}
 			al_draw_textf(font, fc, 2 * xButtonSpace_c,
 					(i + 1) * (yButtonSpace_c + fontSize_c), ALLEGRO_ALIGN_LEFT,

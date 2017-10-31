@@ -20,6 +20,7 @@
 #include <map>
 #include <string>
 #include <math.h>
+#include <cmath>
 #include "FloatCalculator.hpp"
 
 /**
@@ -97,6 +98,8 @@ void FloatCalculator::initMap() {
 	cmdmap["cos"] = &FloatCalculator::cos;
 	cmdmap["sin"] = &FloatCalculator::sin;
 	cmdmap["pop"] = &FloatCalculator::popOp;
+	cmdmap["e"] = &FloatCalculator::euler;
+	cmdmap["pi"] = &FloatCalculator::pi;
 } // end-of-method FloatCalculator::initMap
 
 /**
@@ -416,6 +419,42 @@ bool FloatCalculator::sqrt() {
 
 	return true;
 }
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 30, 2017
+   @mname   FloatCalculator::pi
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+FloatCalculator::pi() {
+
+	push((float) M_PI);
+	return true;
+} // end-of-method FloatCalculator::pi
+
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 30, 2017
+   @mname   FloatCalculator::euler
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+FloatCalculator::euler() {
+
+	push((float) std::exp(1.0));
+	return true;
+} // end-of-method FloatCalculator::euler
+
+
 
 /**
  -------------------------------------------------------------------------
