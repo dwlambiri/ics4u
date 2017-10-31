@@ -310,9 +310,9 @@ bool GraphicsEngine::allegroEventLoop(FloatCalculator& calc, std::string* otherC
 			*ready = false;
 		} else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 			//need to exit from main
-			//return false;
-			std::cerr << "Don't touch that dude!!" << std::endl;
-			continue;
+			//std::cerr << "Don't touch that dude!!" << std::endl;
+			//continue;
+			return false;
 		}
 		if (ev.type == ALLEGRO_EVENT_MOUSE_AXES
 				|| ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY) {

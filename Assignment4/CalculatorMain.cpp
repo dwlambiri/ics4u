@@ -70,8 +70,10 @@ int main(int argc, char **argv) {
 		ge.initCalculator();
 		ge.drawCalculator();
 		std::thread pthread(foo);
-		ge.allegroEventLoop(calculator, &cmdLine, &ready, &quit);
-		pthread.join();
+		if(ge.allegroEventLoop(calculator, &cmdLine, &ready, &quit) == false)
+			pthread.~thread();
+		else
+			pthread.join();
 		ge.cleanUp();
 	} else {
 		std::cerr << "error: could not init allegro. running in terminal mode"

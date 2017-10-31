@@ -31,7 +31,7 @@ FloatStack::FloatStack() {
 	mStackSize = 50;
 	mStack = new float[mStackSize];
 	mElementsInStack = 0;
-
+	v = 0;
 } // end-of-method FloatStack::FloatStack
 
 /**
@@ -70,6 +70,7 @@ FloatStack::FloatStack(FloatStack& param) {
 	for (unsigned int i = 0; i < mElementsInStack; i++) {
 		mStack[i] = param.mStack[i];
 	} //end-of-for
+	v= 0;
 } // end-of-method FloatStack::FloatStack
 
 /**
@@ -91,6 +92,7 @@ FloatStack::FloatStack(unsigned int stackSize) {
 	} //end-of-if
 	mStack = new float[mStackSize];
 	mElementsInStack = 0;
+	v= 0;
 } // end-of-method FloatStack::FloatStack
 
 /**

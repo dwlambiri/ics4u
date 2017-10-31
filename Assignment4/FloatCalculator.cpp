@@ -640,7 +640,7 @@ bool FloatCalculator::parse(std::string& array) {
 	static char local[localArraySize_c];
 
 	if (array[0] == '\0') {
-		return false;
+		return true;
 	}
 
 	char * pch = nullptr;
