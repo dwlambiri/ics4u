@@ -103,19 +103,11 @@ FloatStack::FloatStack(unsigned int stackSize) {
  --------------------------------------------------------------------------
  */
 float*
-FloatStack::top() const {
+FloatStack::top() {
 	if (empty()) {
 		return nullptr;
 	} //end-of-if
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 28, 2017
-	 *  This purpose of this temporary variable is to make sure that this
-	 *  function remains and accessor and so that the user is unable to
-	 *  change the value at the top of the stack.
-	 */
 
-	static float v;
 	v = mStack[mElementsInStack - 1];
 	return &v;
 } // end-of-method FloatStack::top
