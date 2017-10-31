@@ -110,7 +110,7 @@ public:
 	 See here http://www.cplusplus.com/reference/stack/stack/\n
 	 -------------------------------------------------------------------------
 	 */
-	float* top() const;
+	float* top();
 
 	/**
 	 -------------------------------------------------------------------------
@@ -220,6 +220,16 @@ private:
 	 *  mStackSize remembers the maximum number of elements that mStack can store.
 	 */
 	unsigned int mStackSize;
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 28, 2017
+	 *  This purpose of this member variable is to make sure that the top
+	 *  method remains an accessor and so that the user is unable to
+	 *  change the value at the top of the stack.
+	 */
+
+	float v;
 
 
 

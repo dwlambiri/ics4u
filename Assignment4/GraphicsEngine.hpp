@@ -17,6 +17,7 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_font.h>
+#include "FloatCalculator.hpp"
 
 
 
@@ -69,15 +70,14 @@ public:
 		Default destructor of class GraphicsEngine \n
 	  --------------------------------------------------------------------------
 	 */
-	~GraphicsEngine(){
-		cleanUp();
-	}
+	~GraphicsEngine(){}
 
 
 	bool initAllegro(const char* title, const int w, const int h);
 	void moveBitmapToDisplay();
-	bool allegroEventLoop();
-	void allegroExitLoop();
+
+	bool allegroEventLoop(FloatCalculator& calc, std::string* otherCmdLine, bool* ready, bool* quit);
+
 
 	bool drawPixel(int x, int y, PixelColour c);
 	void displayStack(PixelColour c);
@@ -89,7 +89,7 @@ public:
 
 	void initCalculator();
 	void drawCalculator();
-
+	void cleanUp();
 
 	/**
 	  -------------------------------------------------------------------------
@@ -150,7 +150,7 @@ public:
 			Default constructor of Class CalculatorButton \n
 		  --------------------------------------------------------------------------
 		 */
-		CalculatorButton(int x, int y, int xw, int yw, const char* name);
+		CalculatorButton(int x, int y, int xw, int yw, const char* name, ALLEGRO_FONT* fc, PixelColour c);
 
 		/**
 		  --------------------------------------------------------------------------
@@ -176,8 +176,95 @@ public:
 			  \n
 		  -------------------------------------------------------------------------
 		 */
-		void draw(ALLEGRO_COLOR c, ALLEGRO_FONT* f);
+		void draw();
 
+
+		/**
+		  -------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 30, 2017
+		   @name    CalculatorButton::getText
+		   @param
+		   @return  std::string&
+		   @details
+			  \n
+		  -------------------------------------------------------------------------
+		 */
+		std::string& getText() {
+			return text;
+		}
+
+		/**
+		  -------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 30, 2017
+		   @name    CalculatorButton::checkMouseLocation
+		   @param
+		   @return  bool
+		   @details
+			  \n
+		  -------------------------------------------------------------------------
+		 */
+		bool checkMouseLocation(int x, int y);
+
+		/**
+		  -------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 30, 2017
+		   @name    CalculatorButton::setFont
+		   @param   ALLEGRO_FONT* f
+		   @return  void
+		   @details
+			  \n
+		  -------------------------------------------------------------------------
+		 */
+		void setFont(ALLEGRO_FONT* f);
+
+		/**
+		  -------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 30, 2017
+		   @name    CalculatorButton::buttonPressed()
+		   @param
+		   @return  void
+		   @details
+			  \n
+		  -------------------------------------------------------------------------
+		 */
+		void buttonPressed() {
+			pressed = true;
+		}
+
+
+		/**
+		  -------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 30, 2017
+		   @name    CalculatorButton::buttonReleased()
+		   @param
+		   @return  void
+		   @details
+			  \n
+		  -------------------------------------------------------------------------
+		 */
+		void buttonReleased() {
+			pressed = false;
+		}
+
+		/**
+		  -------------------------------------------------------------------------
+		   @author  dwlambiri
+		   @date    Oct 30, 2017
+		   @name    CalculatorButton::isButtonPressed
+		   @param
+		   @return  bool
+		   @details
+			  \n
+		  -------------------------------------------------------------------------
+		 */
+		bool isButtonPressed() const {
+			return pressed;
+		}
 
 	private:
 		//--------------------------------------------------
@@ -188,6 +275,10 @@ public:
 		std::string text;
 		int xlen;
 		int ylen;
+		bool pressed;
+		ALLEGRO_FONT* f;
+		ALLEGRO_COLOR c;
+
 
 	private:
 		//--------------------------------------------------
@@ -228,7 +319,7 @@ private:
 	//--------------------------------------------------
 	// Private Methods
 	//--------------------------------------------------
-	void cleanUp();
+
 
 }; //end-of-class GraphicsEngine
 
