@@ -283,6 +283,7 @@ bool FloatCalculator::swap() {
  */
 bool FloatCalculator::sum() {
 	float sumation = 0;
+	if(!top()) return false;
 	while (top()) {
 		sumation += *top();
 		pop();
@@ -302,6 +303,7 @@ bool FloatCalculator::sum() {
  */
 bool FloatCalculator::product() {
 	float totalProduct = 1;
+	if(!top()) return false;
 	while (top()) {
 		totalProduct *= *top();
 		pop();
