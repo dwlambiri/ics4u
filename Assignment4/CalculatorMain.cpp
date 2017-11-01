@@ -23,7 +23,7 @@
 #include <sstream>
 #include <string.h>
 #include <string>
-#include <thread>
+//#include <thread>
 #include <time.h>
 #include "FloatCalculator.hpp"
 #include "GraphicsEngine.hpp"
@@ -98,9 +98,6 @@ int main(int argc, char **argv) {
 	const int h_c = 800;
 	GraphicsEngine ge;
 
-	std::cout << "Welcome to the RPN calculator" << std::endl;
-	std::cout << "Type quit to exit the calculator" << std::endl;
-
 	/*
 	 * The following line calls a method in the GraphicsEngine class,
         initAllegro, which initializes all of the allegro primitives.
@@ -115,7 +112,7 @@ int main(int argc, char **argv) {
 		   infinitely in wait of user input in the terminal. While there is no
 		   input the terminal, the second thread remains blocked.
 		*/
-		std::thread pthread(foo);
+		//std::thread pthread(foo);
 		/*
 		 * The following method will return false and subsequently destroy the
 		   thread if the the user presses the "close window" button.
@@ -123,10 +120,10 @@ int main(int argc, char **argv) {
 		   set to true.
 		 */
 		if(ge.allegroEventLoop(calculator, &cmdLine, &ready, &quit) == false){
-			pthread.~thread();
+			//pthread.~thread();
 		}
 		else {
-			pthread.join();
+			//pthread.join();
 		}
 		ge.cleanUp();
 	}
@@ -144,6 +141,9 @@ int main(int argc, char **argv) {
 		 *  if allegro cannot initialize, the program runs in command line
 		 *  mode only. in this case the program has only one thread
 		 */
+
+		std::cout << "Welcome to the RPN calculator" << std::endl;
+		std::cout << "Type quit to exit the calculator" << std::endl;
 
 		std::cerr << "error: could not init allegro. running in terminal mode"
 				<< std::endl;

@@ -234,12 +234,11 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 	al_init_font_addon(); // initialize the font addon
 	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
 
+	const char* fontfile = "font.ttf";
 	ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
 	al_append_path_component(path, "./");
-
-	al_set_path_filename(path, "font.ttf");
-
-	font = al_load_ttf_font("font.ttf", fontSize_c, 0);
+	al_set_path_filename(path, fontfile);
+	font = al_load_ttf_font( fontfile, fontSize_c, 0);
 	//font = al_load_ttf_font(al_path_cstr(path, '/'), fontSize_c, 0);
 	al_destroy_path(path);
 
