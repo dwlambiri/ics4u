@@ -100,7 +100,87 @@ void FloatCalculator::initMap() {
 	cmdmap["pop"] = &FloatCalculator::popOp;
 	cmdmap["e"] = &FloatCalculator::euler;
 	cmdmap["pi"] = &FloatCalculator::pi;
+	cmdmap["rand"] = &FloatCalculator::random;
 } // end-of-method FloatCalculator::initMap
+
+/**
+ ---------------------------------------------------------------------------
+ @author  dwlambiri
+ @date    Oct 29, 2017
+ @mname   FloatCalculator::getTopOfStack
+ @details
+ \n
+ --------------------------------------------------------------------------
+ */
+void FloatCalculator::getTopOfStack(std::vector<float>& f, unsigned int num) {
+	int retnum = (num < mElementsInStack) ? num : mElementsInStack;
+	if(retnum) {
+		f.resize(retnum+1);
+		f[0] = mElementsInStack;
+	}
+	else {
+		f.resize(0);
+		return;
+	}
+	for (unsigned int i = 0; (i < num) && (mElementsInStack >= i + 1);
+			i++) {
+		f[i+1] = mStack[mElementsInStack - i - 1];
+	} //end-of-for
+}
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 31, 2017
+   @mname   unary
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+FloatCalculator::unary(float& FirstInStack) {
+
+	if (top()) {
+		FirstInStack = *top();
+		pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+	return true;
+} // end-of-method unary
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 31, 2017
+   @mname   binary
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+FloatCalculator::binary(float& FirstInStack, float& SecondInStack) {
+
+	if (top()) {
+			FirstInStack = *top();
+			pop();
+	} //end-of-if
+	else {
+		return false;
+	}
+
+	if (top()) {
+		SecondInStack = *top();
+		pop();
+	} //end-of-if
+
+	else {
+		return false;
+	}
+	return true;
+} // end-of-method unary
 
 /**
  ---------------------------------------------------------------------------
@@ -113,25 +193,11 @@ void FloatCalculator::initMap() {
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::add() {
-	float v1;
-	float v2;
+	float v1 = 0;
+	float v2 = 0;
 
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	if(binary(v1,v2) == false)
 		return false;
-	}
-
-	if (top()) {
-		v2 = *top();
-		pop();
-	} //end-of-if
-
-	else {
-		return false;
-	}
 	push(v2 + v1);
 	return true;
 }
@@ -147,24 +213,11 @@ bool FloatCalculator::add() {
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::subtract() {
-	float v1;
-	float v2;
+	float v1 = 0;
+	float v2 = 0;
 
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
-		return false;
-	}
-
-	if (top()) {
-		v2 = *top();
-		pop();
-	} //end-of-if
-	else {
-		return false;
-	}
+	if(binary(v1,v2) == false)
+			return false;
 	push(v2 - v1);
 	return true;
 }
@@ -180,24 +233,11 @@ bool FloatCalculator::subtract() {
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::multiply() {
-	float v1;
-	float v2;
+	float v1 = 0;
+	float v2 = 0;
 
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	if(binary(v1,v2) == false)
 		return false;
-
-	}
-	if (top()) {
-		v2 = *top();
-		pop();
-	} //end-of-if
-	else {
-		return false;
-	}
 	push(v2 * v1);
 	return true;
 }
@@ -213,25 +253,11 @@ bool FloatCalculator::multiply() {
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::divide() {
-	float v1;
-	float v2;
+	float v1 = 0;
+	float v2 = 0;
 
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	if(binary(v1,v2) == false)
 		return false;
-	}
-
-	if (top()) {
-		v2 = *top();
-		pop();
-	} //end-of-if
-
-	else {
-		return false;
-	}
 
 	if (v1 == 0) {
 		return false;
@@ -250,25 +276,11 @@ bool FloatCalculator::divide() {
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::swap() {
-	float v1;
-	float v2;
+	float v1 = 0;
+	float v2 = 0;
 
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	if(binary(v1,v2) == false)
 		return false;
-	}
-
-	if (top()) {
-		v2 = *top();
-		pop();
-	} //end-of-if
-
-	else {
-		return false;
-	}
 
 	push(v1);
 	push(v2);
@@ -325,25 +337,11 @@ bool FloatCalculator::product() {
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::power() {
-	float v1;
-	float v2;
+	float v1 = 0;
+	float v2 = 0;
 
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	if(binary(v1,v2) == false)
 		return false;
-	}
-
-	if (top()) {
-		v2 = *top();
-		pop();
-	} //end-of-if
-
-	else {
-		return false;
-	}
 	push(pow(v2, v1));
 	return true;
 }
@@ -387,6 +385,7 @@ bool FloatCalculator::series() {
 	else {
 		return false;
 	}
+
 	for (float i = firstNum; i <= lastNum; i += step) {
 		push(i);
 	} //end-of-for
@@ -407,14 +406,9 @@ bool FloatCalculator::series() {
  */
 
 bool FloatCalculator::sqrt() {
-	float v1;
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	float v1 = 0;
+	if(unary(v1) == false)
 		return false;
-	}
 	push((float) ::sqrt(v1));
 
 	return true;
@@ -468,14 +462,9 @@ FloatCalculator::euler() {
  -------------------------------------------------------------------------
  */
 bool FloatCalculator::exponential() {
-	float v1;
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	float v1 = 0;
+	if(unary(v1) == false)
 		return false;
-	}
 	push((float) ::exp(v1));
 
 	return true;
@@ -493,14 +482,9 @@ bool FloatCalculator::exponential() {
  -------------------------------------------------------------------------
  */
 bool FloatCalculator::log() {
-	float v1;
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	float v1 = 0;
+	if(unary(v1) == false)
 		return false;
-	}
 	push((float) ::log(v1));
 
 	return true;
@@ -517,14 +501,9 @@ bool FloatCalculator::log() {
  -------------------------------------------------------------------------
  */
 bool FloatCalculator::cos() {
-	float v1;
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	float v1 = 0;
+	if(unary(v1) == false)
 		return false;
-	}
 	push((float) ::cos(v1));
 
 	return true;
@@ -541,18 +520,30 @@ bool FloatCalculator::cos() {
  -------------------------------------------------------------------------
  */
 bool FloatCalculator::sin() {
-	float v1;
-	if (top()) {
-		v1 = *top();
-		pop();
-	} //end-of-if
-	else {
+	float v1 = 0;
+	if(unary(v1) == false)
 		return false;
-	}
 	push((float) ::sin(v1));
 
 	return true;
 }
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 31, 2017
+   @mname   FloatCalculator::random
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+bool
+FloatCalculator::random() {
+
+	push(rand());
+	return true;
+} // end-of-method FloatCalculator::random
+
 
 /**
  ---------------------------------------------------------------------------

@@ -15,7 +15,7 @@
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 29, 2017
- @mname   CalculatorButton::CalculatorButton
+ @mname   GraphicsEngine::CalculatorButton::CalculatorButton
  @details
  \n
  --------------------------------------------------------------------------
@@ -31,7 +31,7 @@ GraphicsEngine::CalculatorButton::CalculatorButton(int x, int y, int xw, int yw,
 	case redPixel_c:
 		c = al_map_rgb(0xff, 0, 0);
 		break;
-	case greeenPixel_c:
+	case greenPixel_c:
 		c = al_map_rgb(0, 0xff, 0);
 		break;
 	case bluePixel_c:
@@ -54,12 +54,13 @@ GraphicsEngine::CalculatorButton::CalculatorButton(int x, int y, int xw, int yw,
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 29, 2017
- @mname   CalculatorButton::draw
+ @mname   GraphicsEngine::CalculatorButton::draw
  @details
  \n
  --------------------------------------------------------------------------
  */
-void GraphicsEngine::CalculatorButton::draw() {
+void
+GraphicsEngine::CalculatorButton::draw() {
 
 	if(pressed == false) {
 		al_draw_rounded_rectangle(xpos, ypos, xpos + xlen, ypos + ylen, 10, 10, c,
@@ -99,22 +100,19 @@ GraphicsEngine::CalculatorButton::checkMouseLocation(int x, int y) {
 } // end-of-method GraphicsEngine::CalculatorButton::checkMouseLocation
 
 
-
 /**
- ---------------------------------------------------------------------------
- @author     dwlambiri
- @date       Sep 30, 2017
- @name       MapPixelColour
- @brief
-
- ---------------------------------------------------------------------------
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 31, 2017
+   @name    GraphicsEngine::GraphicsEngine
+   @param
+   @return
+   @details
+	constructor\n
+  -------------------------------------------------------------------------
  */
-
-//constants that determine the initial values of the variables
-// initialize the allegro display
-
 GraphicsEngine::GraphicsEngine() :
-		buttons(16) {
+		buttons(numButtonColumns_c*numButtonRows_c) {
 	display = nullptr;
 	event_queue = nullptr;
 	timer = nullptr;
@@ -127,8 +125,21 @@ GraphicsEngine::GraphicsEngine() :
 	yButtonStart = 0;
 	xblen = 0;
 	yblen = 0;
+
+	calcPixelColour = bluePixel_c;
 }
 
+/**
+  --------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Oct 31, 2017
+   @name    GraphicsEngine::cleanup
+   @param
+   @return  void
+   @details
+	\n
+  -------------------------------------------------------------------------
+ */
 void GraphicsEngine::cleanUp() {
 	al_destroy_bitmap(screenBitmap);
 	al_destroy_display(display);
@@ -148,12 +159,33 @@ void GraphicsEngine::cleanUp() {
  false if any initialization fails
  --------------------------------------------------------------------------
  */
-bool GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
-		const int windowHeight_c) {
+bool
+GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
+							const int windowHeight_c) {
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 31, 2017
+	 *  buttons start in the lower half of the window
+	 */
 
 	yButtonStart = windowHeight_c / 2;
-	xblen = ((windowWidth_c - xButtonSpace_c) / 4) - xButtonSpace_c;
-	yblen = (yButtonStart / 4) - yButtonSpace_c;
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 31, 2017
+	 *  each button length depends on the number of button columns
+	 */
+
+	xblen = ((windowWidth_c - xButtonSpace_c) / numButtonColumns_c) - xButtonSpace_c;
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Oct 31, 2017
+	 *  each button height depends on the number of button rows
+	 */
+
+	yblen = (yButtonStart / numButtonRows_c) - yButtonSpace_c;
 	//initialize display
 	al_init();
 	display = al_create_display(windowWidth_c, windowHeight_c);
@@ -162,21 +194,10 @@ bool GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 
 	// Always check if your allegro routines worked successfully.
 	if (!display) {
-//		al_show_native_message_box(display, "Error", "Error",
-//				"Failed to initialize display!",
-//				nullptr, ALLEGRO_MESSAGEBOX_ERROR);
-
 		std::cerr << "allegro error: failed to initialize display!"
 				<< std::endl;
 		return false;
 	}
-
-	//	if (!al_install_keyboard()) {
-	//		std::cerr << "allegro error: failed to initialize the keyboard!"
-	//				<< std::endl;
-	//		al_destroy_display(display);
-	//		return false;
-	//	}
 
 	timer = al_create_timer(1.0 / fps);
 
@@ -234,7 +255,6 @@ bool GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
-//	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_register_event_source(event_queue, al_get_mouse_event_source());
 
 	al_start_timer(timer);
@@ -251,6 +271,10 @@ bool GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	al_set_window_title(display, title);
 	al_flip_display();
+
+	initCalculator();
+	drawCalculator();
+
 	return true;
 } // end-of-function initAllegro
 
@@ -293,6 +317,15 @@ bool GraphicsEngine::allegroEventLoop(FloatCalculator& calc, std::string* otherC
 		al_wait_for_event(event_queue, &ev);
 
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
+			/*
+			 * @author   dwlambiri
+			 * @date     Oct 31, 2017
+			 *  the timer event is used to check for user input
+			 *  provided from the command line as well as quit
+			 *  commands
+			 *
+			 */
+
 			if(quit && (*quit == true)) {
 				return true;
 			}
@@ -324,15 +357,39 @@ bool GraphicsEngine::allegroEventLoop(FloatCalculator& calc, std::string* otherC
 //			std::cerr << msg << std::endl;
 
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+			/*
+			 * @author   dwlambiri
+			 * @date     Oct 31, 2017
+			 *  the mouse button up event is when things happen
+			 */
+
 			for (int i = 0; i < buttons.size(); i++ ) {
 				if(buttons[i] && (buttons[i]->isButtonPressed() == true )) {
 					buttons[i]->buttonReleased();
 					std::string& cmdLine = buttons[i]->getText();
-					if (calc.parse(cmdLine) == false) {
-						setErrorString(std::string("error: bad expression"));
+					if(((cmdLine[0] >= '0') && (cmdLine[0]<='9')) || (cmdLine[0]=='.')) {
+						inputNumber += cmdLine;
+						setErrorString(inputNumber);
 					}
-					else {
-						setErrorString(std::string(""));
+					else if(cmdLine.compare("del") == 0) {
+						inputNumber = inputNumber.substr(0, inputNumber.size()-1);
+						setErrorString(inputNumber);
+					}
+					else{
+						std::string cmd;
+						if(cmdLine.compare("enter") == 0) {
+							cmd = inputNumber;
+						}
+						else {
+							cmd = inputNumber + " " + cmdLine;
+						}
+						if (calc.parse(cmd) == false) {
+							setErrorString(std::string("error: bad expression"));
+						}
+						else {
+							setErrorString(std::string(""));
+						}
+						inputNumber = "";
 					}
 					const int topNum_c = 11;
 					std::vector<float> topofstack(topNum_c);
@@ -343,7 +400,15 @@ bool GraphicsEngine::allegroEventLoop(FloatCalculator& calc, std::string* otherC
 			//std::cerr << "Mouse up event" << std::endl;
 			//break;
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-			//break;
+			/*
+			 * @author   dwlambiri
+			 * @date     Oct 31, 2017
+			 *  check which button we pressed, if any
+			 *  each button can check if the mouse if over
+			 *  it using the method
+			 *  GraphicsEngine::CalculatorButtton::checkMouseLocation
+			 */
+
 			for (int i = 0; i < buttons.size(); i++ ) {
 				if(buttons[i] && (buttons[i]->checkMouseLocation(ev.mouse.x, ev.mouse.y) == true )) {
 					buttons[i]->buttonPressed();
@@ -351,42 +416,20 @@ bool GraphicsEngine::allegroEventLoop(FloatCalculator& calc, std::string* otherC
 				}
 			} //end-of-for
 			//std::cerr << "Mouse down event" << std::endl;
-
-
 		}
+
+		/*
+		 * @author   dwlambiri
+		 * @date     Oct 31, 2017
+		 *  after events are processed re-draw the calculator
+		 */
+
 		drawCalculator();
 
 	}
 	return true;
 } // end-of-function allegroEventLoop
 
-
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Sep 30, 2017
- @mname   GraphicsEngine::DrawPixel
- @details
- \n
- --------------------------------------------------------------------------
- */
-bool GraphicsEngine::drawPixel(int x, int y, PixelColour c) {
-	switch (c) {
-	case redPixel_c:
-		al_draw_pixel(x, y, al_map_rgb(0xff, 0, 0));
-		break;
-	case greeenPixel_c:
-		al_draw_pixel(x, y, al_map_rgb(0, 0xff, 0));
-		break;
-	case bluePixel_c:
-		al_draw_pixel(x, y, al_map_rgb(0, 0, 0xff));
-		break;
-	default:
-		return false;
-	} //end-of-switch
-	return true;
-
-} // end-of-function DrawPixel
 
 /**
  --------------------------------------------------------------------------
@@ -407,7 +450,7 @@ void GraphicsEngine::displayStack(PixelColour c) {
 	case redPixel_c:
 		fc = al_map_rgb(0xff, 0, 0);
 		break;
-	case greeenPixel_c:
+	case greenPixel_c:
 		fc = al_map_rgb(0, 0xff, 0);
 		break;
 	case bluePixel_c:
@@ -485,7 +528,7 @@ void GraphicsEngine::displayError(PixelColour c) {
 	case redPixel_c:
 		fc = al_map_rgb(0xff, 0, 0);
 		break;
-	case greeenPixel_c:
+	case greenPixel_c:
 		fc = al_map_rgb(0, 0xff, 0);
 		break;
 	case bluePixel_c:
@@ -524,8 +567,8 @@ void GraphicsEngine::drawCalculator() {
 			cb->draw();
 		}
 	} //end-of-for
-	displayStack(whitePixel_c);
-	displayError(whitePixel_c);
+	displayStack(calcPixelColour);
+	displayError(calcPixelColour);
 	moveBitmapToDisplay();
 } // end-of-method GraphicsEngine::drawCalculator
 
@@ -543,91 +586,33 @@ void GraphicsEngine::initCalculator() {
 	/*
 	 * @author   dwlambiri
 	 * @date     Oct 29, 2017
-	 *  column 1
 	 */
 
-	PixelColour c = whitePixel_c;
-
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c, yButtonStart, xblen, yblen,
-					"/", font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c,
-					yButtonStart + yblen + yButtonSpace_c, xblen, yblen, "*", font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c,
-					yButtonStart + 2 * (yblen + yButtonSpace_c), xblen, yblen,
-					"-", font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c,
-					yButtonStart + 3 * (yblen + yButtonSpace_c), xblen, yblen,
-					"+",font, c));
+	std::vector<std::string> btext{"1", "2", "3", "4",
+								   "5", "6", "7", "8",
+								   "9", "0", ".", "enter",
+								   "+","-","^","del",
+								   "*","/","exp","log",
+								   "cos", "sin", "rand", "pop",
+								   "swap","series","sum","prod",
+								   "sqrt", "e", "pi", "clear"
+	};
 
 	/*
 	 * @author   dwlambiri
-	 * @date     Oct 29, 2017
-	 *  column 2
+	 * @date     Oct 31, 2017
+	 *  buttons are drawn in a 2 for statements, one for columns
+	 *  and one for each row in a column
 	 */
 
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + xblen + xButtonSpace_c,
-					yButtonStart, xblen, yblen, "^" , font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + xblen + xButtonSpace_c,
-					yButtonStart + yblen + yButtonSpace_c, xblen, yblen,
-					"sqrt", font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + xblen + xButtonSpace_c,
-					yButtonStart + 2 * (yblen + yButtonSpace_c), xblen, yblen,
-					"exp" ,font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + xblen + xButtonSpace_c,
-					yButtonStart + 3 * (yblen + yButtonSpace_c), xblen, yblen,
-					"log" ,font, c));
-
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 29, 2017
-	 *  column 3
-	 */
-
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + 2 * (xblen + xButtonSpace_c),
-					yButtonStart, xblen, yblen, "cos",font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + 2 * (xblen + xButtonSpace_c),
-					yButtonStart + yblen + yButtonSpace_c, xblen, yblen,
-					"sin",font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + 2 * (xblen + xButtonSpace_c),
-					yButtonStart + 2 * (yblen + yButtonSpace_c), xblen, yblen,
-					"pop",font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + 2 * (xblen + xButtonSpace_c),
-					yButtonStart + 3 * (yblen + yButtonSpace_c), xblen, yblen,
-					"clear",font, c));
-
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 29, 2017
-	 *  column 4
-	 */
-
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + 3 * (xblen + xButtonSpace_c),
-					yButtonStart, xblen, yblen, "series",font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + 3 * (xblen + xButtonSpace_c),
-					yButtonStart + yblen + yButtonSpace_c, xblen, yblen,
-					"swap",font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + 3 * (xblen + xButtonSpace_c),
-					yButtonStart + 2 * (yblen + yButtonSpace_c), xblen, yblen,
-					"sum",font, c));
-	buttons.push_back(
-			new CalculatorButton(xButtonStart_c + 3 * (xblen + xButtonSpace_c),
-					yButtonStart + 3 * (yblen + yButtonSpace_c), xblen, yblen,
-					"prod",font, c));
+	for (int i = 0; i < numButtonColumns_c; i++ ) {
+		for (int j = 0; j < numButtonRows_c; j++ ) {
+			buttons.push_back(
+						new CalculatorButton(xButtonStart_c + i * (xblen + xButtonSpace_c),
+								yButtonStart + j * (yblen + yButtonSpace_c), xblen, yblen,
+								btext[i*numButtonRows_c+j].c_str(),font, calcPixelColour));
+		} //end-of-for
+	} //end-of-for
 
 } // end-of-method GraphicsEngine::initCalculator
 

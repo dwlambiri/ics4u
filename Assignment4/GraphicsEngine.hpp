@@ -22,7 +22,7 @@
 
 
 enum PixelColour {
-	redPixel_c, greeenPixel_c, bluePixel_c, whitePixel_c, blackPixel_c
+	redPixel_c, greenPixel_c, bluePixel_c, whitePixel_c, blackPixel_c
 };
 //end-of-enum PixelColour
 
@@ -74,53 +74,11 @@ public:
 
 
 	bool initAllegro(const char* title, const int w, const int h);
-	void moveBitmapToDisplay();
+
+	void cleanUp();
 
 	bool allegroEventLoop(FloatCalculator& calc, std::string* otherCmdLine, bool* ready, bool* quit);
 
-
-	bool drawPixel(int x, int y, PixelColour c);
-	void displayStack(PixelColour c);
-	void displayError(PixelColour c);
-	void clearBitmap()  {
-	    //this should clear the bitmap
-	    al_clear_to_color(al_map_rgb(0,0,0));
-	}
-
-	void initCalculator();
-	void drawCalculator();
-	void cleanUp();
-
-	/**
-	  -------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 29, 2017
-	   @name    GraphicsEngine::setErrorString
-	   @param   std::string& str
-	   @return  void
-	   @details
-		  \n
-	  -------------------------------------------------------------------------
-	 */
-	void setErrorString(std::string str) {
-		errorString =  str;
-	}
-
-	/**
-	  -------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 29, 2017
-	   @name    GraphicsEngine::setVector
-	   @param   std::vector<float>& v
-	   @return  void
-	   @details
-		  \n
-	  -------------------------------------------------------------------------
-	 */
-	void setVector(std::vector<float>& v) {
-		stack.clear();
-		stack = v;
-	}
 
 	/**
 	  ---------------------------------------------------------------------------
@@ -297,6 +255,7 @@ private:
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_BITMAP *screenBitmap;
 	ALLEGRO_FONT *font;
+	PixelColour  calcPixelColour;
 
 	std::vector<CalculatorButton*> buttons;
 
@@ -305,6 +264,7 @@ private:
 	int fps;
 	std::string errorString;
 	std::vector<float> stack;
+	std::string inputNumber;
 
 	static const int xButtonStart_c = 20;
 	int yButtonStart;
@@ -313,12 +273,55 @@ private:
 	int xblen;
 	int yblen;
 	static const int fontSize_c = 30;
+	static const int numButtonColumns_c = 8;
+	static const int numButtonRows_c = 4;
 
 
 private:
 	//--------------------------------------------------
 	// Private Methods
 	//--------------------------------------------------
+	void moveBitmapToDisplay();
+	void displayStack(PixelColour c);
+	void displayError(PixelColour c);
+	void clearBitmap()  {
+	    //this should clear the bitmap
+	    al_clear_to_color(al_map_rgb(0,0,0));
+	}
+	void initCalculator();
+	void drawCalculator();
+
+
+	/**
+	  -------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 29, 2017
+	   @name    GraphicsEngine::setErrorString
+	   @param   std::string& str
+	   @return  void
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	void setErrorString(std::string str) {
+		errorString =  str;
+	}
+
+	/**
+	  -------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Oct 29, 2017
+	   @name    GraphicsEngine::setVector
+	   @param   std::vector<float>& v
+	   @return  void
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	void setVector(std::vector<float>& v) {
+		stack.clear();
+		stack = v;
+	}
 
 
 }; //end-of-class GraphicsEngine
