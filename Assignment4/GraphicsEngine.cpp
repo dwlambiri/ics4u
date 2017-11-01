@@ -239,7 +239,8 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 
 	al_set_path_filename(path, "font.ttf");
 
-	font = al_load_ttf_font(al_path_cstr(path, '/'), fontSize_c, 0);
+	font = al_load_ttf_font("font.ttf", fontSize_c, 0);
+	//font = al_load_ttf_font(al_path_cstr(path, '/'), fontSize_c, 0);
 	al_destroy_path(path);
 
 	if (!font) {
