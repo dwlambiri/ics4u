@@ -334,7 +334,7 @@ bool GraphicsEngine::allegroEventLoop(FloatCalculator& calc, std::string* otherC
 				setErrorString(std::string("error: bad expression"));
 			}
 			else {
-				setErrorString(std::string(""));
+				setErrorString(inputNumber);
 			}
 			const int topNum_c = 11;
 			std::vector<float> topofstack(topNum_c);
