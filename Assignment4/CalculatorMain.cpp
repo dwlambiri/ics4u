@@ -23,7 +23,7 @@
 #include <sstream>
 #include <string.h>
 #include <string>
-#include <thread>
+//#include <thread>
 #include <time.h>
 #include "FloatCalculator.hpp"
 #include "GraphicsEngine.hpp"
@@ -98,9 +98,6 @@ int main(int argc, char **argv) {
 	const int h_c = 800;
 	GraphicsEngine ge;
 
-	std::cout << "Welcome to the RPN calculator" << std::endl;
-	std::cout << "Type quit to exit the calculator" << std::endl;
-
 	/*
 	 * The following line calls a method in the GraphicsEngine class,
         initAllegro, which initializes all of the allegro primitives.
@@ -115,7 +112,7 @@ int main(int argc, char **argv) {
 		   infinitely in wait of user input in the terminal. While there is no
 		   input the terminal, the second thread remains blocked.
 		*/
-		std::thread pthread(foo);
+		//std::thread pthread(foo);
 		/*
 		 * The following method will return false and subsequently destroy the
 		   thread if the the user presses the "close window" button.
@@ -123,19 +120,30 @@ int main(int argc, char **argv) {
 		   set to true.
 		 */
 		if(ge.allegroEventLoop(calculator, &cmdLine, &ready, &quit) == false){
-			pthread.~thread();
+			//pthread.~thread();
 		}
 		else {
-			pthread.join();
+			//pthread.join();
 		}
 		ge.cleanUp();
-	} else {
+	}
+	/*
+	 * @author   dwlambiri
+	 * @date     Nov 1, 2017
+	 *  The following "else" condition is used when allegro cannot be initialized and thus runs in
+	 *  terminal mode.
+	 */
+
+	else {
 		/*
 		 * @author   dwlambiri
 		 * @date     Oct 31, 2017
 		 *  if allegro cannot initialize, the program runs in command line
 		 *  mode only. in this case the program has only one thread
 		 */
+
+		std::cout << "Welcome to the RPN calculator" << std::endl;
+		std::cout << "Type quit to exit the calculator" << std::endl;
 
 		std::cerr << "error: could not init allegro. running in terminal mode"
 				<< std::endl;
@@ -144,6 +152,13 @@ int main(int argc, char **argv) {
 			std::ostringstream error;
 			const int topNum_c = 11;
 			std::vector<float> topofstack(topNum_c);
+			/*
+			 * @author   dwlambiri
+			 * @date     Nov 1, 2017
+			 *  This reads in a line at a time and passes it to the parse method in the FloatCalculator
+			 *  class. If the word the string is not quit, and the parse function does not return false,
+			 *  the string will be parsed and print the output in the terminal (top 10 elements of stack)
+			 */
 
 			std::cout << "#";
 			std::getline(std::cin, cmdLine);
