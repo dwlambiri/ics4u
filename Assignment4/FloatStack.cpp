@@ -79,7 +79,8 @@ FloatStack::FloatStack(FloatStack& param) {
  @date    Oct 23, 2017
  @mname   FloatStack::FloatStack
  @details
- \n
+ 	 Constructor that allows you to declare the total number of elements
+ 	 that can be stored in the stack. \n
  --------------------------------------------------------------------------
  */
 
@@ -101,7 +102,7 @@ FloatStack::FloatStack(unsigned int stackSize) {
  @date    Oct 23, 2017
  @mname   FloatStack::top
  @details
- \n
+ 	 This function returns the top element on the stack. \n
  --------------------------------------------------------------------------
  */
 float*
@@ -120,7 +121,7 @@ FloatStack::top() {
  @date    Oct 23, 2017
  @mname   FloatStack::push
  @details
- \n
+ 	 Pushes an element into the stack. \n
  --------------------------------------------------------------------------
  */
 void FloatStack::push(float param) {
@@ -136,7 +137,7 @@ void FloatStack::push(float param) {
  @date    Oct 23, 2017
  @mname   FloatStack::pop
  @details
- \n
+ 	 Pop's the top element of the stack.\n
  --------------------------------------------------------------------------
  */
 void FloatStack::pop() {
@@ -154,7 +155,8 @@ void FloatStack::pop() {
  @date    Oct 23, 2017
  @mname   FloatStack::expand
  @details
- \n
+ 	 This method is called when the stack is full and expands it if it is
+ 	 so. The computational complexity of this method is: n. \n
  --------------------------------------------------------------------------
  */
 void FloatStack::expand() {

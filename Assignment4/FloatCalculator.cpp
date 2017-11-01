@@ -75,7 +75,10 @@ FloatCalculator::FloatCalculator(unsigned int sizeOfStack) :
  @date    Oct 29, 2017
  @mname   FloatCalculator::initMap
  @details
- \n
+ 	 The following method initializes map. The strings on the left
+ 	 represent the keyword and the method references on the right is used
+ 	 to call a method which preforms a specific operation.
+ 	 EX: the keyword "+" calls the add() method. \n
  --------------------------------------------------------------------------
  */
 void FloatCalculator::initMap() {
@@ -109,10 +112,14 @@ void FloatCalculator::initMap() {
  @date    Oct 29, 2017
  @mname   FloatCalculator::getTopOfStack
  @details
- \n
+ 	 This function gets the top of stack. And records the elements in the
+ 	 stack. And resizes if the stack is full. This function gets called
+ 	 from the graphics engine and is used to print the top x elements
+ 	 of the stack into the allegro display\n
  --------------------------------------------------------------------------
  */
 void FloatCalculator::getTopOfStack(std::vector<float>& f, unsigned int num) {
+	//This is a turnary operator
 	int retnum = (num < mElementsInStack) ? num : mElementsInStack;
 	if(retnum) {
 		f.resize(retnum+1);
@@ -134,7 +141,7 @@ void FloatCalculator::getTopOfStack(std::vector<float>& f, unsigned int num) {
    @date    Oct 31, 2017
    @mname   unary
    @details
-	  \n
+	  This was a repeated piece of code that I turned into a function. \n
   --------------------------------------------------------------------------
  */
 bool
@@ -157,7 +164,7 @@ FloatCalculator::unary(float& FirstInStack) {
    @date    Oct 31, 2017
    @mname   binary
    @details
-	  \n
+		This was a repeated piece of code that I turned into a function.\n
   --------------------------------------------------------------------------
  */
 bool
@@ -293,7 +300,7 @@ bool FloatCalculator::swap() {
  @date    Oct 28, 2017
  @mname   FloatCalculator::sum
  @details
- \n
+ 	 Calculates the sum of all elements in the stack. \n
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::sum() {
@@ -313,7 +320,7 @@ bool FloatCalculator::sum() {
  @date    Oct 28, 2017
  @mname   FloatCalculator::product
  @details
- \n
+ 	 This method calculates the product of all elements in the stack. \n
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::product() {
@@ -333,7 +340,8 @@ bool FloatCalculator::product() {
  @date    Oct 28, 2017
  @mname   exponent
  @details
- \n
+ 	 This function pushes the power of the second top element in the stack
+ 	 to the power of the first. \n
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::power() {
@@ -352,7 +360,7 @@ bool FloatCalculator::power() {
  @date    Oct 28, 2017
  @mname   FloatCalculator::series
  @details
- \n
+ 	 This function pushes a series of numbers into the stack. \n
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::series() {
@@ -401,7 +409,7 @@ bool FloatCalculator::series() {
  @param   paramlist: none
  @return  type
  @details
- \n
+ 	 This method pushes the square root of the top elemtn of the stack.\n
  -------------------------------------------------------------------------
  */
 
@@ -420,7 +428,8 @@ bool FloatCalculator::sqrt() {
    @date    Oct 30, 2017
    @mname   FloatCalculator::pi
    @details
-	  \n
+	  This function pushes pi into the stack, which is denoted by the
+	  constant in math.h called M_PI. \n
   --------------------------------------------------------------------------
  */
 bool
@@ -438,7 +447,7 @@ FloatCalculator::pi() {
    @date    Oct 30, 2017
    @mname   FloatCalculator::euler
    @details
-	  \n
+	  This function pushes e (euler's constant) into the stack.\n
   --------------------------------------------------------------------------
  */
 bool
@@ -458,7 +467,7 @@ FloatCalculator::euler() {
  @param   paramlist: none
  @return  bool
  @details
- \n
+ 	 This method pushes the exponent of the top element into the stack.
  -------------------------------------------------------------------------
  */
 bool FloatCalculator::exponential() {
@@ -478,7 +487,7 @@ bool FloatCalculator::exponential() {
  @param   paramlist: none
  @return  bool
  @details
- \n
+ 	 Pushes the logarithm of the top element into the stack. \n
  -------------------------------------------------------------------------
  */
 bool FloatCalculator::log() {
@@ -497,7 +506,7 @@ bool FloatCalculator::log() {
  @param   paramlist: none
  @return  bool
  @details
- \n
+ 	 Pushes the cos of the top element into the stack. \n
  -------------------------------------------------------------------------
  */
 bool FloatCalculator::cos() {
@@ -516,7 +525,7 @@ bool FloatCalculator::cos() {
  @param   paramlist: none
  @return  bool
  @details
- \n
+ 	 Pushes the sin of the top element into the stack. \n
  -------------------------------------------------------------------------
  */
 bool FloatCalculator::sin() {
@@ -534,7 +543,7 @@ bool FloatCalculator::sin() {
    @date    Oct 31, 2017
    @mname   FloatCalculator::random
    @details
-	  \n
+	  Pushes pushes a random number into the stack. \n
   --------------------------------------------------------------------------
  */
 bool
@@ -551,7 +560,9 @@ FloatCalculator::random() {
  @date    Oct 29, 2017
  @mname   FloatCalculator::popOp
  @details
- \n
+ 	 Pop's the top element in the stack (this method is declared
+ 	 because we need a bool function to be used in the map and the
+ 	 regular pop() method is void. \n
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::popOp() {
@@ -571,7 +582,7 @@ bool FloatCalculator::popOp() {
  @date    Oct 26, 2017
  @mname   FloatCalculator::compute
  @details
- \n
+ 	 \n
  --------------------------------------------------------------------------
  */
 bool FloatCalculator::compute(char term[]) {
@@ -621,8 +632,8 @@ bool FloatCalculator::compute(char term[]) {
  @date    Oct 28, 2017
  @mname   parse
  @details
- \n
- --------------------------------------------------------------------------
+ 	 Parses a string and calls the compute method to operate on the stack.\n
+ ---------------------------------------------------------------------------
  */
 bool FloatCalculator::parse(std::string& array) {
 	bool noError = true;

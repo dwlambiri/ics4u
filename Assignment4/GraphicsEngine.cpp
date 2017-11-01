@@ -56,7 +56,10 @@ GraphicsEngine::CalculatorButton::CalculatorButton(int x, int y, int xw, int yw,
  @date    Oct 29, 2017
  @mname   GraphicsEngine::CalculatorButton::draw
  @details
- \n
+ 	 This method draws the button normally (button colour and black
+ 	 background) the mouse is not pressed above any button. If the mouse
+ 	 is pressed above a button pressed will become true and the button
+ 	 will be drawn inversely. \n
  --------------------------------------------------------------------------
  */
 void
@@ -84,7 +87,8 @@ GraphicsEngine::CalculatorButton::draw() {
    @date    Oct 30, 2017
    @mname   GraphicsEngine::CalculatorButton::checkMouseLocation
    @details
-	  \n
+	  This function simply checks if the mouse position and if is above
+	  a button, it returns true. \n
   --------------------------------------------------------------------------
  */
 bool
@@ -126,7 +130,7 @@ GraphicsEngine::GraphicsEngine() :
 	xblen = 0;
 	yblen = 0;
 
-	calcPixelColour = bluePixel_c;
+	calcPixelColour = whitePixel_c;
 }
 
 /**
@@ -137,7 +141,8 @@ GraphicsEngine::GraphicsEngine() :
    @param
    @return  void
    @details
-	\n
+	This method is called from the GraphicsEngine destructor and it
+	destroys all of the allegro aspects. \n
   -------------------------------------------------------------------------
  */
 void GraphicsEngine::cleanUp() {
@@ -466,6 +471,7 @@ void GraphicsEngine::displayStack(PixelColour c) {
 		;
 	} //end-of-switch
 
+
 	al_draw_rounded_rectangle(xButtonSpace_c, yButtonSpace_c,
 			windowWidth - xButtonSpace_c,
 			windowHeight / 2 - fontSize_c - yButtonSpace_c, 20, 20, fc, 10);
@@ -478,10 +484,7 @@ void GraphicsEngine::displayStack(PixelColour c) {
 		al_draw_textf(font, fc, 2 * xButtonSpace_c,
 				(yButtonSpace_c + fontSize_c), ALLEGRO_ALIGN_LEFT, "%s", msg);
 		int i = 1;
-		for (;
-				(i < stack.size())
-						&& (i
-								< (windowHeight / 3
+		for (; (i < stack.size()) && (i < (windowHeight / 3
 										/ (yButtonSpace_c + fontSize_c)));
 				i++) {
 			if (i == 1) {
@@ -578,7 +581,8 @@ void GraphicsEngine::drawCalculator() {
  @date    Oct 29, 2017
  @mname   GraphicsEngine::initCalculator
  @details
- Add buttons to vector\n
+ Add buttons to vector
+	\n
  --------------------------------------------------------------------------
  */
 void GraphicsEngine::initCalculator() {
@@ -603,8 +607,12 @@ void GraphicsEngine::initCalculator() {
 	 * @date     Oct 31, 2017
 	 *  buttons are drawn in a 2 for statements, one for columns
 	 *  and one for each row in a column
-	 */
-
+	 *
+	 *  This part of the method draws all of the buttons. It draws rectangles with
+	 *  rounded edges. It draws them in a loop and the  text inside each button drawing
+	 *  corresponds to a vector of strings in which the description of the button is
+	 *  written.
+	 *  */
 	for (int i = 0; i < numButtonColumns_c; i++ ) {
 		for (int j = 0; j < numButtonRows_c; j++ ) {
 			buttons.push_back(

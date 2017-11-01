@@ -129,7 +129,15 @@ int main(int argc, char **argv) {
 			pthread.join();
 		}
 		ge.cleanUp();
-	} else {
+	}
+	/*
+	 * @author   dwlambiri
+	 * @date     Nov 1, 2017
+	 *  The following "else" condition is used when allegro cannot be initialized and thus runs in
+	 *  terminal mode.
+	 */
+
+	else {
 		/*
 		 * @author   dwlambiri
 		 * @date     Oct 31, 2017
@@ -144,6 +152,13 @@ int main(int argc, char **argv) {
 			std::ostringstream error;
 			const int topNum_c = 11;
 			std::vector<float> topofstack(topNum_c);
+			/*
+			 * @author   dwlambiri
+			 * @date     Nov 1, 2017
+			 *  This reads in a line at a time and passes it to the parse method in the FloatCalculator
+			 *  class. If the word the string is not quit, and the parse function does not return false,
+			 *  the string will be parsed and print the output in the terminal (top 10 elements of stack)
+			 */
 
 			std::cout << "#";
 			std::getline(std::cin, cmdLine);
