@@ -257,6 +257,15 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 		return false;
 	}
 
+    if (!al_init_primitives_addon()) {
+   	al_show_native_message_box(display, "Error", "Error", "Failed to initialize primatives addon!",
+               nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+       al_destroy_event_queue(event_queue);
+		al_destroy_bitmap(screenBitmap);
+		al_destroy_display(display);
+		al_destroy_timer(timer);
+   	return -1;
+	}
 
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));

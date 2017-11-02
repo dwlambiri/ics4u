@@ -135,6 +135,7 @@ private:
 
 	CmdMap cmdmap;
 
+
 private:
 	//--------------------------------------------------
 	// Private Methods
