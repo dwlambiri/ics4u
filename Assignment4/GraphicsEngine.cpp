@@ -264,7 +264,7 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 		al_destroy_bitmap(screenBitmap);
 		al_destroy_display(display);
 		al_destroy_timer(timer);
-   	return -1;
+   	return false;
 	}
 
 	al_register_event_source(event_queue, al_get_display_event_source(display));
