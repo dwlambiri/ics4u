@@ -605,7 +605,7 @@ void GraphicsEngine::initCalculator() {
 								   "5", "6", "7", "8",
 								   "9", "0", ".", "enter",
 								   "+","-","^","del",
-								   "*","/","exp","log",
+								   "*","/","exp","ln",
 								   "cos", "sin", "rand", "pop",
 								   "swap","series","sum","prod",
 								   "sqrt", "e", "pi", "clear"
