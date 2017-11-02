@@ -238,7 +238,7 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 	//ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
 	//al_append_path_component(path, "./");
 	//al_set_path_filename(path, fontfile);
-	font = al_load_font( fontfile, fontSize_c, 0);
+	font = al_load_font(fontfile, fontSize_c, 0);
 	//font = al_load_ttf_font(al_path_cstr(path, '/'), fontSize_c, 0);
 	//al_destroy_path(path);
 
