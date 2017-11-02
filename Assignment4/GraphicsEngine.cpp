@@ -235,12 +235,12 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
 
 	const char* fontfile = "font.ttf";
-	ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-	al_append_path_component(path, "./");
-	al_set_path_filename(path, fontfile);
-	font = al_load_ttf_font( fontfile, fontSize_c, 0);
+	//ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+	//al_append_path_component(path, "./");
+	//al_set_path_filename(path, fontfile);
+	font = al_load_font(fontfile, fontSize_c, 0);
 	//font = al_load_ttf_font(al_path_cstr(path, '/'), fontSize_c, 0);
-	al_destroy_path(path);
+	//al_destroy_path(path);
 
 	if (!font) {
 		std::cerr << "allegro error:  could not load 'font.ttf'" << std::endl;
@@ -257,15 +257,16 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 		return false;
 	}
 
-     if (!al_init_primitives_addon()) {
-    	al_show_native_message_box(display, "Error", "Error", "Failed to initialize primatives addon!",
-                nullptr, ALLEGRO_MESSAGEBOX_ERROR);
-        al_destroy_event_queue(event_queue);
+    if (!al_init_primitives_addon()) {
+   	al_show_native_message_box(display, "Error", "Error", "Failed to initialize primatives addon!",
+               nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+       al_destroy_event_queue(event_queue);
 		al_destroy_bitmap(screenBitmap);
 		al_destroy_display(display);
 		al_destroy_timer(timer);
-    	return -1;
+   	return false;
 	}
+
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_mouse_event_source());
