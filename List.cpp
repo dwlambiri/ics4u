@@ -35,14 +35,38 @@ int List::size() {
 // remove city from list, return false if not in list.
 // (optional enhancement remove all instances of that city)
 bool List::remove(apstring city) {
+    bool removed = false;
+    if (length == 0)
+        return removed;
    cout << "Stub for removing " << city << endl;
-
+   for (NODE* t = head; t != nullptr; t = t->next){
+        if (t == head){
+            head = t->next;
+            t->next->prev = nullptr;
+            delete t;
+        }
+        if(t->city == city){
+            t->prev->next = t->next;
+            t->next->prev = t -> prev;
+            delete t;
+            removed = true;
+        }
+        if (t == tail){
+            tail = t->prev;
+            t->prev->next = nullptr;
+            delete t;
+        }
+   }
+    return removed;
 }
 
 // add city to list, in alphabetical order
 void List::insert(apstring city) {
     cout << "Stub for adding " << city << endl;
-
+    tail->next = new Node;
+    tail->next->city = city;
+    tail->next->prev = tail;
+    tail = tail->next;
 }
 
 // free memory of all the nodes in the list

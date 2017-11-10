@@ -8,13 +8,15 @@ using namespace std;
 #include "apstring.h"
 struct Node {
     apstring city;
-    Node *next;
+    Node* next;
+    Node* prev;
 };
 
 class List {
 	private:
 		int length;
 		Node *head;
+		Node *tail;
     public:
 	    List();
         List(apstring);
