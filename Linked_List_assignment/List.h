@@ -10,6 +10,14 @@ struct Node {
     apstring city;
     Node* next;
     Node* prev;
+
+    Node() {
+    	next = prev = nullptr;
+    }
+    Node(apstring& city) {
+    	next = prev = nullptr;
+    	this->city = city;
+    }
 };
 
 class List {
