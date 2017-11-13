@@ -63,20 +63,41 @@ bool List::remove(apstring city) {
 // add city to list, in alphabetical order
 void List::insert(apstring city) {
 	cout << "Stub for adding " << city << endl;
-	Node* p = new Node(city);
-	p->prev = tail;
+	Node *newnode = new Node;
+    newnode->city = city;
+    newnode->next = nullptr;
 
-	if (tail != nullptr) {
-		tail->next = p;
-	}
-	tail = p;
+    if (!head) {
+        head = newnode;
+        length++;
+        return;
+    }
 
-	if (head == nullptr) {
-		head = p;
-	}
+    Node *prev = nullptr;
+    Node *t = head;
+    while (t != nullptr && t->city < city) {
+        prev = t;
+        t = t->next;
+    }
 
-	length++;
-	//cout << "LALALALA" <<endl;
+    if (t == head) {
+        newnode->next = head;
+        head->prev = newnode;
+        head = newnode;
+        length++;
+        return;
+    }
+
+    prev->next = newnode;
+    newnode->next = t;
+    newnode->prev = prev;
+    if (t!= nullptr){
+        t->prev = newnode;
+    }
+    else{
+        tail = newnode;
+    }
+    length++;
 }
 
 // free memory of all the nodes in the list
