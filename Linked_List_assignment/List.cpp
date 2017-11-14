@@ -55,9 +55,9 @@ bool List::remove(apstring city) {
 	if (length == 0)
 		return removed;
 	//removes nodes by finding out if they exist in the linked list or not.
-	cout << "Stub for removing " << city << endl;
 	for (Node* t = head; t != nullptr; t = t->next) {
 		if(t->city == city) {
+			cout << "Removing " << city << endl;
 			if(t->next) {
 				t->next->prev = t->prev;
 			}
@@ -80,7 +80,6 @@ bool List::remove(apstring city) {
 
 // add city to list, in alphabetical order
 void List::insert(apstring city) {
-	cout << "Stub for adding " << city << endl;
 	Node *newnode = new Node;
     newnode->city = city;
     newnode->next = nullptr;
@@ -97,8 +96,8 @@ void List::insert(apstring city) {
         prev = t;
         t = t->next;
     }
-    //If t is hte head then we must only set the
-    // head to newnode and the prevoius of the old head
+    //If t is the head then we must only set the
+    // head to newnode and the previous of the old head
     // to newnode
     //We do not want to operate upon the previous of the head as
     //  it will result in a segmentation fault 11
@@ -153,8 +152,10 @@ bool List::load(apstring filename) {
 		cout << "Unable to open " << filename << endl;
 		return false;
 	}
-
+    //fin.ignore(256, '\n');
+    //fin.ignore(256, ' ');
 	while (getline(fin, name)) {
+		//cout << "++" << name << "++" << endl;
 		insert(name);
 	}
 	return true;
