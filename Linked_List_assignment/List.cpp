@@ -1,6 +1,23 @@
 // Name:
 // list.cpp
 // List Class - an ordered link list
+/*****************************************************************************
+ *	Name:   Darius W Lambiri (dwlambiri)
+ *	File:   List.cpp
+ *	Course: ICS4U
+ *	Date:   Nov 13, 2017
+ *
+ *	Purpose:This contains a linked list containing city names stored in
+ *				apstrings
+ *
+ *	Usage:  This file is used in a main
+ *
+ *	Revision History:
+ *
+ *	Known Issues: No known bugs.
+ *
+ *****************************************************************************/
+
 
 #include <iostream>
 #include <fstream>
@@ -37,6 +54,7 @@ bool List::remove(apstring city) {
 	int nodesRemoved = 0;
 	if (length == 0)
 		return removed;
+	//removes nodes by finding out if they exist in the linked list or not.
 	cout << "Stub for removing " << city << endl;
 	for (Node* t = head; t != nullptr; t = t->next) {
 		if(t->city == city) {
@@ -79,7 +97,11 @@ void List::insert(apstring city) {
         prev = t;
         t = t->next;
     }
-
+    //If t is hte head then we must only set the
+    // head to newnode and the prevoius of the old head
+    // to newnode
+    //We do not want to operate upon the previous of the head as
+    //  it will result in a segmentation fault 11
     if (t == head) {
         newnode->next = head;
         head->prev = newnode;
@@ -87,10 +109,12 @@ void List::insert(apstring city) {
         length++;
         return;
     }
-
+    //placing newnode in the linked list
     prev->next = newnode;
     newnode->next = t;
     newnode->prev = prev;
+    //the last node will point to a nullptr
+    //checking if newnode is the last node
     if (t!= nullptr){
         t->prev = newnode;
     }
