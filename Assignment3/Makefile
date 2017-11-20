@@ -4,13 +4,13 @@ CLFLAGS =
 #CLFLAGS =   -g -fprofile-arcs -ftest-coverage 
 CC = g++
 
-OBJS =		topography.o
+OBJS =		rpn.o
 
 LIBS = -L/usr/local/lib -lallegro -lallegro_main -lallegro_image -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_dialog
 
 
 
-TARGET =	topography.exe
+TARGET =	rpn.exe
 
 $(TARGET):	$(OBJS)
 	$(CC) $(CLFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
