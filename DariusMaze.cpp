@@ -10,11 +10,11 @@ struct node{
     bool visited;
 };
 struct position{
-    int x;
-    int y;
+    int r;
+    int c;
 };
 
-bool readIn(string filename, int &rows, int &cols, apmatrix<node>& maze){
+bool readIn(string filename, int &rows, int &cols, apmatrix<char>& maze){
     fstream file;
     file.open(filename, fstream::in);
 
@@ -33,27 +33,31 @@ bool readIn(string filename, int &rows, int &cols, apmatrix<node>& maze){
             //if (r == 0 || c == 0 || r == rows - 1 || c == cols - 1)
                // maze[r][c].character = '#';
             //else
-                file >> maze[r][c].character;
+                file >> maze[r][c];
         }
     }
     return true;
 }
 
-node* findStart(apmatrix<node> maze){
-    node* startPoint = nullptr;
+position findStart(apmatrix<char> maze){
+    position startPoint;
+    startPoint.r = -1;
+    startPoint.c = -1;
     bool foundStart = false;
 
     for (int r = 0; r < maze.numrows(); r++)
         for (int c = 0; c < maze.numcols(); c++){
-            if (toupper(maze[r][c].character == 'S')){
+            if (toupper(maze[r][c]) == 'S'){
                 foundStart = true;
+                startPoint.r = r;
+                startPoint.c = c;
             }
         }
     if (foundStart){
-        cout << "found the start" << endl;
+        cout << "Start is found " << startPoint.r << " " << startPoint.c << endl;
         return startPoint;
     }
-    cout << "could not find the start";
+    cout << "Start Not Found";
     return startPoint;
 }
 
@@ -66,23 +70,52 @@ node* findStart(apmatrix<node> maze){
 //7. if (FindPath(South of x,y) == true) return true
 //8. if (FindPath(West of x,y) == true) return true
 //9. unmark x,y as part of solution path
+    //mark it with a '.'
 //10. return false
-bool findPath(int x, int y){
+bool findPath(int curR, int curC, apmatrix<char>& maze){
+    //Check for exceeding the bounds of the maze
+    if (curR <= -1 || curC <= -1 || curR >= maze.numrows() || curC >= maze.numcols())
+        return false;
+    //Checks if it is at the maze exit
+    else if (toupper(maze[curR][curC]) == 'G')
+        return true;
+    //Checks if the maze location is a wall
+    else if (maze[curR][curC] == '#')
+        return false;
+    //Checks if the location in the path is already marked
+    else if (maze[curR][curC] == '+')
+        return false;
+
+    //Marks the path as visited with a + sign
+    maze[curR][curC] = '+';
+    //NORTH
+    if(findPath(curR-1, curC, maze))
+        return true;
+    //WEST
+    if(findPath(curR, curC-1, maze))
+        return true;
+    //EAST
+    if(findPath(curR, curC+1, maze))
+        return true;
+    //SOUTH
+    if(findPath(curR+1, curC, maze))
+        return true;
+
+    maze[curR][curC] = '.';
+    return false;
 }
 
 int main(){
     int numRows;
     int numCols;
     string filename;
-    apmatrix<node> maze;
-    node* start;
+    apmatrix<char> maze;
+    position start;
     cout << "please enter name of file" << endl;
     cin >> filename;
 
     if(!readIn(filename, numRows, numCols, maze))
         return 1;
     start = findStart(maze);
-
-
     return 0;
 }
