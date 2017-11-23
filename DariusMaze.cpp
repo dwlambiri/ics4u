@@ -39,7 +39,7 @@ bool readIn(string filename, int &rows, int &cols, apmatrix<char>& maze){
     return true;
 }
 
-position findStart(apmatrix<char> maze){
+position findStart(apmatrix<char>& maze){
     position startPoint;
     startPoint.r = -1;
     startPoint.c = -1;
@@ -105,6 +105,15 @@ bool findPath(int curR, int curC, apmatrix<char>& maze){
     return false;
 }
 
+printmaze(apmatrix<char> &maze){
+    //cout << maze.numcols() << endl;
+    //cout << maze.numrows() << endl;
+    for (int i = 0; i < maze.numrows(); i++){
+        for (int j = 0; j < maze.numcols(); j++)
+            cout << maze[i][j];
+        cout << endl;
+    }
+}
 int main(){
     int numRows;
     int numCols;
@@ -117,5 +126,10 @@ int main(){
     if(!readIn(filename, numRows, numCols, maze))
         return 1;
     start = findStart(maze);
+    printmaze(maze);
+    cout << endl << "Now Solving Maze" << endl << endl;
+    findPath(start.r, start.c, maze);
+    maze[start.r][start.c] = 'S';
+    printmaze(maze);
     return 0;
 }
