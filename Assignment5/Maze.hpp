@@ -89,9 +89,6 @@ public:
 	 */
 	void printMaze();
 
-
-
-
 	/**
 	  -------------------------------------------------------------------------
 	   @name  callFP
@@ -103,6 +100,46 @@ public:
 	 */
 	void callFP();
 
+	/**
+	  -------------------------------------------------------------------------
+	   @name  getnumRows
+	   @param
+	   @return  int
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	int getNumRows() const {
+		return numRows;
+	}
+
+	/**
+	  -------------------------------------------------------------------------
+	   @name  getnumCols
+	   @param
+	   @return  int
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	int getNumCols() const {
+		return numCols;
+	}
+
+	/**
+	  -------------------------------------------------------------------------
+	   @name  getnumRows
+	   @param
+	   @return  apmatrix<char>
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	apmatrix<char>& getMaze() {
+		return maze;
+	}
+
+
 private:
 	//--------------------------------------------------
 	// Data Members
@@ -112,8 +149,8 @@ private:
 private:
 	int numRows;
 	int numCols;
-	int startingR;
-	int startingC;
+	int startRow;
+	int startCol;
 	std::string filename;
 	apmatrix<char> maze;
 

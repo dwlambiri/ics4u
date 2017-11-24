@@ -13,8 +13,8 @@
 Maze::Maze(std::string& filename) : maze(1,1) {
 	numRows = 0;
 	numCols = 0;
-	startingR = -1;
-	startingC = -1;
+	startRow = -1;
+	startCol = -1;
 	this->filename = filename;
 } // end-of-method Maze::Maze
 
@@ -88,11 +88,11 @@ Maze::findstart() {
 	        for (int c = 0; c < maze.numcols(); c++){
 	            if (toupper(maze[r][c]) == 'S'){
 	                foundStart = true;
-	                startingR = r;
-	                startingC = c;
+	                startRow = r;
+	                startCol = c;
 	            }
 	        }
-	std::cout << "starting point is (" << startingR << "," << startingC << ")" << std::endl;
+	std::cout << "starting point is (" << startRow << "," << startCol << ")" << std::endl;
 	 return foundStart;
 } // end-of-method Maze::findstart
 
@@ -126,8 +126,8 @@ Maze::printMaze() {
  */
 void
 Maze::callFP() {
-	findPath(startingR, startingC);
-	maze[startingR][startingC] = 'S';
+	findPath(startRow, startCol);
+	maze[startRow][startCol] = 'S';
 } // end-of-method Maze::callFP
 
 
