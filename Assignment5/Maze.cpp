@@ -16,6 +16,8 @@ Maze::Maze(std::string& filename) : maze(1,1) {
 	startRow = -1;
 	startCol = -1;
 	this->filename = filename;
+
+
 } // end-of-method Maze::Maze
 
 
@@ -45,12 +47,19 @@ Maze::readIn() {
 			}
 		}
 		file.close();
-		return true;
+		 /* The following line calls a method in the GraphicsEngine class,
+			initAllegro, which initializes all of the allegro primitives.
+			The method will return false if an allegro initialization has an error
+			and thus the program will run in terminal mode which only accepts input
+			and delivers output from the terminal.
+		 */
+	    return ge.initAllegro("Maze Solver", w_c, h_c);
 	}
 	else {
 		std::cout << "file " << filename << " does not exist" << std::endl;
 		return false;
 	} //end-of-if
+
 	return false;
 } // end-of-method readIn
 
@@ -65,7 +74,7 @@ Maze::readIn() {
   --------------------------------------------------------------------------
  */
 Maze::~Maze() {
-
+	ge.cleanUp();
 } // end-of-method Maze::~Maze
 
 
@@ -142,6 +151,8 @@ Maze::callFP() {
  */
 bool
 Maze::findPath(int curR, int curC) {
+	ge.pause(1.0/60.0);
+	ge.drawMaze(maze);
 	//Check for exceeding the bounds of the maze
 	if (curR <= -1 || curC <= -1 || curR >= maze.numrows() || curC >= maze.numcols())
 		return false;

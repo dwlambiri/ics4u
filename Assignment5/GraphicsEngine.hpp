@@ -17,7 +17,8 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_font.h>
-#include "Maze.hpp"
+#include "apmatrix.h"
+
 
 
 
@@ -54,7 +55,7 @@ public:
 		Default constructor of Class GraphicsEngine \n
 	  --------------------------------------------------------------------------
 	 */
-	GraphicsEngine(Maze& m) ;
+	GraphicsEngine() ;
 
 	/**
 	  --------------------------------------------------------------------------
@@ -76,7 +77,11 @@ public:
 
 	bool allegroEventLoop();
 
+	void pause(double seconds){
+		al_rest(seconds);
+	}
 
+	void drawMaze(apmatrix<char>& m);
 private:
 	//--------------------------------------------------
 	// Data Members
@@ -104,7 +109,7 @@ private:
 	static const int fontSize_c = 30;
 	static const int numButtonColumns_c = 8;
 	static const int numButtonRows_c = 4;
-	Maze& maze;
+
 
 
 private:
@@ -118,8 +123,7 @@ private:
 	    //this should clear the bitmap
 	    al_clear_to_color(al_map_rgb(0,0,0));
 	}
-	void initMaze();
-	void drawMaze();
+
 
 
 	/**

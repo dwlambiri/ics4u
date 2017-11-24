@@ -1,12 +1,11 @@
 #ifndef MazeClass
 #define MazeClass
 #include <iostream>
-#include <apmatrix.h>
 #include <fstream>
 #include <string>
 #include "apmatrix.h"
 #include <ctype.h>
-
+#include "GraphicsEngine.hpp"
 /**
   ---------------------------------------------------------------------------
    @author     dwlambiri
@@ -140,6 +139,10 @@ public:
 	}
 
 
+	void closeWindow() {
+		ge.allegroEventLoop();
+	}
+
 private:
 	//--------------------------------------------------
 	// Data Members
@@ -153,6 +156,9 @@ private:
 	int startCol;
 	std::string filename;
 	apmatrix<char> maze;
+	static const int w_c = 1200;
+	static const int h_c = 800;
+	GraphicsEngine ge;
 
 	//--------------------------------------------------
 	// Private Methods

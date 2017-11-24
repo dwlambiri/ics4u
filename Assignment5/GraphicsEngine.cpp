@@ -27,7 +27,7 @@
 	constructor\n
   -------------------------------------------------------------------------
  */
-GraphicsEngine::GraphicsEngine(Maze& m): maze(m){
+GraphicsEngine::GraphicsEngine(){
 	display = nullptr;
 	event_queue = nullptr;
 	timer = nullptr;
@@ -196,9 +196,6 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 	al_set_window_title(display, title);
 	al_flip_display();
 
-	initMaze();
-	drawMaze();
-
 	return true;
 } // end-of-function initAllegro
 
@@ -219,7 +216,7 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 void GraphicsEngine::moveBitmapToDisplay() {
 
 	al_set_target_bitmap(al_get_backbuffer(display));
-	al_draw_bitmap(screenBitmap, 0, 0, 0);
+	al_draw_bitmap(screenBitmap, 255, 255, 255);
 	al_flip_display();
 	al_set_target_bitmap(screenBitmap);
 
@@ -250,9 +247,6 @@ bool GraphicsEngine::allegroEventLoop() {
 			 *
 			 */
 
-			maze.callFP();
-			std::cout << std::endl;
-			maze.printMaze();
 
 
 		} else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -266,8 +260,6 @@ bool GraphicsEngine::allegroEventLoop() {
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
 
 		}
-
-		drawMaze();
 
 	}
 	return true;
@@ -323,27 +315,15 @@ void GraphicsEngine::displayError(PixelColour c) {
  Draw fresh calculator\n
  --------------------------------------------------------------------------
  */
-void GraphicsEngine::drawMaze() {
+void GraphicsEngine::drawMaze(apmatrix<char>& maze) {
 
 	clearBitmap();
 
+	//al_draw_filled_rectangle(xpos, ypos, xpos + xlen, ypos + ylen, 10, 10, c);
 
 
 	moveBitmapToDisplay();
 } // end-of-method GraphicsEngine::drawCalculator
 
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 29, 2017
- @mname   GraphicsEngine::initCalculator
- @details
- Add buttons to vector
-	\n
- --------------------------------------------------------------------------
- */
-void GraphicsEngine::initMaze() {
 
-
-} // end-of-method GraphicsEngine::initCalculator
 
