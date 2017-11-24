@@ -35,25 +35,28 @@ int SCREEN_WIDTH;
 float SCREEN_HEIGHT;
 const int scale = 30;
 
-void initializeEvents(){
+bool initializeEvents(int w, int h){
     //initializes allegro
     al_init();
     al_init_primitives_addon();
     //initializes display
+
+    SCREEN_WIDTH = w*scale;
+    SCREEN_HEIGHT = h*scale;
+
     display = al_create_display (SCREEN_WIDTH, SCREEN_HEIGHT);
     if (!display){
         cerr << "failed to create display! " << endl;
+        return false;
     }
+    return true;
 }
 //function that creates calculator display. Passes operation string by reference to change it
 void drawMaze(apmatrix<mazePart> &maze){
-    al_init();
 
-    SCREEN_WIDTH = maze.numcols()*scale;
-    SCREEN_HEIGHT = maze.numrows()*scale;
 
-    initializeEvents();
-    al_set_target_bitmap(al_get_backbuffer (display));
+
+    //al_set_target_bitmap(al_get_backbuffer (display));
 
     for (int y = 0; y < maze.numrows(); y++){
         for (int x = 0; x < maze.numcols(); x++){
@@ -71,5 +74,5 @@ void drawMaze(apmatrix<mazePart> &maze){
     }
 
     al_flip_display ();
-    al_rest(5);
+    al_rest(1.0/60.0);
 }

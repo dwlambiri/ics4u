@@ -2,6 +2,7 @@
 #include <apmatrix.h>
 #include <fstream>
 #include <cstdlib>
+#include <allegro5/allegro.h>
 
 #define NORTH maze[position.y-1][position.x]
 #define SOUTH maze[position.y+1][position.x]
@@ -84,6 +85,8 @@ string findPath(apmatrix<mazePart> &maze, Coordinate position){
 }
 void drawPath(apmatrix<mazePart> &maze, string path, Coordinate position){
     //checks which direction to go in
+
+	drawMaze(maze);
     switch(path[0]){
         case 'N':
             position.y--;
@@ -139,11 +142,15 @@ int main(){
     if (start.x == -1)
         return 0;
 
-    drawMaze(maze);
+    if(initializeEvents(maze.numcols(), maze.numrows()) == false) {
+    	return 2;
+    }
+
     //changes the matrix to include a path from the start to end
     drawPath(maze, findPath(maze, start), start);
     //draws maze using allegro
-    drawMaze(maze);
+
+    al_rest(20);
 
     file.close();
 }

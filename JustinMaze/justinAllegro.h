@@ -3,7 +3,7 @@
 #include <apmatrix.h>
 #include "MazeStructures.h"
 
-void initializeEvents();
+bool initializeEvents(int w, int h);
 void drawMaze(apmatrix<mazePart> &maze);
 //void createCalc(string &operation, float answer);
 #endif
