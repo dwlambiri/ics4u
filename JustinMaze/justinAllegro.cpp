@@ -33,7 +33,7 @@ using namespace std;
 ALLEGRO_DISPLAY *display = nullptr;
 int SCREEN_WIDTH;
 float SCREEN_HEIGHT;
-const int scale = 30;
+const int scale = 100;
 
 bool initializeEvents(int w, int h){
     //initializes allegro
@@ -58,18 +58,21 @@ void drawMaze(apmatrix<mazePart> &maze){
 
     //al_set_target_bitmap(al_get_backbuffer (display));
 
+	al_clear_to_color(al_map_rgb(0,0,0));
+
     for (int y = 0; y < maze.numrows(); y++){
         for (int x = 0; x < maze.numcols(); x++){
             if (maze[y][x].character == '#')
-                al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,BLACK);
+                al_draw_filled_rounded_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,25,25,WHITE);
             else if (maze[y][x].character == '+')
-                al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,RED);
+            	al_draw_filled_circle((x+0.5)*scale,(y+0.5)*scale, scale/2, RED);
+                //al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,RED);
             else if (maze[y][x].character == 'S')
                 al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,BLUE);
             else if (maze[y][x].character == 'G')
                 al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,GREEN);
-            else
-                al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,WHITE);
+//            else
+//                al_draw_filled_circle((x+0.5)*scale,(y+0.5)*scale, scale/2,WHITE);
         }
     }
 
