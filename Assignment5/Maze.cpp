@@ -151,7 +151,15 @@ Maze::callFP() {
  */
 bool
 Maze::findPath(int curR, int curC) {
-	ge.pause(1.0/60.0);
+	/*
+	 * @author   dwlambiri
+	 * @date     Nov 24, 2017
+	 *  I am pausing the computation for 1/60 of a second.
+	 *  After the pause I am drawing the maze, and I continue with the
+	 *  	recursive function.
+	 */
+
+	ge.pause();
 	ge.drawMaze(maze);
 	//Check for exceeding the bounds of the maze
 	if (curR <= -1 || curC <= -1 || curR >= maze.numrows() || curC >= maze.numcols())
@@ -166,8 +174,11 @@ Maze::findPath(int curR, int curC) {
 	else if (maze[curR][curC] == '+')
 		return false;
 
+
+
 	//Marks the path as visited with a + sign
-	maze[curR][curC] = '+';
+	if(maze[curR][curC] != 'S')
+		maze[curR][curC] = '+';
 	
 	//NORTH
 	if(findPath(curR-1, curC))
@@ -184,8 +195,8 @@ Maze::findPath(int curR, int curC) {
 	//SOUTH
 	if(findPath(curR+1, curC))
 		return true;
-
-	maze[curR][curC] = '.';
+	if(maze[curR][curC] != 'S')
+		maze[curR][curC] = '.';
 	return false;
 	
 } // end-of-method Maze::findPath

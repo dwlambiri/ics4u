@@ -36,12 +36,7 @@ GraphicsEngine::GraphicsEngine(){
 	windowWidth = 0;
 	windowHeight = 0;
 	fps = 60;
-	errorString = "";
-	yButtonStart = 0;
-	xblen = 0;
-	yblen = 0;
 
-	calcPixelColour = whitePixel_c;
 }
 
 /**
@@ -79,29 +74,6 @@ bool
 GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 							const int windowHeight_c) {
 
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 31, 2017
-	 *  buttons start in the lower half of the window
-	 */
-
-	yButtonStart = windowHeight_c / 2;
-
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 31, 2017
-	 *  each button length depends on the number of button columns
-	 */
-
-	xblen = ((windowWidth_c - xButtonSpace_c) / numButtonColumns_c) - xButtonSpace_c;
-
-	/*
-	 * @author   dwlambiri
-	 * @date     Oct 31, 2017
-	 *  each button height depends on the number of button rows
-	 */
-
-	yblen = (yButtonStart / numButtonRows_c) - yButtonSpace_c;
 	//initialize display
 	al_init();
 	display = al_create_display(windowWidth_c, windowHeight_c);
@@ -190,7 +162,7 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 	 *  	for all the allegro writes
 	 */
 
-	al_set_target_bitmap(screenBitmap);
+	//al_set_target_bitmap(screenBitmap);
 	//set background to black
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	al_set_window_title(display, title);
@@ -199,28 +171,7 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 	return true;
 } // end-of-function initAllegro
 
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 6, 2017
- @mname   GraphicsEngine::moveBitmapToDisplay
- @details
- Allegro has a feature that allows all commands to be directed to a bitmap
- I utilized this property by creating a bitmap the same size as the screen
- and filling this bitmap.
- Every time I want to move the contents of the bitmap to the display I change
- the target of the write to the display itself, copy the bitmap to the display
- buffer, flip the display and then set the write target back to the bitmap.
- --------------------------------------------------------------------------
- */
-void GraphicsEngine::moveBitmapToDisplay() {
 
-	al_set_target_bitmap(al_get_backbuffer(display));
-	al_draw_bitmap(screenBitmap, 255, 255, 255);
-	al_flip_display();
-	al_set_target_bitmap(screenBitmap);
-
-} // end-of-function moveBitmapToDisplay
 
 /**
  ---------------------------------------------------------------------------
@@ -267,63 +218,53 @@ bool GraphicsEngine::allegroEventLoop() {
 
 
 
-
 /**
  ---------------------------------------------------------------------------
  @author  dwlambiri
  @date    Oct 29, 2017
- @mname   GraphicsEngine::displayError
+ @mname   GraphicsEngine::drawMaze
  @details
- \n
- --------------------------------------------------------------------------
- */
-void GraphicsEngine::displayError(PixelColour c) {
-
-	ALLEGRO_COLOR fc = al_map_rgb(0xff, 0xff, 0xff);
-
-	switch (c) {
-	case redPixel_c:
-		fc = al_map_rgb(0xff, 0, 0);
-		break;
-	case greenPixel_c:
-		fc = al_map_rgb(0, 0xff, 0);
-		break;
-	case bluePixel_c:
-		fc = al_map_rgb(0, 0, 0xff);
-		break;
-	case blackPixel_c:
-		fc = al_map_rgb(0, 0, 0);
-		break;
-	case whitePixel_c:
-		fc = al_map_rgb(0xff, 0xff, 0xff);
-		break;
-	default:
-		;
-	} //end-of-switch
-
-	al_draw_textf(font, fc, xButtonSpace_c, windowHeight / 2 - 1.5 * fontSize_c,
-			ALLEGRO_ALIGN_LEFT, "%s", errorString.c_str());
-
-} // end-of-method GraphicsEngine::displayError
-
-/**
- ---------------------------------------------------------------------------
- @author  dwlambiri
- @date    Oct 29, 2017
- @mname   GraphicsEngine::drawCalculator
- @details
- Draw fresh calculator\n
+ Redraw the maze every time this method is called.
+ The walls are drawn in green.
+ The starting point is denoted by a yellow circle.
+ The end point is denoted by a red circle.
+ The path is denoted with a stream of white circles. \n
  --------------------------------------------------------------------------
  */
 void GraphicsEngine::drawMaze(apmatrix<char>& maze) {
+	static float xratio = ((float)windowWidth)/ maze.numcols();
+	static float yratio = ((float)windowHeight) / maze.numrows();
 
+	static ALLEGRO_COLOR wallC = al_map_rgb(0, 0xff, 0);
+	static ALLEGRO_COLOR pathC = al_map_rgb(0xff, 0xff, 0xff);
+	static ALLEGRO_COLOR startC = al_map_rgb(0xff, 0xff, 0);
+	static ALLEGRO_COLOR stopC = al_map_rgb(0xff, 0, 0);
 	clearBitmap();
+	for (int r = 0; r < maze.numrows(); r++ ) {
+		for (int c = 0; c < maze.numcols(); c++ ) {
+			switch (maze[r][c]) {
+				case '#':
+					al_draw_filled_rounded_rectangle(c * xratio, r*yratio, (c+1)* xratio, (r+1)* yratio, 20, 20, wallC);
+					break;
+				case '+':
+					al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, (xratio < yratio)?xratio/2:yratio/2, pathC);
+					break;
+				case 'S':
+					al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, (xratio < yratio)?xratio/2:yratio/2, startC);
+					break;
+				case 'G':
+					al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, (xratio < yratio)?xratio/2:yratio/2, stopC);
+					break;
+				default:
+					break;
+			} //end-of-switch
+		} //end-of-for
+	} //end-of-for
 
-	//al_draw_filled_rectangle(xpos, ypos, xpos + xlen, ypos + ylen, 10, 10, c);
 
 
-	moveBitmapToDisplay();
-} // end-of-method GraphicsEngine::drawCalculator
+	al_flip_display();
+} // end-of-method GraphicsEngine::drawMaze
 
 
 

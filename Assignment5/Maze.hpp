@@ -1,5 +1,5 @@
-#ifndef MazeClass
-#define MazeClass
+#ifndef MAZE_H_
+#define MAZE_H_
 #include <iostream>
 #include <fstream>
 #include <string>

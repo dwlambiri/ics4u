@@ -20,13 +20,6 @@
 #include "apmatrix.h"
 
 
-
-
-enum PixelColour {
-	redPixel_c, greenPixel_c, bluePixel_c, whitePixel_c, blackPixel_c
-};
-//end-of-enum PixelColour
-
 /**
   ---------------------------------------------------------------------------
    @author     dwlambiri
@@ -77,8 +70,8 @@ public:
 
 	bool allegroEventLoop();
 
-	void pause(double seconds){
-		al_rest(seconds);
+	void pause(){
+		al_rest(1.0/fps);
 	}
 
 	void drawMaze(apmatrix<char>& m);
@@ -91,24 +84,11 @@ private:
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_BITMAP *screenBitmap;
 	ALLEGRO_FONT *font;
-	PixelColour  calcPixelColour;
 
 	int windowWidth;
 	int windowHeight;
 	int fps;
-	std::string errorString;
-	std::vector<float> stack;
-	std::string inputNumber;
-
-	static const int xButtonStart_c = 20;
-	int yButtonStart;
-	static const int yButtonSpace_c = 20;
-	static const int xButtonSpace_c = 20;
-	int xblen;
-	int yblen;
 	static const int fontSize_c = 30;
-	static const int numButtonColumns_c = 8;
-	static const int numButtonRows_c = 4;
 
 
 
@@ -116,45 +96,10 @@ private:
 	//--------------------------------------------------
 	// Private Methods
 	//--------------------------------------------------
-	void moveBitmapToDisplay();
 
-	void displayError(PixelColour c);
 	void clearBitmap()  {
 	    //this should clear the bitmap
 	    al_clear_to_color(al_map_rgb(0,0,0));
-	}
-
-
-
-	/**
-	  -------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 29, 2017
-	   @name    GraphicsEngine::setErrorString
-	   @param   std::string& str
-	   @return  void
-	   @details
-		  \n
-	  -------------------------------------------------------------------------
-	 */
-	void setErrorString(std::string str) {
-		errorString =  str;
-	}
-
-	/**
-	  -------------------------------------------------------------------------
-	   @author  dwlambiri
-	   @date    Oct 29, 2017
-	   @name    GraphicsEngine::setVector
-	   @param   std::vector<float>& v
-	   @return  void
-	   @details
-		  \n
-	  -------------------------------------------------------------------------
-	 */
-	void setVector(std::vector<float>& v) {
-		stack.clear();
-		stack = v;
 	}
 
 
