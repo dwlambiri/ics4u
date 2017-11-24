@@ -5,14 +5,12 @@
 #include <apmatrix.h>
 #include <ctype.h>
 using namespace std;
-struct node{
-    char character;
-    bool visited;
-};
+
 struct position{
     int r;
     int c;
 };
+
 
 bool readIn(string filename, int &rows, int &cols, apmatrix<char>& maze){
     fstream file;
@@ -105,7 +103,7 @@ bool findPath(int curR, int curC, apmatrix<char>& maze){
     return false;
 }
 
-printmaze(apmatrix<char> &maze){
+void printmaze(apmatrix<char> &maze){
     //cout << maze.numcols() << endl;
     //cout << maze.numrows() << endl;
     for (int i = 0; i < maze.numrows(); i++){
