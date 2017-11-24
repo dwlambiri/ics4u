@@ -141,6 +141,7 @@ int main (int argc, char* argv[]) {
         break;
       }
     }
+    al_rest(1.0);
 
     return 0;
 }
