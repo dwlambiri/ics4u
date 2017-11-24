@@ -33,43 +33,49 @@ using namespace std;
 ALLEGRO_DISPLAY *display = nullptr;
 int SCREEN_WIDTH;
 float SCREEN_HEIGHT;
-const int scale = 30;
+const int scale = 100;
 
-void initializeEvents(){
+bool initializeEvents(int w, int h){
     //initializes allegro
     al_init();
     al_init_primitives_addon();
     //initializes display
+
+    SCREEN_WIDTH = w*scale;
+    SCREEN_HEIGHT = h*scale;
+
     display = al_create_display (SCREEN_WIDTH, SCREEN_HEIGHT);
     if (!display){
         cerr << "failed to create display! " << endl;
+        return false;
     }
+    return true;
 }
 //function that creates calculator display. Passes operation string by reference to change it
 void drawMaze(apmatrix<mazePart> &maze){
-    al_init();
 
-    SCREEN_WIDTH = maze.numcols()*scale;
-    SCREEN_HEIGHT = maze.numrows()*scale;
 
-    initializeEvents();
-    al_set_target_bitmap(al_get_backbuffer (display));
+
+    //al_set_target_bitmap(al_get_backbuffer (display));
+
+	al_clear_to_color(al_map_rgb(0,0,0));
 
     for (int y = 0; y < maze.numrows(); y++){
         for (int x = 0; x < maze.numcols(); x++){
             if (maze[y][x].character == '#')
-                al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,BLACK);
+                al_draw_filled_rounded_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,25,25,WHITE);
             else if (maze[y][x].character == '+')
-                al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,RED);
+            	al_draw_filled_circle((x+0.5)*scale,(y+0.5)*scale, scale/2, RED);
+                //al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,RED);
             else if (maze[y][x].character == 'S')
                 al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,BLUE);
             else if (maze[y][x].character == 'G')
                 al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,GREEN);
-            else
-                al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,WHITE);
+//            else
+//                al_draw_filled_circle((x+0.5)*scale,(y+0.5)*scale, scale/2,WHITE);
         }
     }
 
     al_flip_display ();
-    al_rest(5);
+    al_rest(1.0/60.0);
 }
