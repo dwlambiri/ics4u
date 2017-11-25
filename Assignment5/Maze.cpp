@@ -1,3 +1,21 @@
+/*****************************************************************************
+ *	Name:   Darius W Lambiri (dwlambiri)
+ *	File:   Maze.cpp
+ *	Course: ICS4U
+ *	Date:   Nov 24, 2017
+ *
+ *	Purpose:
+ *
+ *	Usage: This file contains methods to read in and solve a maze from a text
+ *			file
+ *
+ *	Revision History:
+ *
+ *	Known Issues: NONE
+ *
+ *****************************************************************************/
+
+
 #include "Maze.hpp"
 
 /**
@@ -6,7 +24,7 @@
    @date    Nov 24, 2017
    @mname   Maze::Maze
    @details
-	  \n
+	  Standard maze constructor which requires a text file\n
   --------------------------------------------------------------------------
  */
 
@@ -27,7 +45,7 @@ Maze::Maze(std::string& filename) : maze(1,1) {
    @date    Nov 24, 2017
    @mname   readIn
    @details
-	  \n
+	  Reads in the contents of the maze from a textfile\n
   --------------------------------------------------------------------------
  */
 bool
@@ -70,7 +88,7 @@ Maze::readIn() {
    @date    Nov 24, 2017
    @mname   Maze::~Maze
    @details
-	  \n
+	  Standard maze destructor that cleans up allegro\n
   --------------------------------------------------------------------------
  */
 Maze::~Maze() {
@@ -85,7 +103,7 @@ Maze::~Maze() {
    @date    Nov 24, 2017
    @mname   Maze::findstart
    @details
-	  \n
+	  Finds the start of the maze\n
   --------------------------------------------------------------------------
  */
 bool
@@ -135,7 +153,8 @@ Maze::printMaze() {
    @date    Nov 24, 2017
    @mname   Maze::callFP
    @details
-	  \n
+	  Calls the recursive algorithm for the first time by passing the
+	  private data\n
   --------------------------------------------------------------------------
  */
 void
@@ -151,7 +170,10 @@ Maze::callFP() {
    @date    Nov 24, 2017
    @mname   Maze::findPath
    @details
-	  \n    
+	  This algorithm recursively solves the maze by checking possible
+	  paths and either marking them as not useful(does not lead to the
+	  termination) or with an arrow character which tells the user from
+	  where the path moved.\n
   --------------------------------------------------------------------------
  */
 bool

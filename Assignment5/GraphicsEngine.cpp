@@ -1,19 +1,27 @@
-/*
- * GraphicsEngine.cpp
+/*****************************************************************************
+ *	Name:   Darius W Lambiri (dwlambiri)
+ *	File:   GraphicsEngine.cpp
+ *	Course: ICS4U
+ *	Date:   Nov 24, 2017
  *
- *  Created on: Oct 29, 2017
- *      Author: dwlambiri
- */
+ *	Purpose:
+ *
+ *	Usage: This contains a graphics class' methods which are used to draw
+ *			the maze.
+ *
+ *	Revision History:
+ *
+ *	Known Issues: NONE
+ *
+ *****************************************************************************/
+
+
 
 //includes
 #include <iostream>
 #include <fstream>
 #include <time.h>
 #include "GraphicsEngine.hpp"
-
-
-
-
 
 
 /**
@@ -114,25 +122,22 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
 		return false;
 	}
 
-	al_init_font_addon(); // initialize the font addon
-	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
+	//This program does not need / use fonts
 
-	const char* fontfile = "font.ttf";
-	//ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-	//al_append_path_component(path, "./");
-	//al_set_path_filename(path, fontfile);
-	font = al_load_font(fontfile, fontSize_c, 0);
-	//font = al_load_ttf_font(al_path_cstr(path, '/'), fontSize_c, 0);
-	//al_destroy_path(path);
+	//al_init_font_addon(); // initialize the font addon
+	//al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
 
-	if (!font) {
-		std::cerr << "allegro error:  could not load 'font.ttf'" << std::endl;
-		al_destroy_event_queue(event_queue);
-		al_destroy_bitmap(screenBitmap);
-		al_destroy_display(display);
-		al_destroy_timer(timer);
-		return false;
-	}
+//	const char* fontfile = "font.ttf";
+//	font = al_load_font(fontfile, fontSize_c, 0);
+//
+//	if (!font) {
+//		std::cerr << "allegro error:  could not load 'font.ttf'" << std::endl;
+//		al_destroy_event_queue(event_queue);
+//		al_destroy_bitmap(screenBitmap);
+//		al_destroy_display(display);
+//		al_destroy_timer(timer);
+//		return false;
+//	}
 
 	if(!al_install_mouse()) {
 		std::cerr << "allegro error:  could not init mouse'" << std::endl;
@@ -179,7 +184,8 @@ GraphicsEngine::initAllegro(const char* title, const int windowWidth_c,
  @date    Oct 6, 2017
  @mname   GraphicsEngine::allegroEventLoop
  @details
- \n
+ This event loop waits for a termination event (pressing the red X on the
+ window)\n
  --------------------------------------------------------------------------
  */
 bool GraphicsEngine::allegroEventLoop() {
@@ -228,7 +234,8 @@ bool GraphicsEngine::allegroEventLoop() {
  The walls are drawn in green.
  The starting point is denoted by a yellow circle.
  The end point is denoted by a red circle.
- The path is denoted with a stream of white circles. \n
+ The path is denoted with a stream of triangles which point in the direction
+ that the previous node moved in order to reach it. \n
  --------------------------------------------------------------------------
  */
 void GraphicsEngine::drawMaze(apmatrix<char>& maze) {

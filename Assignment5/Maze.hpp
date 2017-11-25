@@ -1,3 +1,20 @@
+/*****************************************************************************
+ *	Name:   Darius W Lambiri (dwlambiri)
+ *	File:   Maze.hpp
+ *	Course: ICS4U
+ *	Date:   Nov 24, 2017
+ *
+ *	Purpose: This is a Maze class declaration
+ *
+ *	Usage:
+ *
+ *	Revision History:
+ *
+ *	Known Issues: NONE
+ *
+ *****************************************************************************/
+
+
 #ifndef MAZE_H_
 #define MAZE_H_
 #include <iostream>
@@ -184,7 +201,9 @@ private:
 	   @param
 	   @return  bool
 	   @details
-		  \n
+		  This method was made private because it only needs to be called
+		  from the callFC method which uses the private data to be passed
+		  as parameters. \n
 	  -------------------------------------------------------------------------
 	 */
 	bool findPath(int, int, char);
