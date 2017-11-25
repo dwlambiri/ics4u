@@ -253,21 +253,24 @@ void GraphicsEngine::drawMaze(apmatrix<char>& maze) {
 				case '#':
 					al_draw_filled_rounded_rectangle(c * xratio, r*yratio, (c+1)* xratio, (r+1)* yratio, 20, 20, wallC);
 					break;
+				case '.':
+					al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, 5, startC);
+					break;
 				case 'v':
 					//al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, (xratio < yratio)?xratio/2:yratio/2, pathC);
-					al_draw_filled_triangle(c * xratio, r*yratio, (c+1)* xratio, (r)* yratio, (c+0.5)* xratio, (r+1)* yratio, pathC);
+					al_draw_filled_triangle((c+0.25) * xratio, r*yratio, (c+0.75)* xratio, (r)* yratio, (c+0.5)* xratio, (r+1)* yratio, pathC);
 					break;
 				case '^':
 					//al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, (xratio < yratio)?xratio/2:yratio/2, pathC);
-					al_draw_filled_triangle((c+0.5) * xratio, r*yratio, (c)* xratio, (r+1)* yratio, (c+1)* xratio, (r+1)* yratio, pathC);
+					al_draw_filled_triangle((c+0.5) * xratio, r*yratio, (c+0.25)* xratio, (r+1)* yratio, (c+0.75)* xratio, (r+1)* yratio, pathC);
 					break;
 				case '<':
 					//al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, (xratio < yratio)?xratio/2:yratio/2, pathC);
-					al_draw_filled_triangle(c * xratio, (r+0.5)*yratio, (c+1)* xratio, (r)* yratio, (c+1)* xratio, (r+1)* yratio, pathC);
+					al_draw_filled_triangle(c * xratio, (r+0.5)*yratio, (c+1)* xratio, (r+0.25)* yratio, (c+1)* xratio, (r+0.75)* yratio, pathC);
 					break;
 				case '>':
 					//al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, (xratio < yratio)?xratio/2:yratio/2, pathC);
-					al_draw_filled_triangle(c * xratio, r*yratio, (c)* xratio, (r+1)* yratio, (c+1)* xratio, (r+0.5)* yratio, pathC);
+					al_draw_filled_triangle(c * xratio, (r+0.25)*yratio, (c)* xratio, (r+0.75)* yratio, (c+1)* xratio, (r+0.5)* yratio, pathC);
 					break;
 				case 'S':
 					al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, (xratio < yratio)?xratio/2:yratio/2, startC);

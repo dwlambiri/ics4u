@@ -192,7 +192,7 @@ Maze::findPath(int curR, int curC, char dir) {
 	if (curR <= -1 || curC <= -1 || curR >= maze.numrows() || curC >= maze.numcols())
 		return false;
 	//Checks if it is at the maze exit
-	else if (toupper(maze[curR][curC]) == 'G')
+	else if (maze[curR][curC] == 'G')
 		return true;
 	//Checks if the maze location is a wall
 	else if (maze[curR][curC] == '#')
@@ -206,27 +206,70 @@ Maze::findPath(int curR, int curC, char dir) {
 	else if (maze[curR][curC] == 'a')
 		return false;
 
-	//Marks the path as visited with a + sign
+	//Marks the path as visited with a direction sign
 	if(maze[curR][curC] != 'S')
 		maze[curR][curC] = dir;
 	
-	//NORTH
-	if(findPath(curR-1, curC, '^'))
-		return true;
+	if(dir == '^') {
+		//NORTH
+		if(findPath(curR-1, curC, '^'))
+			return true;
+		//SOUTH
+		if(findPath(curR+1, curC, 'v'))
+			return true;
+		//WEST
+		if(findPath(curR, curC-1, '<'))
+			return true;
+		//EAST
+		if(findPath(curR, curC+1, '>'))
+			return true;
+	}
+	else if(dir == 'v') {
+		//SOUTH
+		if(findPath(curR+1, curC, 'v'))
+			return true;
+		//NORTH
+		if(findPath(curR-1, curC, '^'))
+			return true;
+		//WEST
+		if(findPath(curR, curC-1, '<'))
+			return true;
+		//EAST
+		if(findPath(curR, curC+1, '>'))
+			return true;
+
+	} 	else if(dir == '<') {
+		//WEST
+		if(findPath(curR, curC-1, '<'))
+			return true;
+		//EAST
+		if(findPath(curR, curC+1, '>'))
+			return true;
+		//NORTH
+		if(findPath(curR-1, curC, '^'))
+			return true;
+		//SOUTH
+		if(findPath(curR+1, curC, 'v'))
+			return true;
+	}	else if(dir == '>') {
+		//EAST
+		if(findPath(curR, curC+1, '>'))
+			return true;
+		//WEST
+		if(findPath(curR, curC-1, '<'))
+			return true;
+		//NORTH
+		if(findPath(curR-1, curC, '^'))
+			return true;
+		//SOUTH
+		if(findPath(curR+1, curC, 'v'))
+			return true;
+	}
 	
-	//WEST
-	if(findPath(curR, curC-1, '<'))
-		return true;
-	//EAST
-	
-	if(findPath(curR, curC+1, '>'))
-		return true;
-	
-	//SOUTH
-	if(findPath(curR+1, curC, 'v'))
-		return true;
+
 	if(maze[curR][curC] != 'S')
 		maze[curR][curC] = 'a';
+
 	return false;
 	
 } // end-of-method Maze::findPath
