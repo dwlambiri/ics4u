@@ -34,7 +34,7 @@ int main(int argc, char* argv[]){
 
 
 		mymaze.callFP();
-		std::cout << std::endl;
+		std::cout << std::endl << "solved maze" << std::endl;
 		mymaze.printMaze();
 		mymaze.closeWindow();
 
