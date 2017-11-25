@@ -187,7 +187,7 @@ private:
 		  \n
 	  -------------------------------------------------------------------------
 	 */
-	bool findPath(int, int);
+	bool findPath(int, int, char);
 
 }; //end-of-class Maze
 

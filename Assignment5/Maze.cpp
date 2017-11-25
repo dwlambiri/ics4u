@@ -118,7 +118,7 @@ void
 Maze::printMaze() {
 	for (int i = 0; i < numRows; i++){
 		for (int j = 0; j < numCols; j++){
-			if (maze[i][j] == 'v')
+			if (maze[i][j] == 'a')
 				std::cout<< '.';
 			else{
 				std::cout << maze[i][j];
@@ -140,7 +140,7 @@ Maze::printMaze() {
  */
 void
 Maze::callFP() {
-	findPath(startRow, startCol);
+	findPath(startRow, startCol, 'v');
 	maze[startRow][startCol] = 'S';
 } // end-of-method Maze::callFP
 
@@ -155,7 +155,7 @@ Maze::callFP() {
   --------------------------------------------------------------------------
  */
 bool
-Maze::findPath(int curR, int curC) {
+Maze::findPath(int curR, int curC, char dir) {
 	/*
 	 * @author   dwlambiri
 	 * @date     Nov 24, 2017
@@ -176,32 +176,35 @@ Maze::findPath(int curR, int curC) {
 	else if (maze[curR][curC] == '#')
 		return false;
 	//Checks if the location in the path is already marked
-	else if (maze[curR][curC] == '+')
+	else if((maze[curR][curC] == 'v')||
+			(maze[curR][curC] == '^')||
+			(maze[curR][curC] == '<')||
+			(maze[curR][curC] == '>'))
 		return false;
-	else if (maze[curR][curC] == 'v')
+	else if (maze[curR][curC] == 'a')
 		return false;
 
 	//Marks the path as visited with a + sign
 	if(maze[curR][curC] != 'S')
-		maze[curR][curC] = '+';
+		maze[curR][curC] = dir;
 	
 	//NORTH
-	if(findPath(curR-1, curC))
+	if(findPath(curR-1, curC, '^'))
 		return true;
 	
 	//WEST
-	if(findPath(curR, curC-1))
+	if(findPath(curR, curC-1, '<'))
 		return true;
 	//EAST
 	
-	if(findPath(curR, curC+1))
+	if(findPath(curR, curC+1, '>'))
 		return true;
 	
 	//SOUTH
-	if(findPath(curR+1, curC))
+	if(findPath(curR+1, curC, 'v'))
 		return true;
 	if(maze[curR][curC] != 'S')
-		maze[curR][curC] = 'v';
+		maze[curR][curC] = 'a';
 	return false;
 	
 } // end-of-method Maze::findPath
