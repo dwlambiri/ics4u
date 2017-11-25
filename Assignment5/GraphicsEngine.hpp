@@ -1,9 +1,20 @@
-/*
- * GraphicsEngine.hpp
+/*****************************************************************************
+ *	Name:   Darius W Lambiri (dwlambiri)
+ *	File:   GraphicsEngine.hpp
+ *	Course: ICS4U
+ *	Date:   Nov 24, 2017
  *
- *  Created on: Oct 29, 2017
- *      Author: dwlambiri
- */
+ *	Purpose: Declaration of the GraphicsEnginge class
+ *
+ *	Usage:
+ *
+ *	Revision History:
+ *
+ *	Known Issues: NONE
+ *
+ *****************************************************************************/
+
+
 
 #ifndef ASSIGNMENT4_GRAPHICSENGINE_HPP_
 #define ASSIGNMENT4_GRAPHICSENGINE_HPP_
