@@ -175,11 +175,15 @@ Maze::callFP() {
 
 	printMaze();
 	if(!findPath(startRow, startCol, down_c)) {
-		std::cout << "error: could not find an exit" << std::endl;
+		std::string err = "could not find an exit";
+		std::cout << "error: " << err << std::endl;
+		ge.errorBox(err);
 		ge.allegroEventLoop();
 		return false;
 	}
-	std::cout << "success: solved the maze" << std::endl;
+	std::string success = "solved the maze";
+	ge.okBox(success);
+	std::cout << "success: " << success << std::endl;
 	printMaze();
 	ge.allegroEventLoop();
 
