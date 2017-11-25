@@ -73,7 +73,7 @@ Maze::readIn() {
 		 */
 		float xr = (float)w_c/numCols;
 		float yr = (float)h_c/numRows;
-		float r = (xr <yr)?yr:xr;
+		float r = (xr >yr)?yr:xr;
 		return ge.initAllegro("Recursive Maze Solver", r*numCols, r*numRows);
 	}
 	else {
@@ -220,7 +220,7 @@ Maze::findPath(int curR, int curC, char dir) {
 	//Check for exceeding the bounds of the maze
 	if (curR <= -1 || curC <= -1 || curR >= maze.numrows() || curC >= maze.numcols())
 		return false;
-	//Checks if it is at the maze exit
+	//Checks if it is at the maze exit or an invalid space
 	else {
 		switch (maze[curR][curC]) {
 		case exit_c:
@@ -237,13 +237,27 @@ Maze::findPath(int curR, int curC, char dir) {
 		} //end-switch(maze[curR][curC])
 	}
 
-	const int noDir_c = 4;
+	static const int noDir_c = 4;
 	Maze::Move move[noDir_c];
 
 
 	//Marks the path as visited with a direction sign
 	if(maze[curR][curC] != start_c)
 		maze[curR][curC] = dir;
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Nov 25, 2017
+	 *	I implemented a heuristic that works as follows:
+	 *	It tries to maintain direction.
+	 *	If it cannot, it uses a coin toss to switch direction at
+	 *		90 degrees.
+	 *	The randomization makes the algorithm more fun to watch.
+	 *	As well as providing "cleaner" paths.
+	 *	If that is unsuccessful, it tries opposite direction.
+	 *	This heuristic does not change the performance of the
+	 *		algorithm which remains O(rows * cols).
+	 */
 
 	int r = rand()%2;
 	if(dir == up_c) {
@@ -271,6 +285,14 @@ Maze::findPath(int curR, int curC, char dir) {
 		move[2-r] = {curR+1, curC, down_c};
 		move[0] = {curR, curC+1, right_c};
 	}
+
+	/*
+	 * @author   dwlambiri
+	 * @date     Nov 25, 2017
+	 *  This calls the function recursively four times,
+	 *  	one call is for each direction.
+	 *  The order depends upon the previously explained heuristic.
+	 */
 
 	for (int i = 0; i < noDir_c; ++i) {
 		if((move[i].dir != wall_c) && (findPath(move[i].x, move[i].y, move[i].dir) == true)) {

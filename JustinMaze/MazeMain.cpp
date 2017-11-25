@@ -112,7 +112,7 @@ void drawPath(apmatrix<mazePart> &maze, string path, Coordinate position){
         drawPath(maze, path, position);
     }
 }
-int main(){
+int main(int argc, char* argv[]){
     fstream file;
     string fileName;
     int numRows;
@@ -153,4 +153,5 @@ int main(){
     al_rest(20);
 
     file.close();
+    return 0;
 }
