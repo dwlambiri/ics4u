@@ -242,7 +242,8 @@ void GraphicsEngine::drawMaze(apmatrix<char>& maze) {
 	static float xratio = ((float)windowWidth)/ maze.numcols();
 	static float yratio = ((float)windowHeight) / maze.numrows();
 
-	static ALLEGRO_COLOR wallC = al_map_rgb(0, 0xff, 0);
+	static ALLEGRO_COLOR wallC = al_map_rgb(0, 0xa0, 0);
+	static ALLEGRO_COLOR wallB = al_map_rgb(0, 0xff, 0);
 	static ALLEGRO_COLOR pathC = al_map_rgb(0xff, 0xff, 0xff);
 	static ALLEGRO_COLOR startC = al_map_rgb(0xff, 0xff, 0);
 	static ALLEGRO_COLOR stopC = al_map_rgb(0xff, 0, 0);
@@ -252,6 +253,7 @@ void GraphicsEngine::drawMaze(apmatrix<char>& maze) {
 			switch (maze[r][c]) {
 				case '#':
 					al_draw_filled_rounded_rectangle(c * xratio, r*yratio, (c+1)* xratio, (r+1)* yratio, 20, 20, wallC);
+					al_draw_rounded_rectangle(c * xratio, r*yratio, (c+1)* xratio, (r+1)* yratio, 20, 20, wallB,4);
 					break;
 				case '.':
 					al_draw_filled_circle((c +0.5) * xratio, (r+0.5)*yratio, 5, startC);
