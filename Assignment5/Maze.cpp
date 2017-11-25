@@ -186,89 +186,98 @@ Maze::findPath(int curR, int curC, char dir) {
 	 *  	recursive function.
 	 */
 
+	static const char visited_c = 'a';
+	static const char exit_c = 'G';
+	static const char start_c = 'S';
+	static const char wall_c = '#';
+	static const char down_c = 'v';
+	static const char up_c = '^';
+	static const char left_c = '<';
+	static const char right_c = '>';
+
 	ge.pause();
 	ge.drawMaze(maze);
 	//Check for exceeding the bounds of the maze
 	if (curR <= -1 || curC <= -1 || curR >= maze.numrows() || curC >= maze.numcols())
 		return false;
 	//Checks if it is at the maze exit
-	else if (maze[curR][curC] == 'G')
+	else if (maze[curR][curC] == exit_c)
 		return true;
 	//Checks if the maze location is a wall
-	else if (maze[curR][curC] == '#')
+	else if (maze[curR][curC] == wall_c)
 		return false;
 	//Checks if the location in the path is already marked
-	else if((maze[curR][curC] == 'v')||
-			(maze[curR][curC] == '^')||
-			(maze[curR][curC] == '<')||
-			(maze[curR][curC] == '>'))
+	else if((maze[curR][curC] == down_c)||
+			(maze[curR][curC] == up_c)||
+			(maze[curR][curC] == left_c)||
+			(maze[curR][curC] == right_c))
 		return false;
-	else if (maze[curR][curC] == 'a')
+	else if (maze[curR][curC] == visited_c)
 		return false;
 
 	//Marks the path as visited with a direction sign
-	if(maze[curR][curC] != 'S')
+	if(maze[curR][curC] != start_c)
 		maze[curR][curC] = dir;
 	
-	if(dir == '^') {
+	if(dir == up_c) {
 		//NORTH
-		if(findPath(curR-1, curC, '^'))
-			return true;
-		//SOUTH
-		if(findPath(curR+1, curC, 'v'))
+		if(findPath(curR-1, curC, up_c))
 			return true;
 		//WEST
-		if(findPath(curR, curC-1, '<'))
+		if(findPath(curR, curC-1, left_c))
+			return true;
+		//SOUTH
+		if(findPath(curR+1, curC, down_c))
 			return true;
 		//EAST
-		if(findPath(curR, curC+1, '>'))
+		if(findPath(curR, curC+1, right_c))
 			return true;
 	}
-	else if(dir == 'v') {
+	else if(dir == down_c) {
 		//SOUTH
-		if(findPath(curR+1, curC, 'v'))
-			return true;
-		//NORTH
-		if(findPath(curR-1, curC, '^'))
+		if(findPath(curR+1, curC, down_c))
 			return true;
 		//WEST
-		if(findPath(curR, curC-1, '<'))
+		if(findPath(curR, curC-1, left_c))
+			return true;
+		//NORTH
+		if(findPath(curR-1, curC, up_c))
 			return true;
 		//EAST
-		if(findPath(curR, curC+1, '>'))
+		if(findPath(curR, curC+1, right_c))
 			return true;
 
-	} 	else if(dir == '<') {
+	} 	else if(dir == left_c) {
 		//WEST
-		if(findPath(curR, curC-1, '<'))
-			return true;
-		//EAST
-		if(findPath(curR, curC+1, '>'))
-			return true;
-		//NORTH
-		if(findPath(curR-1, curC, '^'))
+		if(findPath(curR, curC-1, left_c))
 			return true;
 		//SOUTH
-		if(findPath(curR+1, curC, 'v'))
+		if(findPath(curR+1, curC, down_c))
 			return true;
-	}	else if(dir == '>') {
 		//EAST
-		if(findPath(curR, curC+1, '>'))
-			return true;
-		//WEST
-		if(findPath(curR, curC-1, '<'))
+		if(findPath(curR, curC+1, right_c))
 			return true;
 		//NORTH
-		if(findPath(curR-1, curC, '^'))
+		if(findPath(curR-1, curC, up_c))
+			return true;
+	}	else if(dir == right_c) {
+		//EAST
+		if(findPath(curR, curC+1, right_c))
+			return true;
+		//NORTH
+		if(findPath(curR-1, curC, up_c))
+			return true;
+		//WEST
+		if(findPath(curR, curC-1, left_c))
 			return true;
 		//SOUTH
-		if(findPath(curR+1, curC, 'v'))
+		if(findPath(curR+1, curC, down_c))
 			return true;
 	}
 	
 
-	if(maze[curR][curC] != 'S')
-		maze[curR][curC] = 'a';
+	if(maze[curR][curC] != start_c)
+		maze[curR][curC] = visited_c;
 
 	return false;
 	
