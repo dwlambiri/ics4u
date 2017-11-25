@@ -117,8 +117,13 @@ Maze::findstart() {
 void
 Maze::printMaze() {
 	for (int i = 0; i < numRows; i++){
-		for (int j = 0; j < numCols; j++)
-			std::cout << maze[i][j];
+		for (int j = 0; j < numCols; j++){
+			if (maze[i][j] == 'v')
+				std::cout<< '.';
+			else{
+				std::cout << maze[i][j];
+			}
+		}
 		std::cout << std::endl;
 	}
 } // end-of-method Maze::printMaze
@@ -173,8 +178,8 @@ Maze::findPath(int curR, int curC) {
 	//Checks if the location in the path is already marked
 	else if (maze[curR][curC] == '+')
 		return false;
-
-
+	else if (maze[curR][curC] == 'v')
+		return false;
 
 	//Marks the path as visited with a + sign
 	if(maze[curR][curC] != 'S')
@@ -196,7 +201,7 @@ Maze::findPath(int curR, int curC) {
 	if(findPath(curR+1, curC))
 		return true;
 	if(maze[curR][curC] != 'S')
-		maze[curR][curC] = '.';
+		maze[curR][curC] = 'v';
 	return false;
 	
 } // end-of-method Maze::findPath
