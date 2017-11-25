@@ -78,9 +78,11 @@ bool findPath(int y, int x, apmatrix <char> &mazeinfo) {
     //Checks if it is at the maze goal
     else if (mazeinfo[position.x][position.y]  == 'G') {
         for (int i = 0; i < mazeinfo.numrows(); i++) {
-        for (int j = 0; j < mazeinfo.numcols(); j++) {
-            cout << mazeinfo[i][j] ;
-        }
+			for (int j = 0; j < mazeinfo.numcols(); j++) {
+				if (mazeinfo[i][j] == 'x')
+					cout << '.';
+				else cout << mazeinfo[i][j] ;
+			}
 
         cout << endl;
     }
@@ -93,9 +95,12 @@ bool findPath(int y, int x, apmatrix <char> &mazeinfo) {
     //Checks if the location in the path is already marked
     else if (mazeinfo[position.x][position.y]  == '+')
         return false;
+    else if (mazeinfo[position.x][position.y]  == 'x')
+        return false;
 
     //Marks the visited path with a + sign
-    mazeinfo[position.x][position.y]  = '+';
+     if(mazeinfo[position.x][position.y]  != 'S')
+    	 mazeinfo[position.x][position.y]  = '+';
     //checking for the directions that the path can follow
     if(findPath(position.x-1, position.y, mazeinfo))
         return true;
@@ -109,7 +114,8 @@ bool findPath(int y, int x, apmatrix <char> &mazeinfo) {
     if(findPath(position.x+1, position.y, mazeinfo))
         return true;
 
-    mazeinfo[position.x][position.y]  = '.';
+    if (mazeinfo[position.x][position.y]  != 'S')
+    	mazeinfo[position.x][position.y]  = 'x';
 
     return false;
 }
