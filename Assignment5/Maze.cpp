@@ -65,13 +65,16 @@ Maze::readIn() {
 			}
 		}
 		file.close();
-		 /* The following line calls a method in the GraphicsEngine class,
+		/* The following line calls a method in the GraphicsEngine class,
 			initAllegro, which initializes all of the allegro primitives.
 			The method will return false if an allegro initialization has an error
 			and thus the program will run in terminal mode which only accepts input
 			and delivers output from the terminal.
 		 */
-	    return ge.initAllegro("Maze Solver", w_c, h_c);
+		float xr = (float)w_c/numCols;
+		float yr = (float)h_c/numRows;
+		float r = (xr <yr)?yr:xr;
+		return ge.initAllegro("Recursive Maze Solver", r*numCols, r*numRows);
 	}
 	else {
 		std::cout << "file " << filename << " does not exist" << std::endl;
@@ -107,20 +110,20 @@ Maze::~Maze() {
   --------------------------------------------------------------------------
  */
 bool
-Maze::findstart() {
+Maze::findStart() {
 
-	bool foundStart = false;
+	bool foundStartPoint = false;
 
-	    for (int r = 0; r < maze.numrows(); r++)
-	        for (int c = 0; c < maze.numcols(); c++){
-	            if (toupper(maze[r][c]) == 'S'){
-	                foundStart = true;
-	                startRow = r;
-	                startCol = c;
-	            }
-	        }
+	for (int r = 0; r < maze.numrows(); r++)
+		for (int c = 0; c < maze.numcols(); c++){
+			if (maze[r][c] == 'S'){
+				foundStartPoint = true;
+				startRow = r;
+				startCol = c;
+			}
+		}
 	std::cout << "starting point is (" << startRow << "," << startCol << ")" << std::endl;
-	 return foundStart;
+	return foundStartPoint;
 } // end-of-method Maze::findstart
 
 /**
@@ -154,13 +157,34 @@ Maze::printMaze() {
    @mname   Maze::callFP
    @details
 	  Calls the recursive algorithm for the first time by passing the
-	  private data\n
+	  private data (startRow and startCol)\n
   --------------------------------------------------------------------------
  */
-void
+bool
 Maze::callFP() {
-	findPath(startRow, startCol, down_c);
-	maze[startRow][startCol] = 'S';
+	if(!readIn()){
+		std::cout << filename << " does not exist" << std::endl;
+		return false;
+	}
+
+
+	if(!findStart()) {
+		std::cout << "error: could not find a starting point" << std::endl;
+		return false;
+	}
+
+	printMaze();
+	if(!findPath(startRow, startCol, down_c)) {
+		std::cout << "error: could not find an exit" << std::endl;
+		ge.allegroEventLoop();
+		return false;
+	}
+	std::cout << "success: solved the maze" << std::endl;
+	printMaze();
+	ge.allegroEventLoop();
+
+	return true;
+
 } // end-of-method Maze::callFP
 
 
@@ -187,7 +211,7 @@ Maze::findPath(int curR, int curC, char dir) {
 	 */
 
 
-	ge.pause();
+	ge.pauseOnDisplayFrame();
 	ge.drawMaze(maze);
 	//Check for exceeding the bounds of the maze
 	if (curR <= -1 || curC <= -1 || curR >= maze.numrows() || curC >= maze.numcols())
@@ -195,17 +219,17 @@ Maze::findPath(int curR, int curC, char dir) {
 	//Checks if it is at the maze exit
 	else {
 		switch (maze[curR][curC]) {
-			case exit_c:
-				return true;
-			case wall_c:
-			case down_c:
-			case up_c:
-			case left_c:
-			case right_c:
-			case visited_c:
-				return false;
-			default:
-				break;
+		case exit_c:
+			return true;
+		case wall_c:
+		case down_c:
+		case up_c:
+		case left_c:
+		case right_c:
+		case visited_c:
+			return false;
+		default:
+			break;
 		} //end-switch(maze[curR][curC])
 	}
 
@@ -216,7 +240,7 @@ Maze::findPath(int curR, int curC, char dir) {
 	//Marks the path as visited with a direction sign
 	if(maze[curR][curC] != start_c)
 		maze[curR][curC] = dir;
-	
+
 	int r = rand()%2;
 	if(dir == up_c) {
 		move[0] = {curR-1, curC, up_c};
@@ -243,7 +267,7 @@ Maze::findPath(int curR, int curC, char dir) {
 		move[2-r] = {curR+1, curC, down_c};
 		move[0] = {curR, curC+1, right_c};
 	}
-	
+
 	for (int i = 0; i < noDir_c; ++i) {
 		if((move[i].dir != wall_c) && (findPath(move[i].x, move[i].y, move[i].dir) == true)) {
 			return true;
@@ -254,7 +278,7 @@ Maze::findPath(int curR, int curC, char dir) {
 		maze[curR][curC] = visited_c;
 
 	return false;
-	
+
 } // end-of-method Maze::findPath
 
 

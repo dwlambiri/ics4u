@@ -43,21 +43,12 @@ int main(int argc, char* argv[]){
 
 
 	Maze mymaze(filename);
-	if(!mymaze.readIn()){
-		std::cout << filename << " does not exist" << std::endl;
-		return 1;
+
+	if(mymaze.callFP() == true) {
+		std::cout << std::endl << "success: solved maze" << std::endl;
 	}
-
-	if(!mymaze.findstart()){
-		return 1;
+	else {
+		std::cout << std::endl << "error: could not solved maze" << std::endl;
 	}
-
-	mymaze.printMaze();
-	mymaze.callFP();
-	std::cout << std::endl << "solved maze" << std::endl;
-	mymaze.printMaze();
-	mymaze.closeWindow();
-
-
 	return 0;
 }

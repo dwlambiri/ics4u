@@ -81,7 +81,7 @@ public:
 
 	bool allegroEventLoop();
 
-	void pause(){
+	void pauseOnDisplayFrame(){
 		al_rest(1.0/fps);
 	}
 
@@ -109,8 +109,8 @@ private:
 	//--------------------------------------------------
 
 	void clearBitmap()  {
-	    //this should clear the bitmap
-	    al_clear_to_color(al_map_rgb(0,0,0));
+		//this should clear the bitmap
+		al_clear_to_color(al_map_rgb(0,0,0));
 	}
 
 
