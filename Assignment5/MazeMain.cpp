@@ -26,10 +26,13 @@
 #include "apmatrix.h"
 #include <ctype.h>
 #include "Maze.hpp"
+#include <math.h>
 
 
 int main(int argc, char* argv[]){
 	std::string filename;
+
+	srand(time(0));
 
 	if (argc < 2) {
 		std::cout <<"What is the name of your maze textfile?" << std::endl;

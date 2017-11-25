@@ -175,6 +175,16 @@ private:
 	apmatrix<char> maze;
 	static const int w_c = 1200;
 	static const int h_c = 800;
+
+	static const char visited_c = 'a';
+	static const char exit_c = 'G';
+	static const char start_c = 'S';
+	static const char wall_c = '#';
+	static const char down_c = 'v';
+	static const char up_c = '^';
+	static const char left_c = '<';
+	static const char right_c = '>';
+
 	GraphicsEngine ge;
 
 	//--------------------------------------------------
@@ -193,6 +203,12 @@ private:
 	 */
 	Maze();
 
+	struct Move {
+		int x;
+		int y;
+		char dir;
+	};
+
 	/**
 	  -------------------------------------------------------------------------
 	   @author  dwlambiri
@@ -207,6 +223,7 @@ private:
 	  -------------------------------------------------------------------------
 	 */
 	bool findPath(int, int, char);
+
 
 }; //end-of-class Maze
 

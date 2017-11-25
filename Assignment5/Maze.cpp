@@ -159,7 +159,7 @@ Maze::printMaze() {
  */
 void
 Maze::callFP() {
-	findPath(startRow, startCol, 'v');
+	findPath(startRow, startCol, down_c);
 	maze[startRow][startCol] = 'S';
 } // end-of-method Maze::callFP
 
@@ -186,14 +186,6 @@ Maze::findPath(int curR, int curC, char dir) {
 	 *  	recursive function.
 	 */
 
-	static const char visited_c = 'a';
-	static const char exit_c = 'G';
-	static const char start_c = 'S';
-	static const char wall_c = '#';
-	static const char down_c = 'v';
-	static const char up_c = '^';
-	static const char left_c = '<';
-	static const char right_c = '>';
 
 	ge.pause();
 	ge.drawMaze(maze);
@@ -201,80 +193,62 @@ Maze::findPath(int curR, int curC, char dir) {
 	if (curR <= -1 || curC <= -1 || curR >= maze.numrows() || curC >= maze.numcols())
 		return false;
 	//Checks if it is at the maze exit
-	else if (maze[curR][curC] == exit_c)
-		return true;
-	//Checks if the maze location is a wall
-	else if (maze[curR][curC] == wall_c)
-		return false;
-	//Checks if the location in the path is already marked
-	else if((maze[curR][curC] == down_c)||
-			(maze[curR][curC] == up_c)||
-			(maze[curR][curC] == left_c)||
-			(maze[curR][curC] == right_c))
-		return false;
-	else if (maze[curR][curC] == visited_c)
-		return false;
+	else {
+		switch (maze[curR][curC]) {
+			case exit_c:
+				return true;
+			case wall_c:
+			case down_c:
+			case up_c:
+			case left_c:
+			case right_c:
+			case visited_c:
+				return false;
+			default:
+				break;
+		} //end-switch(maze[curR][curC])
+	}
+
+	const int noDir_c = 4;
+	Maze::Move move[noDir_c];
+
 
 	//Marks the path as visited with a direction sign
 	if(maze[curR][curC] != start_c)
 		maze[curR][curC] = dir;
 	
+	int r = rand()%2;
 	if(dir == up_c) {
-		//NORTH
-		if(findPath(curR-1, curC, up_c))
-			return true;
-		//WEST
-		if(findPath(curR, curC-1, left_c))
-			return true;
-		//SOUTH
-		if(findPath(curR+1, curC, down_c))
-			return true;
-		//EAST
-		if(findPath(curR, curC+1, right_c))
-			return true;
+		move[0] = {curR-1, curC, up_c};
+		move[1+r] = {curR, curC-1, left_c};
+		move[2-r] = {curR, curC+1, right_c};
+		move[3] = {curR+1, curC, down_c};
+
 	}
 	else if(dir == down_c) {
-		//SOUTH
-		if(findPath(curR+1, curC, down_c))
-			return true;
-		//WEST
-		if(findPath(curR, curC-1, left_c))
-			return true;
-		//NORTH
-		if(findPath(curR-1, curC, up_c))
-			return true;
-		//EAST
-		if(findPath(curR, curC+1, right_c))
-			return true;
-
-	} 	else if(dir == left_c) {
-		//WEST
-		if(findPath(curR, curC-1, left_c))
-			return true;
-		//SOUTH
-		if(findPath(curR+1, curC, down_c))
-			return true;
-		//EAST
-		if(findPath(curR, curC+1, right_c))
-			return true;
-		//NORTH
-		if(findPath(curR-1, curC, up_c))
-			return true;
-	}	else if(dir == right_c) {
-		//EAST
-		if(findPath(curR, curC+1, right_c))
-			return true;
-		//NORTH
-		if(findPath(curR-1, curC, up_c))
-			return true;
-		//WEST
-		if(findPath(curR, curC-1, left_c))
-			return true;
-		//SOUTH
-		if(findPath(curR+1, curC, down_c))
-			return true;
+		move[3] = {curR-1, curC, up_c};
+		move[2-r] = {curR, curC-1, left_c};
+		move[0] = {curR+1, curC, down_c};
+		move[1+r] = {curR, curC+1, right_c};
+	}
+	else if(dir == left_c) {
+		move[2-r] = {curR-1, curC, up_c};
+		move[0] = {curR, curC-1, left_c};
+		move[1+r] = {curR+1, curC, down_c};
+		move[3] = {curR, curC+1, right_c};
+	}
+	else if(dir == right_c) {
+		move[1+r] = {curR-1, curC, up_c};
+		move[3] = {curR, curC-1, left_c};
+		move[2-r] = {curR+1, curC, down_c};
+		move[0] = {curR, curC+1, right_c};
 	}
 	
+	for (int i = 0; i < noDir_c; ++i) {
+		if((move[i].dir != wall_c) && (findPath(move[i].x, move[i].y, move[i].dir) == true)) {
+			return true;
+		}
+	}//end-of-for
 
 	if(maze[curR][curC] != start_c)
 		maze[curR][curC] = visited_c;
@@ -282,6 +256,5 @@ Maze::findPath(int curR, int curC, char dir) {
 	return false;
 	
 } // end-of-method Maze::findPath
-
 
 
