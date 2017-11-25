@@ -25,6 +25,7 @@
 
 
 #define WHITE al_map_rgb(255,255,255)
+#define GRAY al_map_rgb(200,200,200)
 #define BLACK al_map_rgb(0,0,0)
 #define BLUE al_map_rgb(50,50,255)
 #define YELLOW al_map_rgb(255,255,0)
@@ -32,12 +33,12 @@
 
 using namespace std;
 
-int SCREEN_WIDTH;
-int SCREEN_HEIGHT;
-const int ratioValue = 100;
-ALLEGRO_DISPLAY *display = nullptr;
-ALLEGRO_EVENT_QUEUE *event_queue = NULL;
-ALLEGRO_FONT *trebuchetSmall = nullptr;
+static int SCREEN_WIDTH;
+static int SCREEN_HEIGHT;
+static const int ratioValue = 50;
+static ALLEGRO_DISPLAY *display = nullptr;
+static ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+static ALLEGRO_FONT *trebuchetSmall = nullptr;
 
 void initAllegro(int w, int h){
   //initializes allegro
@@ -81,16 +82,18 @@ void printMaze(const apmatrix <char> maze, int counter) {
   al_clear_to_color(al_map_rgb(0,0,0));
   for (int i = 0; i < maze.numrows(); i++){
     for (int j = 0; j < maze.numcols(); j++){
-      if (maze[i][j] == '#')
-        al_draw_filled_rounded_rectangle(j*ratioValue,i*ratioValue, j*ratioValue+ratioValue, i*ratioValue+ratioValue, 20,20,WHITE);
+      if (maze[i][j] == '#') {
+        al_draw_filled_rounded_rectangle(j*ratioValue,i*ratioValue, j*ratioValue+ratioValue, i*ratioValue+ratioValue, 15,15,GRAY);
+        al_draw_rounded_rectangle(j*ratioValue,i*ratioValue, j*ratioValue+ratioValue, i*ratioValue+ratioValue, 15,15, WHITE, 4);
+      }
       else if (maze[i][j] == '+')
-        al_draw_filled_rectangle(j*ratioValue,i*ratioValue, j*ratioValue+ratioValue, i*ratioValue+ratioValue, BLUE);
+        al_draw_filled_rounded_rectangle(j*ratioValue,i*ratioValue, j*ratioValue+ratioValue, i*ratioValue+ratioValue, 15,15,BLUE);
       else if (maze[i][j] == 'S')
         al_draw_filled_rectangle(j*ratioValue,i*ratioValue, j*ratioValue+ratioValue, i*ratioValue+ratioValue,YELLOW);
       else if (maze[i][j] == 'G')
         al_draw_filled_rectangle(j*ratioValue,i*ratioValue, j*ratioValue+ratioValue, i*ratioValue+ratioValue,GREEN);
-//      else
-//        al_draw_filled_rectangle(j*ratioValue,i*ratioValue, j*ratioValue+ratioValue, i*ratioValue+ratioValue, WHITE);
+      else if (maze[i][j] == '.')
+        al_draw_filled_circle((j+0.5)*ratioValue,(i+0.5)*ratioValue, 3 ,WHITE);
     }
   }
 
