@@ -22,6 +22,7 @@
 #include "justinAllegro.h"
 
 #define WHITE al_map_rgb(255,255,255)
+#define GRAY al_map_rgb(200,200,200)
 #define BLACK al_map_rgb(0,0,0)
 #define RED al_map_rgb(255,0,0)
 #define BLUE al_map_rgb(0,0,255)
@@ -30,10 +31,10 @@
 
 using namespace std;
 //constant for allegro pointer
-ALLEGRO_DISPLAY *display = nullptr;
-int SCREEN_WIDTH;
-float SCREEN_HEIGHT;
-const int scale = 100;
+static ALLEGRO_DISPLAY *display = nullptr;
+static int SCREEN_WIDTH;
+static float SCREEN_HEIGHT;
+static const int scale = 50;
 
 bool initializeEvents(int w, int h){
     //initializes allegro
@@ -62,8 +63,10 @@ void drawMaze(apmatrix<mazePart> &maze){
 
     for (int y = 0; y < maze.numrows(); y++){
         for (int x = 0; x < maze.numcols(); x++){
-            if (maze[y][x].character == '#')
-                al_draw_filled_rounded_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,25,25,WHITE);
+            if (maze[y][x].character == '#') {
+                al_draw_filled_rounded_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,15,15,WHITE);
+                al_draw_rounded_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,15,15,GRAY,4);
+            }
             else if (maze[y][x].character == '+')
             	al_draw_filled_circle((x+0.5)*scale,(y+0.5)*scale, scale/2, RED);
                 //al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,RED);
@@ -71,8 +74,8 @@ void drawMaze(apmatrix<mazePart> &maze){
                 al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,BLUE);
             else if (maze[y][x].character == 'G')
                 al_draw_filled_rectangle(x*scale,y*scale, x*scale+scale, y*scale+scale,GREEN);
-//            else
-//                al_draw_filled_circle((x+0.5)*scale,(y+0.5)*scale, scale/2,WHITE);
+            else if (maze[y][x].character == '.')
+                al_draw_filled_circle((x+0.5)*scale,(y+0.5)*scale, 3,WHITE);
         }
     }
 
