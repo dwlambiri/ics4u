@@ -161,7 +161,7 @@ public:
 	 */
 	void okBox(std::string& usrmsg) {
 		al_show_native_message_box(display, "Success", "Success", usrmsg.c_str(),
-		               nullptr, ALLEGRO_MESSAGEBOX_OK_CANCEL);
+		               nullptr, ALLEGRO_MESSAGEBOX_WARN);
 
 	}
 
