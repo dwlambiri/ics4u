@@ -101,6 +101,7 @@ private:
 	static const char up_c = '^';
 	static const char left_c = '<';
 	static const char right_c = '>';
+	static const char open_c = '.';
 
 	GraphicsEngine ge;
 
