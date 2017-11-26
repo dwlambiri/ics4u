@@ -142,8 +142,12 @@ int main (int argc, char* argv[]) {
       if (spacekeyPressed()) {
         //figures out solution
         startPosition = findStart(mazeinfo);
-        findPath(startPosition.x, startPosition.y, mazeinfo);
-        printMaze(mazeinfo, counter);
+        if(findPath(startPosition.x, startPosition.y, mazeinfo) == false) {
+        	printMaze(mazeinfo, counter);
+        	apstring err = "Could not find Exit";
+        	errorBox(err);
+        }
+        else printMaze(mazeinfo, counter);
         break;
       }
     }

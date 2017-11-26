@@ -152,3 +152,8 @@ bool spacekeyPressed() {
   return false;
 }
 
+
+void errorBox(apstring& usrmsg) {
+	al_show_native_message_box(display, "Error", "Error", usrmsg.c_str(),
+		               nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+}
