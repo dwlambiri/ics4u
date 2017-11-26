@@ -30,19 +30,28 @@
 
 
 int main(int argc, char* argv[]){
-	std::string filename;
+	std::string filename = "";
 
 	srand(time(0));
+	int row = 30;
+	int fill = 6;
 
-	if (argc < 2) {
-		std::cout <<"What is the name of your maze textfile?" << std::endl;
-		std::cin >> filename;
-	} else {
-		filename = argv[1];
-	} //end-of-if
+	switch (argc) {
+		case 1:
+			std::cout << "will auto generate maze" << std::endl;
+			break;
+		case 2:
+			filename = argv[1];
+			break;
+		case 3:
+			row = atoi(argv[1]);
+			fill = atoi(argv[2]);
+			break;
+		default:
+			break;
+	} //end-switch(argc)
 
-
-	Maze mymaze(filename);
+	Maze mymaze(filename, row, row, fill);
 
 	if(mymaze.callFP() == true) {
 		std::cout << std::endl << "success: solved maze" << std::endl;

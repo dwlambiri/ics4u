@@ -51,7 +51,7 @@ public:
 		Default constructor of Class Maze \n
 	  --------------------------------------------------------------------------
 	 */
-	Maze(std::string& filename);
+	Maze(std::string& filename, int rows, int cols, int fill);
 
 	/**
 	  --------------------------------------------------------------------------
@@ -88,6 +88,7 @@ private:
 	int numCols;
 	int startRow;
 	int startCol;
+	int fill;
 	std::string filename;
 	apmatrix<char> maze;
 	static const int w_c = 1200;
@@ -180,6 +181,19 @@ private:
 	  -------------------------------------------------------------------------
 	 */
 	void printMaze();
+
+	/**
+	  -------------------------------------------------------------------------
+	   @author  dwlambiri
+	   @date    Nov 26, 2017
+	   @name    Maze::mazeGenerator
+	   @param   int cols, int rows
+	   @return  void
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	void mazeGenerator(int rows, int cols, int fill);
 
 
 

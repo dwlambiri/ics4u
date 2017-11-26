@@ -28,9 +28,10 @@
   --------------------------------------------------------------------------
  */
 
-Maze::Maze(std::string& filename) : maze(1,1) {
-	numRows = 0;
-	numCols = 0;
+Maze::Maze(std::string& filename, int rows, int cols, int fillv) : maze(rows,cols) {
+	numRows = rows;
+	numCols = cols;
+	fill    = fillv;
 	startRow = -1;
 	startCol = -1;
 	this->filename = filename;
@@ -71,15 +72,18 @@ Maze::readIn() {
 			and thus the program will run in terminal mode which only accepts input
 			and delivers output from the terminal.
 		 */
-		float xr = (float)w_c/numCols;
-		float yr = (float)h_c/numRows;
-		float r = (xr >yr)?yr:xr;
-		return ge.initAllegro("Recursive Maze Solver", r*numCols, r*numRows);
 	}
 	else {
 		std::cout << "file " << filename << " does not exist" << std::endl;
-		return false;
+		std::cout << "will generate maze of size " << numRows << " x  " <<  numCols << " fill = " << fill << std::endl;
+		maze.resize(numRows, numCols);
+		mazeGenerator(numRows, numCols, fill);
 	} //end-of-if
+
+	float xr = (float)w_c/numCols;
+	float yr = (float)h_c/numRows;
+	float r = (xr >yr)?yr:xr;
+	return ge.initAllegro("Recursive Maze Solver", r*numCols, r*numRows);
 
 	return false;
 } // end-of-method readIn
@@ -306,5 +310,30 @@ Maze::findPath(int curR, int curC, char dir) {
 	return false;
 
 } // end-of-method Maze::findPath
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Nov 26, 2017
+   @mname   Maze::mazeGenerator
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+Maze::mazeGenerator(int rows, int cols, int fill) {
+
+	for (int r = 0; r < rows; r++){
+		for(int c = 0; c < cols; c++){
+			maze[r][c] = (rand()% fill)?'.':'#';
+		}
+	}
+
+	maze[rand()% rows][rand()% cols] = 'S';
+	maze[rand()% rows][rand()% cols] = 'G';
+
+} // end-of-method Maze::mazeGenerator
+
+
 
 
