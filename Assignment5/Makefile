@@ -1,0 +1,2 @@
+maze.exe:
+	g++ -std=c++11 -Wall -I../apclasses -I/usr/local/include -L/usr/local/lib -lallegro -lallegro_main -lallegro_image -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_dialog -o maze.exe MazeMain.cpp Maze.cpp GraphicsEngine.cpp -L/usr/local/lib -lallegro -lallegro_main -lallegro_image -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_dialog
