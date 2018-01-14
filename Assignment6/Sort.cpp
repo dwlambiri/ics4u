@@ -122,6 +122,7 @@ Sort::callFP(char salgo) {
 		break;
 	}
 
+	ge.drawVector(data, -1);
 	if(!result) {
 		std::string err = "could not sort";
 		std::cout << "error: " << err << std::endl;
@@ -213,7 +214,7 @@ Sort::partition (int low, int high){
             i++;
             swap(data[i], data[j]);
         }
-        ge.drawVector(data, j);
+        ge.drawVector(data, high);
     }
     swap(data[i + 1], data[high]);
     return (i + 1);

@@ -253,10 +253,10 @@ void GraphicsEngine::drawVector(apvector<int>& data, int pos) {
 	for (int r = 0; r < data.length(); r++ ) {
 		if (r == pos) {
 			al_draw_filled_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio , (r+1)* xratio, windowHeight, 0.25*xratio, 0.25*xratio, wallD);
-			al_draw_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio, (r+1)* xratio, windowHeight , 0.25*xratio, 0.25*xratio, wallE,4);
+			if(xratio > 2) al_draw_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio, (r+1)* xratio, windowHeight , 0.25*xratio, 0.25*xratio, wallE,(4<xratio/2)?4:(int)xratio/2);
 		} else {
 			al_draw_filled_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio , (r+1)* xratio, windowHeight, 0.25*xratio, 0.25*xratio, wallC);
-			al_draw_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio, (r+1)* xratio, windowHeight , 0.25*xratio, 0.25*xratio, wallB,4);
+			if(xratio > 2) al_draw_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio, (r+1)* xratio, windowHeight , 0.25*xratio, 0.25*xratio, wallB,(4<xratio/2)?4:(int)xratio/2);
 		}//end-of-if
 	} //end-of-for
 
