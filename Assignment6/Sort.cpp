@@ -68,27 +68,64 @@ Sort::~Sort() {
   --------------------------------------------------------------------------
  */
 bool
-Sort::callFP() {
+Sort::callFP(char salgo) {
 
 	float xr = (float)w_c/numCols;
 	float yr = (float)h_c/numRows;
 	float r = (xr >yr)?yr:xr;
 	//float r = 20;
 
-	if(!ge.initAllegro("Sorting Demo", r*numCols, r*numRows)) {
+	char* title = nullptr;
+	bool result = false;
+
+
+	switch(salgo) {
+	case 'b':
+		title = "Sorting Demo: Bubble Sort";
+		break;
+	case 's':
+		title = "Sorting Demo: Selection Sort";
+		break;
+	case 'q':
+		title = "Sorting Demo: QuickSort";
+		break;
+	default:
+		title = "Sorting Demo: Bubble Sort";
+		salgo = 'b';
+		break;
+	}
+
+	if(!ge.initAllegro(title, r*numCols, r*numRows)) {
 		return false;
 	}
 
-	if(!insertionSort()) {
+	printVector();
+
+	switch(salgo) {
+	case 'b':
+		result = bubbleSort();
+		break;
+	case 's':
+		result = selectionSort();
+		break;
+	case 'q':
+		result = quickSort(0, data.length()-1);
+		break;
+	default:
+		std::cout << "Unknown sorting algorithm" << std::endl;
+		break;
+	}
+
+	if(!result) {
 		std::string err = "could not sort";
 		std::cout << "error: " << err << std::endl;
 		ge.errorBox(err);
 		ge.allegroEventLoop();
 		return false;
 	}
+	printVector();
 	std::string success = "data is sorted";
 	ge.okBox(success);
-	std::cout << "success: " << success << std::endl;
 	ge.allegroEventLoop();
 
 	return true;
@@ -100,40 +137,101 @@ Sort::callFP() {
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Nov 24, 2017
-   @mname   Maze::findPath
+   @mname   Sort::selectionSort
    @details
-	  This algorithm recursively solves the maze by checking possible
-	  paths and either marking them as not useful(does not lead to the
-	  termination) or with an arrow character which tells the user from
-	  where the path moved.\n
+	  Selection Sort\n
   --------------------------------------------------------------------------
  */
 bool
-Sort::insertionSort() {
-	/*
-	 * @author   dwlambiri
-	 * @date     Nov 24, 2017
-	 *  I am pausing the computation for 1/60 of a second.
-	 *  After the pause I am drawing the maze, and I continue with the
-	 *  	recursive function.
-	 */
+Sort::selectionSort() {
 
+	for (int i = 0; i < numRows-1; ++i) {
+		int min = data[i];
+		int minidx = i;
+		for (int j = i; j < numRows; ++j) {
+			ge.pauseOnDisplayFrame();
+			if(data[j] < min) {
+				minidx = j;
+				min = data[j];
+			}
+			ge.drawVector(data,j);
+		}//end-of-for
+		int tmp = data[i];
+		data[i] = min;
+		data[minidx] = tmp;
+	}//end-of-for
+
+	return true;
+
+} // end-of-method Sort::selectionSort
+
+
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Nov 24, 2017
+   @mname   Sort::bubbleSort
+   @details
+	  bubble Sort\n
+  --------------------------------------------------------------------------
+ */
+bool
+Sort::bubbleSort() {
 
 	for (int i = 0; i < numRows-1; ++i) {
 		for (int j = i; j < numRows; ++j) {
 			ge.pauseOnDisplayFrame();
 			if(data[j] < data[i]) {
-				int temp = data[j];
-				data[j] = data[i];
-				data[i] = temp;
+				swap(data[i], data[j]);
 			}
-			ge.drawVector(data);
+			ge.drawVector(data, j);
 		}//end-of-for
 	}//end-of-for
 
 	return true;
 
-} // end-of-method Maze::findPath
+} // end-of-method Sort::selectionSort
+
+
+int
+Sort::partition (int low, int high){
+    int pivot = data[high];    //taking the last element as pivot
+    int i = (low - 1);
+    for (int j = low; j <= high- 1; j++)
+    {
+    	ge.pauseOnDisplayFrame();
+        // If current element is smaller than or
+        // equal to pivot
+        if (data[j] <= pivot)
+        {
+            i++;
+            swap(data[i], data[j]);
+        }
+        ge.drawVector(data, j);
+    }
+    swap(data[i + 1], data[high]);
+    return (i + 1);
+}
+
+bool
+Sort::quickSort(int low, int high) {
+    if (low < high)
+    {
+        int pi = partition(low, high);
+        quickSort(low, pi - 1);
+        quickSort(pi + 1, high);
+    }
+    return true;
+}
+
+
+void
+Sort::swap(int& a, int& b) {
+	int tmp = a;
+	a = b;
+	b = tmp;
+}
+
 
 /**
   ---------------------------------------------------------------------------
@@ -153,5 +251,22 @@ Sort::generateVector() {
 } // end-of-method Maze::mazeGenerator
 
 
+/**
+  ---------------------------------------------------------------------------
+   @author  elambiri
+   @date    Jan 14, 2018
+   @mname   Sort::printVector
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
+void
+Sort::printVector() {
 
+	std::cout << std::endl;
+	for (int i = 0; i < data.length(); ++i) {
+		std::cout << data[i] << " ";
+	}//end-of-for
+	std::cout << std::endl << std::endl;
+} // end-of-method Sort::printVector
 

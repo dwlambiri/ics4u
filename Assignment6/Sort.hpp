@@ -75,7 +75,7 @@ public:
 		  \n
 	  -------------------------------------------------------------------------
 	 */
-	bool callFP();
+	bool callFP(char salgo);
 
 private:
 	//--------------------------------------------------
@@ -108,11 +108,6 @@ private:
 	 */
 	Sort();
 
-	struct Move {
-		int x;
-		int y;
-		char dir;
-	};
 
 	/**
 	  -------------------------------------------------------------------------
@@ -127,7 +122,15 @@ private:
 		  as parameters. \n
 	  -------------------------------------------------------------------------
 	 */
-	bool insertionSort();
+	bool selectionSort();
+
+	bool bubbleSort();
+
+	int partition (int low, int high);
+
+	bool quickSort(int low, int high);
+
+	void swap(int& a, int& b);
 
 
 	/**
@@ -142,6 +145,19 @@ private:
 	  -------------------------------------------------------------------------
 	 */
 	void generateVector();
+
+	/**
+	  -------------------------------------------------------------------------
+	   @author  elambiri
+	   @date    Jan 14, 2018
+	   @name    Sort::printVector
+	   @param
+	   @return  void
+	   @details
+		  \n
+	  -------------------------------------------------------------------------
+	 */
+	void printVector();
 
 
 

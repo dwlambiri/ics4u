@@ -238,19 +238,26 @@ bool GraphicsEngine::allegroEventLoop() {
  that the previous node moved in order to reach it. \n
  --------------------------------------------------------------------------
  */
-void GraphicsEngine::drawVector(apvector<int>& data) {
+void GraphicsEngine::drawVector(apvector<int>& data, int pos) {
 	static float xratio = ((float)windowWidth) / data.length();
 	static float yratio = ((float)windowHeight) / data.length();
 
 	static ALLEGRO_COLOR wallC = al_map_rgb(0, 0xa0, 0);
 	static ALLEGRO_COLOR wallB = al_map_rgb(0, 0xff, 0);
-	static ALLEGRO_COLOR pathC = al_map_rgb(0xff, 0xff, 0xff);
-	static ALLEGRO_COLOR startC = al_map_rgb(0xff, 0xff, 0);
-	static ALLEGRO_COLOR stopC = al_map_rgb(0xff, 0, 0);
+	static ALLEGRO_COLOR wallD = al_map_rgb(0, 0, 0xa0);
+	static ALLEGRO_COLOR wallE = al_map_rgb(0, 0, 0xff);
+//	static ALLEGRO_COLOR pathC = al_map_rgb(0xff, 0xff, 0xff);
+//	static ALLEGRO_COLOR startC = al_map_rgb(0xff, 0xff, 0);
+//	static ALLEGRO_COLOR stopC = al_map_rgb(0xff, 0, 0);
 	clearBitmap();
 	for (int r = 0; r < data.length(); r++ ) {
-		al_draw_filled_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio , (r+1)* xratio, windowHeight, 0.25*xratio, 0.25*xratio, wallC);
-		al_draw_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio, (r+1)* xratio, windowHeight , 0.25*xratio, 0.25*xratio, wallB,4);
+		if (r == pos) {
+			al_draw_filled_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio , (r+1)* xratio, windowHeight, 0.25*xratio, 0.25*xratio, wallD);
+			al_draw_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio, (r+1)* xratio, windowHeight , 0.25*xratio, 0.25*xratio, wallE,4);
+		} else {
+			al_draw_filled_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio , (r+1)* xratio, windowHeight, 0.25*xratio, 0.25*xratio, wallC);
+			al_draw_rounded_rectangle(r * xratio, windowHeight - data[r]* yratio, (r+1)* xratio, windowHeight , 0.25*xratio, 0.25*xratio, wallB,4);
+		}//end-of-if
 	} //end-of-for
 
 	al_flip_display();

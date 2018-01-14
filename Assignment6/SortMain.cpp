@@ -30,7 +30,13 @@ int main(int argc, char* argv[]){
 	srand(time(0));
 	int row = 30;
 
+	char salgo = 'b';
+
 	switch (argc) {
+		case 3:
+			row = atoi(argv[1]);
+			salgo = argv[2][0];
+			break;
 		case 2:
 			row = atoi(argv[1]);
 			break;
@@ -44,11 +50,11 @@ int main(int argc, char* argv[]){
 
 	Sort mysort(row, row);
 
-	if(mysort.callFP() == true) {
-		std::cout << std::endl << "success: solved maze" << std::endl;
+	if(mysort.callFP(salgo) == true) {
+		std::cout << std::endl << "success: vector is sorted" << std::endl;
 	}
 	else {
-		std::cout << std::endl << "error: could not solved maze" << std::endl;
+		std::cout << std::endl << "error: could not sort the vector" << std::endl;
 	}
 	return 0;
 }

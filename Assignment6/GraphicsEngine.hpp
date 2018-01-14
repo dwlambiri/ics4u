@@ -177,7 +177,7 @@ public:
 		 Draws an allegro version of the maze provided as a parameter\n
 	  --------------------------------------------------------------------------
 	 */
-	void drawVector(apvector<int>& m);
+	void drawVector(apvector<int>& m, int pos);
 private:
 	//--------------------------------------------------
 	// Data Members
