@@ -132,6 +132,9 @@ private:
 
 	void swap(int& a, int& b);
 
+	void merge(int,int,int);
+	bool merge_sort(int low,int high);
+
 
 	/**
 	  -------------------------------------------------------------------------

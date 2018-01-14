@@ -89,6 +89,9 @@ Sort::callFP(char salgo) {
 	case 'q':
 		title = "Sorting Demo: QuickSort";
 		break;
+	case 'm':
+		title = "Sorting Demo: MergeSort";
+		break;
 	default:
 		title = "Sorting Demo: Bubble Sort";
 		salgo = 'b';
@@ -110,6 +113,9 @@ Sort::callFP(char salgo) {
 		break;
 	case 'q':
 		result = quickSort(0, data.length()-1);
+		break;
+	case 'm':
+		result = merge_sort(0, data.length()-1);
 		break;
 	default:
 		std::cout << "Unknown sorting algorithm" << std::endl;
@@ -230,6 +236,62 @@ Sort::swap(int& a, int& b) {
 	int tmp = a;
 	a = b;
 	b = tmp;
+}
+
+
+
+bool
+Sort::merge_sort(int low,int high){
+	int mid;
+	if(low<high){
+		mid=(low+high)/2;
+		merge_sort(low,mid);
+		merge_sort(mid+1,high);
+		merge(low,mid,high);
+	}
+
+	return true;
+}
+
+void
+Sort::merge(int low,int mid,int high){
+	int h,i,j,k;
+	apvector<int> b;
+
+	b.resize(data.length());
+
+	h=low;
+	i=low;
+	j=mid+1;
+
+	while((h<=mid)&&(j<=high)){
+		if(data[h]<=data[j]){
+			b[i]=data[h];
+			h++;
+		}
+		else{
+			b[i]=data[j];
+			j++;
+		}
+		i++;
+	}
+	if(h>mid){
+		for(k=j;k<=high;k++){
+			b[i]=data[k];
+			i++;
+		}
+	}
+	else{
+		for(k=h;k<=mid;k++){
+			b[i]=data[k];
+			i++;
+		}
+	}
+	for(k=low;k<=high;k++) {
+		ge.pauseOnDisplayFrame();
+		data[k] = b[k];
+		ge.drawVector(data, k);
+	}
 }
 
 
