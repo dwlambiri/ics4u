@@ -140,7 +140,7 @@ private:
 	  -------------------------------------------------------------------------
 	   @author  dwlambiri
 	   @date    Nov 26, 2017
-	   @name    Sort::SortGenerator
+	   @name    Sort::generateVector
 	   @param
 	   @return  void
 	   @details

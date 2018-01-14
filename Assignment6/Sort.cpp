@@ -22,9 +22,9 @@
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Nov 24, 2017
-   @mname   Maze::Maze
+   @mname   Sort::Sort
    @details
-	  Standard maze constructor which requires a text file\n
+	  \n
   --------------------------------------------------------------------------
  */
 
@@ -36,7 +36,7 @@ Sort::Sort(int rows, int cols) {
 
 	generateVector();
 
-} // end-of-method Maze::Maze
+} // end-of-method Sort::Sort
 
 
 
@@ -45,14 +45,14 @@ Sort::Sort(int rows, int cols) {
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Nov 24, 2017
-   @mname   Maze::~Maze
+   @mname   Sort::~Sort
    @details
-	  Standard maze destructor that cleans up allegro\n
+	  Standard destructor that cleans up allegro\n
   --------------------------------------------------------------------------
  */
 Sort::~Sort() {
 	ge.cleanUp();
-} // end-of-method Maze::~Maze
+} // end-of-method Sort::~Sort
 
 
 
@@ -61,10 +61,9 @@ Sort::~Sort() {
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Nov 24, 2017
-   @mname   Maze::callFP
+   @mname   Sort::callFP
    @details
-	  Calls the recursive algorithm for the first time by passing the
-	  private data (startRow and startCol)\n
+	  \n
   --------------------------------------------------------------------------
  */
 bool
@@ -137,7 +136,7 @@ Sort::callFP(char salgo) {
 
 	return true;
 
-} // end-of-method Maze::callFP
+} // end-of-method Sort::callFP
 
 
 /**
@@ -200,6 +199,15 @@ Sort::bubbleSort() {
 } // end-of-method Sort::selectionSort
 
 
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Jan 14, 2018
+   @mname   Sort::partition
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
 int
 Sort::partition (int low, int high){
     int pivot = data[high];    //taking the last element as pivot
@@ -220,6 +228,15 @@ Sort::partition (int low, int high){
     return (i + 1);
 }
 
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Jan 14, 2018
+   @mname   Sort::quicksort
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
 bool
 Sort::quickSort(int low, int high) {
     if (low < high)
@@ -231,7 +248,15 @@ Sort::quickSort(int low, int high) {
     return true;
 }
 
-
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Jan 14, 2018
+   @mname   Sort::swap
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
 void
 Sort::swap(int& a, int& b) {
 	int tmp = a;
@@ -240,7 +265,15 @@ Sort::swap(int& a, int& b) {
 }
 
 
-
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Jan 14, 2018
+   @mname   Sort::merge_sort
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
 bool
 Sort::merge_sort(int low,int high){
 	int mid;
@@ -254,6 +287,15 @@ Sort::merge_sort(int low,int high){
 	return true;
 }
 
+/**
+  ---------------------------------------------------------------------------
+   @author  dwlambiri
+   @date    Jan 14, 2018
+   @mname   Sort::merge
+   @details
+	  \n
+  --------------------------------------------------------------------------
+ */
 void
 Sort::merge(int low,int mid,int high){
 	int h,i,j,k;
@@ -300,7 +342,7 @@ Sort::merge(int low,int mid,int high){
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Nov 26, 2017
-   @mname   Maze::mazeGenerator
+   @mname   Sort::generateVector
    @details
 	  \n
   --------------------------------------------------------------------------
@@ -311,12 +353,12 @@ Sort::generateVector() {
 	for (int r = 0; r < numCols; r++){
 			data[r] = rand()% numRows;
 	}
-} // end-of-method Maze::mazeGenerator
+} // end-of-method Sort::generateVector
 
 
 /**
   ---------------------------------------------------------------------------
-   @author  elambiri
+   @author  dwlambiri
    @date    Jan 14, 2018
    @mname   Sort::printVector
    @details
