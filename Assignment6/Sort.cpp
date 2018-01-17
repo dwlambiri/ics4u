@@ -182,9 +182,10 @@ Sort::selectionSort() {
 			}
 			ge.drawVector(data,j);
 		}//end-of-for
-		int tmp = data[i];
-		data[i] = min;
-		data[minidx] = tmp;
+		swap(data[i], data[minidx]);
+//		int tmp = data[i];
+//		data[i] = min;
+//		data[minidx] = tmp;
 	}//end-of-for
 	return true;
 
