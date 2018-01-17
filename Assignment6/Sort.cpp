@@ -102,19 +102,40 @@ Sort::callFP(char salgo) {
 	}
 
 	printVector();
+	std::cout << "FPS = " << ge.fps << std::endl;
 
 	switch(salgo) {
 	case 'b':
+		myTime.start();
+
 		result = bubbleSort();
+
+		myTime.stop();
+		std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 		break;
 	case 's':
+		myTime.start();
+
 		result = selectionSort();
+
+		myTime.stop();
+		std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 		break;
 	case 'q':
+		myTime.start();
+
 		result = quickSort(0, data.length()-1);
+
+		myTime.stop();
+		std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 		break;
 	case 'm':
+		myTime.start();
+
 		result = merge_sort(0, data.length()-1);
+
+		myTime.stop();
+		std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 		break;
 	default:
 		std::cout << "Unknown sorting algorithm" << std::endl;
@@ -150,8 +171,6 @@ Sort::callFP(char salgo) {
  */
 bool
 Sort::selectionSort() {
-    myTime.start();
-
 	for (int i = 0; i < numRows-1; ++i) {
 		int min = data[i];
 		int minidx = i;
@@ -167,8 +186,6 @@ Sort::selectionSort() {
 		data[i] = min;
 		data[minidx] = tmp;
 	}//end-of-for
-    myTime.stop();
-    std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 	return true;
 
 } // end-of-method Sort::selectionSort
@@ -185,8 +202,6 @@ Sort::selectionSort() {
  */
 bool
 Sort::bubbleSort() {
-    myTime.start();
-
 	for (int i = 0; i < numRows-1; ++i) {
 		for (int j = i; j < numRows; ++j) {
 			ge.pauseOnDisplayFrame();
@@ -196,8 +211,6 @@ Sort::bubbleSort() {
 			ge.drawVector(data, j);
 		}//end-of-for
 	}//end-of-for
-    myTime.stop();
-    std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 	return true;
 
 } // end-of-method Sort::selectionSort

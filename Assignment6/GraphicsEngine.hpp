@@ -178,6 +178,14 @@ public:
 	  --------------------------------------------------------------------------
 	 */
 	void drawVector(apvector<int>& m, int pos);
+	/*
+	 * @author   dwlambiri
+	 * @date     Jan 17, 2018
+	 *  I moved this data member to public so that I could print it from the
+	 *  sorting class.
+	 */
+
+	int fps;
 private:
 	//--------------------------------------------------
 	// Data Members
@@ -190,7 +198,6 @@ private:
 
 	int windowWidth;
 	int windowHeight;
-	int fps;
 	static const int fontSize_c = 30;
 
 

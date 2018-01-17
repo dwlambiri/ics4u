@@ -52,8 +52,6 @@ int main(int argc, char* argv[]){
 	} //end-switch(argc)
 
 	std::cout << "will auto generate vector to sort" << std::endl;
-    std::cout << "1/100 FPS" << std::endl;
-
 
 	Sort mysort(row, row);
 
