@@ -90,6 +90,7 @@ private:
 	apvector<int> data;
 	static const int w_c = 600;
 	static const int h_c = 600;
+	int swapCounter;
 	Timer myTime;
 
 	GraphicsEngine ge;
@@ -135,6 +136,7 @@ private:
 	void swap(int& a, int& b);
 
 	void merge(int,int,int);
+
 	bool merge_sort(int low,int high);
 
 
