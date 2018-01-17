@@ -43,7 +43,7 @@ GraphicsEngine::GraphicsEngine(){
 	font = nullptr;
 	windowWidth = 0;
 	windowHeight = 0;
-	fps = 60;
+	fps = 200;
 
 }
 

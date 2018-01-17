@@ -150,6 +150,7 @@ Sort::callFP(char salgo) {
  */
 bool
 Sort::selectionSort() {
+    myTime.start();
 
 	for (int i = 0; i < numRows-1; ++i) {
 		int min = data[i];
@@ -166,7 +167,8 @@ Sort::selectionSort() {
 		data[i] = min;
 		data[minidx] = tmp;
 	}//end-of-for
-
+    myTime.stop();
+    std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 	return true;
 
 } // end-of-method Sort::selectionSort
@@ -183,6 +185,7 @@ Sort::selectionSort() {
  */
 bool
 Sort::bubbleSort() {
+    myTime.start();
 
 	for (int i = 0; i < numRows-1; ++i) {
 		for (int j = i; j < numRows; ++j) {
@@ -193,7 +196,8 @@ Sort::bubbleSort() {
 			ge.drawVector(data, j);
 		}//end-of-for
 	}//end-of-for
-
+    myTime.stop();
+    std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 	return true;
 
 } // end-of-method Sort::selectionSort
@@ -283,7 +287,6 @@ Sort::merge_sort(int low,int high){
 		merge_sort(mid+1,high);
 		merge(low,mid,high);
 	}
-
 	return true;
 }
 

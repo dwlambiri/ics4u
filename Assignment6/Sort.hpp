@@ -23,6 +23,7 @@
 #include "apvector.h"
 #include <ctype.h>
 #include "GraphicsEngine.hpp"
+#include "Timer.cpp"
 /**
   ---------------------------------------------------------------------------
    @author     dwlambiri
@@ -89,6 +90,7 @@ private:
 	apvector<int> data;
 	static const int w_c = 600;
 	static const int h_c = 600;
+	Timer myTime;
 
 	GraphicsEngine ge;
 
