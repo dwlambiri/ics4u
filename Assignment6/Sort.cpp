@@ -104,6 +104,7 @@ Sort::callFP(char salgo) {
 	printVector();
 	std::cout << "FPS = " << ge.fps << std::endl;
 	myTime.start();
+    swapCounter = 0;
 
 	switch(salgo) {
 	case 'b':
@@ -156,7 +157,6 @@ Sort::callFP(char salgo) {
  */
 bool
 Sort::selectionSort() {
-	swapCounter = 0;
 	for (int i = 0; i < numRows-1; ++i) {
 		int min = data[i];
 		int minidx = i;
@@ -169,7 +169,6 @@ Sort::selectionSort() {
 			ge.drawVector(data,j);
 		}//end-of-for
 		swap(data[i], data[minidx]);
-		swapCounter++;
 //		int tmp = data[i];
 //		data[i] = min;
 //		data[minidx] = tmp;
@@ -190,13 +189,11 @@ Sort::selectionSort() {
  */
 bool
 Sort::bubbleSort() {
-	swapCounter = 0;
 	for (int i = 0; i < numRows-1; ++i) {
 		for (int j = i; j < numRows; ++j) {
 			ge.pauseOnDisplayFrame();
 			if(data[j] < data[i]) {
 				swap(data[i], data[j]);
-				swapCounter++;
 			}
 			ge.drawVector(data, j);
 		}//end-of-for
@@ -269,6 +266,7 @@ Sort::swap(int& a, int& b) {
 	int tmp = a;
 	a = b;
 	b = tmp;
+	swapCounter++;
 }
 
 
