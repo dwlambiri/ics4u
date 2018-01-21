@@ -28,12 +28,11 @@
   --------------------------------------------------------------------------
  */
 
-Sort::Sort(int rows, int cols) {
-	numRows = rows;
-	numCols = cols;
+Sort::Sort(int indeces) {
+	numVals = indeces;
 	swapCounter = 0;
 	compCounter = 0;
-	data.resize(numCols);
+	data.resize(numVals);
 
 	generateVector();
 
@@ -74,8 +73,8 @@ Sort::~Sort() {
 bool
 Sort::callFP(char salgo) {
 
-	float xr = (float)w_c/numCols;
-	float yr = (float)h_c/numRows;
+	float xr = (float)w_c/numVals;
+	float yr = (float)h_c/numVals;
 	float r = (xr >yr)?yr:xr;
 	//float r = 20;
 
@@ -102,7 +101,7 @@ Sort::callFP(char salgo) {
 		break;
 	}
 
-	if(!ge.initAllegro(title, r*numCols, r*numRows)) {
+	if(!ge.initAllegro(title, r*numVals, r*numVals)) {
 		return false;
 	}
 
@@ -164,10 +163,10 @@ Sort::callFP(char salgo) {
  */
 bool
 Sort::selectionSort() {
-	for (int i = 0; i < numRows-1; ++i) {
+	for (int i = 0; i < numVals-1; ++i) {
 		int min = data[i];
 		int minidx = i;
-		for (int j = i; j < numRows; ++j) {
+		for (int j = i; j < numVals; ++j) {
 			ge.pauseOnDisplayFrame();
 			compCounter++;
 			if(data[j] < min) {
@@ -194,8 +193,8 @@ Sort::selectionSort() {
  */
 bool
 Sort::bubbleSort() {
-	for (int i = 0; i < numRows-1; ++i) {
-		for (int j = i; j < numRows; ++j) {
+	for (int i = 0; i < numVals-1; ++i) {
+		for (int j = i; j < numVals; ++j) {
 			ge.pauseOnDisplayFrame();
 			compCounter++;
 			if(data[j] < data[i]) {
@@ -382,8 +381,8 @@ Sort::merge(int low,int mid,int high){
 void
 Sort::generateVector() {
 
-	for (int r = 0; r < numCols; r++){
-			data[r] = rand()% numRows + 1;
+	for (int r = 0; r < numVals; r++){
+			data[r] = rand()% numVals + 1;
 	}
 } // end-of-method Sort::generateVector
 

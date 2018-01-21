@@ -52,7 +52,7 @@ public:
 		Default constructor of Class Sort \n
 	  --------------------------------------------------------------------------
 	 */
-	Sort(int rows, int cols);
+	Sort(int indeces);
 
 	/**
 	  --------------------------------------------------------------------------
@@ -85,8 +85,7 @@ private:
 
 
 private:
-	int numRows;
-	int numCols;
+	int numVals;
 	apvector<int> data;
 	static const int w_c = 600;
 	static const int h_c = 600;

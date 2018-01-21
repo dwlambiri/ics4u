@@ -32,18 +32,18 @@
 int main(int argc, char* argv[]){
 
 	srand(time(0));
-	int row = 200;
+	int indeces = 200;
     //bool algorithmGo = false;
 
 	char salgo = 'b';
 	//determines type of sort needed from user input
 	switch (argc) {
 		case 3:
-			row = atoi(argv[1]);
+			indeces = atoi(argv[1]);
 			salgo = argv[2][0];
 			break;
 		case 2:
-			row = atoi(argv[1]);
+			indeces = atoi(argv[1]);
 			std::cout << "Would you like 'b'ubble,'m'erge, 's'election, or 'q'uick sort" << std::endl;
 			std::cin >> salgo;
 			break;
@@ -57,8 +57,8 @@ int main(int argc, char* argv[]){
 
 	std::cout << "will auto generate vector to sort" << std::endl;
 
-	//Creates the sorting object
-	Sort mysort(row, row);
+	//Creates the sorting object with indeces number of elements
+	Sort mysort(indeces);
 
 	//Calls the callFP method which sorts the vector.
 	//Any error will be caught and messaged accordingly
