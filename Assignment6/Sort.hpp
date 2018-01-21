@@ -91,6 +91,7 @@ private:
 	static const int w_c = 600;
 	static const int h_c = 600;
 	int swapCounter;
+	int compCounter;
 	Timer myTime;
 
 	GraphicsEngine ge;

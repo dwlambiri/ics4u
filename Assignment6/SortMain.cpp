@@ -28,7 +28,7 @@
 int main(int argc, char* argv[]){
 
 	srand(time(0));
-	int row = 50;
+	int row = 200;
     //bool algorithmGo = false;
 
 	char salgo = 'b';

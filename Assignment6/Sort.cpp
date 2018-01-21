@@ -31,7 +31,8 @@
 Sort::Sort(int rows, int cols) {
 	numRows = rows;
 	numCols = cols;
-
+	swapCounter = 0;
+	compCounter = 0;
 	data.resize(numCols);
 
 	generateVector();
@@ -105,6 +106,7 @@ Sort::callFP(char salgo) {
 	std::cout << "FPS = " << ge.fps << std::endl;
 	myTime.start();
     swapCounter = 0;
+    compCounter = 0;
 
 	switch(salgo) {
 	case 'b':
@@ -137,6 +139,7 @@ Sort::callFP(char salgo) {
 	printVector();
 	std::cout <<"Number of Seconds " << myTime.elapsedSeconds() <<std::endl;
 	std::cout <<"Number of swaps = " << swapCounter <<std::endl;
+	std::cout <<"Number of Comparisons = " << compCounter <<std::endl;
 	std::string success = "data is sorted";
 	ge.okBox(success);
 	ge.allegroEventLoop();
@@ -162,6 +165,7 @@ Sort::selectionSort() {
 		int minidx = i;
 		for (int j = i; j < numRows; ++j) {
 			ge.pauseOnDisplayFrame();
+			compCounter++;
 			if(data[j] < min) {
 				minidx = j;
 				min = data[j];
@@ -169,9 +173,6 @@ Sort::selectionSort() {
 			ge.drawVector(data,j);
 		}//end-of-for
 		swap(data[i], data[minidx]);
-//		int tmp = data[i];
-//		data[i] = min;
-//		data[minidx] = tmp;
 	}//end-of-for
 	return true;
 
@@ -192,12 +193,27 @@ Sort::bubbleSort() {
 	for (int i = 0; i < numRows-1; ++i) {
 		for (int j = i; j < numRows; ++j) {
 			ge.pauseOnDisplayFrame();
+			compCounter++;
 			if(data[j] < data[i]) {
 				swap(data[i], data[j]);
 			}
 			ge.drawVector(data, j);
 		}//end-of-for
 	}//end-of-for
+
+//	bool disorder = true;
+//	while (disorder) {
+//		disorder = false;
+//		for (int i = 1; i < numRows; i++) {
+//			ge.pauseOnDisplayFrame();
+//			compCounter++;
+//			if (data[i] < data[i - 1]) {
+//				swap(data[i], data[i - 1]);
+//				disorder = true;
+//			}
+//			ge.drawVector(data, i);
+//		}
+//	}
 	return true;
 
 } // end-of-method Sort::selectionSort
@@ -216,13 +232,11 @@ int
 Sort::partition (int low, int high){
     int pivot = data[high];    //taking the last element as pivot
     int i = (low - 1);
-    for (int j = low; j <= high- 1; j++)
-    {
+    for (int j = low; j <= high- 1; j++){
     	ge.pauseOnDisplayFrame();
-        // If current element is smaller than or
-        // equal to pivot
-        if (data[j] <= pivot)
-        {
+        // This checks if the current element is smaller than or equal to pivot
+        compCounter++;
+    	if (data[j] <= pivot){
             i++;
             swap(data[i], data[j]);
         }
@@ -243,8 +257,7 @@ Sort::partition (int low, int high){
  */
 bool
 Sort::quickSort(int low, int high) {
-    if (low < high)
-    {
+    if (low < high){
         int pi = partition(low, high);
         quickSort(low, pi - 1);
         quickSort(pi + 1, high);
@@ -282,6 +295,7 @@ Sort::swap(int& a, int& b) {
 bool
 Sort::merge_sort(int low,int high){
 	int mid;
+	compCounter++;
 	if(low<high){
 		mid=(low+high)/2;
 		merge_sort(low,mid);
