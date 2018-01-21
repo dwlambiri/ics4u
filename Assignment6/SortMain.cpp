@@ -4,7 +4,11 @@
  *	Course: ICS4U
  *	Date:   Jan 12, 2018
  *
- *	Purpose:
+ *	Purpose:This is the file which contains the main function for the sorting
+ *				program. It creates an object (Sort mysort) which contains
+ *				all of the sorting methods. The user is able to ask for a
+ *				specific sort and array size through the command line or through
+ *				terminal input.
  *
  *	Usage:
  *
@@ -32,7 +36,7 @@ int main(int argc, char* argv[]){
     //bool algorithmGo = false;
 
 	char salgo = 'b';
-
+	//determines type of sort needed from user input
 	switch (argc) {
 		case 3:
 			row = atoi(argv[1]);
@@ -53,8 +57,11 @@ int main(int argc, char* argv[]){
 
 	std::cout << "will auto generate vector to sort" << std::endl;
 
+	//Creates the sorting object
 	Sort mysort(row, row);
 
+	//Calls the callFP method which sorts the vector.
+	//Any error will be caught and messaged accordingly
 	if(mysort.callFP(salgo) == true) {
         //algorithmGo = true;
 		std::cout << std::endl << "success: vector is sorted" << std::endl;

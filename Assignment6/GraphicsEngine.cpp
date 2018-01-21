@@ -2,7 +2,7 @@
  *	Name:   Darius W Lambiri (dwlambiri)
  *	File:   GraphicsEngine.cpp
  *	Course: ICS4U
- *	Date:   Nov 24, 2017
+ *	Date:   Jan 15 2018
  *
  *	Purpose:
  *
@@ -230,12 +230,13 @@ bool GraphicsEngine::allegroEventLoop() {
  @date    Oct 29, 2017
  @mname   GraphicsEngine::drawVector
  @details
- Redraw the maze every time this method is called.
- The walls are drawn in green.
- The starting point is denoted by a yellow circle.
- The end point is denoted by a red circle.
- The path is denoted with a stream of triangles which point in the direction
- that the previous node moved in order to reach it. \n
+ This method will redraw the sorting in allegro per frame. There are several
+   colour constants declared in the method. We will be using light green
+   dark green. Light blue and dark blue.
+ Each value in the vector is represented by one of these rectangles drawn
+   by this method. Each rectangle is composed of an inner filled rectangle
+   and is surrounded by an empty rectangle which acts as a border and
+   gives a nice aesthetic look. \n
  --------------------------------------------------------------------------
  */
 void GraphicsEngine::drawVector(apvector<int>& data, int pos) {

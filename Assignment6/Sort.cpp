@@ -2,7 +2,7 @@
  *	Name:   Darius W Lambiri (dwlambiri)
  *	File:   Maze.cpp
  *	Course: ICS4U
- *	Date:   Nov 24, 2017
+ *	Date:   Jan 15, 2018
  *
  *	Purpose:
  *
@@ -57,13 +57,17 @@ Sort::~Sort() {
 
 
 
-
 /**
   ---------------------------------------------------------------------------
    @author  dwlambiri
    @date    Nov 24, 2017
    @mname   Sort::callFP
    @details
+   	  This method is the "central" method of the maze class.
+   	  This reads checks the type of sort that is wanted and then uses a
+   	  	  switch statement to call the according sorting method.
+   	  There is also a swap, time, and comparison counter which allows the
+   	  	  user to see how much time and how many computations each sort takes.
 	  \n
   --------------------------------------------------------------------------
  */
@@ -201,6 +205,10 @@ Sort::bubbleSort() {
 		}//end-of-for
 	}//end-of-for
 
+//  This was my first attempt at writing bubble sort
+	// inspired by the textbook. It has problems running
+	// wiht my allegro method so i took it out.
+
 //	bool disorder = true;
 //	while (disorder) {
 //		disorder = false;
@@ -225,7 +233,7 @@ Sort::bubbleSort() {
    @date    Jan 14, 2018
    @mname   Sort::partition
    @details
-	  \n
+	  This method partitions the array and then gets called from quicksort\n
   --------------------------------------------------------------------------
  */
 int
@@ -252,7 +260,7 @@ Sort::partition (int low, int high){
    @date    Jan 14, 2018
    @mname   Sort::quicksort
    @details
-	  \n
+	  recursively quicksorts the vector by partitioning and sorting it\n
   --------------------------------------------------------------------------
  */
 bool
@@ -271,7 +279,8 @@ Sort::quickSort(int low, int high) {
    @date    Jan 14, 2018
    @mname   Sort::swap
    @details
-	  \n
+	  standard swap function that swaps the values of their parameters
+	  	  as well as incrementing the swap counter\n
   --------------------------------------------------------------------------
  */
 void
@@ -289,7 +298,10 @@ Sort::swap(int& a, int& b) {
    @date    Jan 14, 2018
    @mname   Sort::merge_sort
    @details
-	  \n
+	  Recursive merge sort.
+	  Breaks the vector down into into subsections and sorts them
+	  	  by merging them.
+	  	  Inspired by pseudocode from Bjarne Stroustrup "Algorithms in C++"
   --------------------------------------------------------------------------
  */
 bool
@@ -311,7 +323,7 @@ Sort::merge_sort(int low,int high){
    @date    Jan 14, 2018
    @mname   Sort::merge
    @details
-	  \n
+	  This is called from the merge sort method. \n
   --------------------------------------------------------------------------
  */
 void
@@ -349,6 +361,7 @@ Sort::merge(int low,int mid,int high){
 		}
 	}
 	for(k=low;k<=high;k++) {
+		//Stops and redraws on allegro display
 		ge.pauseOnDisplayFrame();
 		data[k] = b[k];
 		ge.drawVector(data, k);
@@ -362,14 +375,15 @@ Sort::merge(int low,int mid,int high){
    @date    Nov 26, 2017
    @mname   Sort::generateVector
    @details
-	  \n
+	  Fills the vector with random integers with the max number equal to
+	  	  the vector size. \n
   --------------------------------------------------------------------------
  */
 void
 Sort::generateVector() {
 
 	for (int r = 0; r < numCols; r++){
-			data[r] = rand()% numRows;
+			data[r] = rand()% numRows + 1;
 	}
 } // end-of-method Sort::generateVector
 
@@ -380,7 +394,7 @@ Sort::generateVector() {
    @date    Jan 14, 2018
    @mname   Sort::printVector
    @details
-	  \n
+	  This prints out into the terminal each element in the vector.\n
   --------------------------------------------------------------------------
  */
 void

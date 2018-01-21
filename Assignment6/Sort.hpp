@@ -2,7 +2,7 @@
  *	Name:   Darius W Lambiri (dwlambiri)
  *	File:   Sort.hpp
  *	Course: ICS4U
- *	Date:   Nov 24, 2017
+ *	Date:   Jan 15, 2018
  *
  *	Purpose: This is a Sort class declaration
  *
@@ -117,11 +117,8 @@ private:
 	  -------------------------------------------------------------------------
 	   @author  dwlambiri
 	   @date    Nov 24, 2017
-	   @name    Sort::findPath
-	   @param
-	   @return  bool
 	   @details
-		  This method was made private because it only needs to be called
+		  These methods were made private because it only needs to be called
 		  from the callFC method which uses the private data to be passed
 		  as parameters. \n
 	  -------------------------------------------------------------------------

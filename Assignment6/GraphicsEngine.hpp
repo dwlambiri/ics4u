@@ -2,7 +2,7 @@
  *	Name:   Darius W Lambiri (dwlambiri)
  *	File:   GraphicsEngine.hpp
  *	Course: ICS4U
- *	Date:   Nov 24, 2017
+ *	Date:   Jan 15 2018
  *
  *	Purpose: Declaration of the GraphicsEnginge class
  *
@@ -214,10 +214,6 @@ private:
 
 
 }; //end-of-class GraphicsEngine
-
-
-
-
 
 
 #endif /* ASSIGNMENT4_GRAPHICSENGINE_HPP_ */
